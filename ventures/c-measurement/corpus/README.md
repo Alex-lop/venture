@@ -159,7 +159,10 @@ query; this run got 1 page of most windows before the 200-call search budget ran
 window than v1, and the two funnels' stage-1 row counts are not comparable — the
 per-repo gates and the membership rule are. Script: `scripts/widen.py`
 (`selfcheck` runs the classifier asserts with no network). Raw per-stage checkpoints:
-`raw/*.jsonl` — a rerun resumes rather than re-spending budget. `raw/prs.jsonl` and
+`raw/*.jsonl` — a rerun resumes rather than re-spending budget; the whole directory is
+gitignored (repo `.gitignore:6`), and the tracked, machine-readable funnel derived from it is
+`funnel-v2.csv` (`scripts/funnel_csv.py`, **dedupe: last row per repo — 2,015 checkpoint rows,
+1,908 repos**). `raw/prs.jsonl` and
 `raw/prs_rest_partial.jsonl` hold PR bodies, which carry third-party names and email
 addresses in their `Co-Authored-By` trailers, so `raw/.gitignore` keeps those two files
 local; everything they feed is reproducible by rerunning the script.

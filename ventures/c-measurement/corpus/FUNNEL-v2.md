@@ -1,6 +1,15 @@
 # FUNNEL v2 — widened candidate corpus (2026-08-30)
 
-Built by `scripts/widen.py`. Raw checkpoints in `raw/*.jsonl` (every stage resumable).
+Built by `scripts/widen.py`. Raw checkpoints in `raw/*.jsonl` (every stage resumable), which
+is gitignored (repo `.gitignore:6`) because the PR payloads carry author logins.
+
+**The machine-readable form of this table is `funnel-v2.csv`** (tracked; one row per repo:
+`repo, stage, verdict, examined, qualifying, sample_prs` plus a column per per-PR drop reason),
+emitted by `scripts/funnel_csv.py` and recomputed by the study's `analysis.py`. Because the
+checkpoint log is append-only and resumable, **a re-processed repo appears more than once:
+2,015 rows for 1,908 repos, and the dedupe rule is last row per repo.** An undeduplicated pass
+gives 981 PRs examined and 302 `no_test_path` instead of the 937 / 288 below. The prose table
+here is hand-written; the CSV is the source.
 Criteria are identical to `candidates.csv` except the two changes the corpus README's
 "Next step" prescribes: **star gate >= 50 -> >= 10**, and the **">= 3 stage-1 hits"**
 **prefilter replaced by a per-repo recovery step** (stage 3b) for repos with 1-2 hits.
