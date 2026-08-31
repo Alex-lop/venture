@@ -3,7 +3,7 @@
 #
 # It builds a throwaway git repository from demo/fixture (a service with a db/
 # directory, a migration, an .mcp.json, no hooks, and a CLAUDE.md that forbids
-# nothing), gives it a history with two repairs, and runs the checkup over it.
+# nothing), gives it a history with three repairs, and runs the checkup over it.
 # The fixture is copied, never git-initialised in place; the checkout under
 # demo/fixture is not touched, and neither is the repository under inspection.
 #

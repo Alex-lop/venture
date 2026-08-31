@@ -76,8 +76,11 @@ def shell_env(tmp_path_factory) -> dict[str, str]:
     script = bin_dir / "guardrail-checkup"
     script.write_text(f'#!/bin/sh\nexec "{sys.executable}" -m guardrail_checkup "$@"\n')
     script.chmod(0o755)
+    # The interpreter running the suite goes on PATH too, so a `python` in a
+    # README block is this one and not whichever `python` the shell would find:
+    # the doc-truth suite has to be hermetic from a clean checkout.
     env = dict(os.environ)
-    env["PATH"] = f"{bin_dir}{os.pathsep}{env['PATH']}"
+    env["PATH"] = f"{bin_dir}{os.pathsep}{Path(sys.executable).parent}{os.pathsep}{env['PATH']}"
     env["PYTHONPATH"] = str(ROOT / "src")
     return env
 
@@ -128,3 +131,50 @@ def unquoted(markdown: str) -> list[str]:
 
     corpus = evidence_corpus()
     return [quote for quote in quotations(markdown) if quote.strip(". ") not in corpus]
+
+
+def list_items(markdown: str, heading: str) -> list[str]:
+    """The bullets, numbered items and table rows under one heading.
+
+    An invented capability is a new bullet or a new table row, and a fabricated
+    comparison entry is a new row; both are what a declared count fails on. An
+    item carries its continuation lines, so a claim that wraps is one item.
+    Fenced blocks are skipped -- a pinned console transcript is evidence, not a
+    claim list -- and a table's separator row is not an item.
+    """
+
+    out: list[str] = []
+    current: str | None = None
+    inside = fenced = False
+
+    def close() -> None:
+        nonlocal current
+        if current is not None:
+            out.append(current)
+            current = None
+
+    for line in markdown.splitlines():
+        if line.startswith("#"):
+            close()
+            inside = line.lstrip("# ").strip() == heading
+        elif line.startswith("```"):
+            close()
+            fenced = not fenced
+        elif not inside or fenced:
+            continue
+        elif re.match(r"^(-|\d+\.) ", line):
+            close()
+            current = line
+        elif line.startswith("|") and not re.fullmatch(r"\|[\s|:-]+\|", line.strip()):
+            close()
+            out.append(line)
+        elif current is not None:
+            current += "\n" + line
+    close()
+    return out
+
+
+def bullets(markdown: str, heading: str) -> list[str]:
+    """The bullets under one heading, each joined into one line."""
+
+    return [flatten(item) for item in list_items(markdown, heading) if item.startswith("- ")]

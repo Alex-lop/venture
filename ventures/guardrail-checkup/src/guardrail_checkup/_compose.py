@@ -8,16 +8,39 @@ from __future__ import annotations
 
 import json
 import re
+import shlex
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from agent_plan_lint import DocumentError, load_plan, load_policy, validate_plan
-from egresswall import Policy, check
+from ._scan import Scan, _read, _record, _screened, servers_of
 
-from ._scan import Scan, _read
+
+def _siblings() -> tuple:
+    """The two sibling packages, imported in the one function that uses them.
+
+    At module scope a partial environment turns `import guardrail_checkup`
+    itself into a two-level traceback and the console script into exit 1 -- the
+    one status this tool promises never to return, and the one a reader would
+    read as "it gated my change". Imported here, a missing sibling is an
+    `ImportError` the CLI turns into one line and exit 2.
+    """
+
+    try:
+        from agent_plan_lint import DocumentError, load_plan, load_policy, validate_plan
+        from egresswall import Policy, check
+    except ImportError as error:  # pragma: no cover - only reachable in a --no-deps install
+        raise ImportError(
+            "needs agent-plan-lint and egresswall, both declared dependencies: pip install guardrail-checkup"
+        ) from error
+    return DocumentError, load_plan, load_policy, validate_plan, Policy, check
+
 
 __all__ = [
+    "CANDIDATE_LIMIT",
     "FIXTURE_SAMPLE",
+    "SIGNATURE_SCAN_BYTES",
+    "SIGNATURE_SCAN_FILES",
     "Composition",
     "compose",
     "emit",
@@ -29,9 +52,31 @@ __all__ = [
     "wrapped_mcp",
 ]
 
+#: How many invariant candidates a report names and drafts a hook for, at most.
+#: Three is the in-person session's number: a reader acts on three and skims a
+#: longer list. §3 says how many it actually had.
+CANDIDATE_LIMIT = 3
+
 #: How many checked-in JSON fixtures are screened. A sample, not a sweep: this
 #: section exists to show what egresswall would say, not to audit a corpus.
 FIXTURE_SAMPLE = 5
+
+#: How many bytes of checked-in JSON the agent-plan-lint signature scan reads
+#: before it stops. The sweep deliberately reads the whole listing rather than
+#: the `--max-files` slice, so that "no document was found" is a statement about
+#: the repository -- but nothing then bounded the work, and 20,000 JSON files of
+#: 1 MiB apiece cost 18 seconds whatever `--max-files` said. The budget bounds
+#: the work without bounding the truth: when it is spent §2 says how many files
+#: were listed and not read, instead of reporting an absence it did not check.
+SIGNATURE_SCAN_BYTES = 64 * 2**20
+
+#: How many checked-in `.json` files the same sweep opens before it stops. The
+#: byte budget bounds what is read out of a file and not what it costs to open
+#: one: a repository of tiny checked-in JSON never spends 64 MiB, and 100,000
+#: of them is eight seconds of `open` against the two tests/test_limits.py
+#: holds one step to. Ten thousand is under a second here, and §2 counts the
+#: rest into the same "listed and not read" clause the byte budget fills.
+SIGNATURE_SCAN_FILES = 10_000
 
 #: Where a fixture may live for this tool to sample it.
 _FIXTURE_PATH = re.compile(r"(^|/)(fixtures?|testdata|test_data|tests?|spec|demo|examples?)(/|$)")
@@ -52,14 +97,23 @@ class Composition:
     validations: list[str] = field(default_factory=list)
     screened: list[tuple[str, list[str]]] = field(default_factory=list)
     drafts: dict[str, str] = field(default_factory=dict)
-    #: The MCP servers `egresswall proxy` was put in front of, and the ones it
-    #: could not be: a server that names a URL rather than a command is not
-    #: reachable through a proxy that wraps a command line.
+    #: The MCP servers `egresswall proxy` was put in front of; the ones it could
+    #: not be, each with the reason; and the ones already running a screen, which
+    #: would come back double-proxied if they were wrapped again.
     wrapped: tuple[str, ...] = ()
-    unwrapped: tuple[str, ...] = ()
+    unwrapped: tuple[tuple[str, str], ...] = ()
+    already: tuple[str, ...] = ()
     #: Paths left out of the starter policy because agent-plan-lint refuses
-    #: them as globs (a backslash, a control or bidi character, a leading `./`).
+    #: them as globs. Its own type decides, not a copy of its rules here.
     unpoliceable: tuple[str, ...] = ()
+    #: How many checked-in `.json` files the signature scan listed and did not
+    #: read, because SIGNATURE_SCAN_BYTES or SIGNATURE_SCAN_FILES was spent. §2
+    #: says so instead of reporting that no policy document exists.
+    signature_skipped: int = 0
+    #: What the emitted MCP suggestion names as egresswall's policy file. The
+    #: report's §4 quotes it and says it is a placeholder, because running the
+    #: emitted configuration before writing that policy fails.
+    policy_path: str = ""
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -68,8 +122,13 @@ class Composition:
             "validations": self.validations,
             "screened": [{"path": path, "violations": items} for path, items in self.screened],
             "drafts": sorted(self.drafts),
-            "mcp": {"wrapped": list(self.wrapped), "unwrapped": list(self.unwrapped)},
+            "mcp": {
+                "wrapped": list(self.wrapped),
+                "unwrapped": [{"server": name, "reason": reason} for name, reason in self.unwrapped],
+                "already_screened": list(self.already),
+            },
             "unpoliceable": list(self.unpoliceable),
+            "signature_scan_skipped": self.signature_skipped,
         }
 
 
@@ -78,19 +137,41 @@ def _identifier(text: str) -> str:
     return cleaned if cleaned and cleaned[0].isalnum() else "repo"
 
 
-#: A path agent-plan-lint will not accept as a glob: it requires a canonical,
-#: relative path and refuses a backslash, a control or bidi character, and a
-#: leading `./`. A repository is free to contain such a path; a policy is not.
-_UNPOLICEABLE = re.compile(
-    "[\\\\\\x00-\\x1f\\x7f-\\x9f\\u061c\\u200b-\\u200f\\u202a-\\u202e\\u2066-\\u2069]|^\\.{1,2}/"
-)
+def _glob_check() -> Callable[[str], bool]:
+    """agent-plan-lint's own answer to "is this a legal write glob?".
+
+    Not a second implementation of its rules. The first one was a regular
+    expression covering a backslash, the control and bidi characters and a
+    leading `./`, and it missed two whole classes the sibling refuses -- a path
+    component ending in a dot or a space (Windows strips both, so `token.env.`
+    and `token.env` are one file there) and U+00A0 with the rest of the
+    invisible, combining and non-printable set. The emitted policy was then
+    invalid and `unpoliceable` was empty, so §2 said nothing had been left out.
+    This reads the annotated type off the policy model instead, so the two
+    cannot drift again.
+    """
+
+    from agent_plan_lint import ProjectPolicy
+    from pydantic import TypeAdapter  # agent-plan-lint's own dependency, not a new one
+
+    adapter = TypeAdapter(ProjectPolicy.model_fields["allowed_write_globs"].annotation)
+
+    def policeable(item: str) -> bool:
+        try:
+            adapter.validate_python((item,))
+        except Exception:
+            return False
+        return True
+
+    return policeable
 
 
 def policy_globs(items: list[str]) -> tuple[list[str], list[str]]:
     """Split path globs into the ones a policy can carry and the ones it cannot."""
 
-    kept = [item for item in items if not _UNPOLICEABLE.search(item)]
-    return kept, [item for item in items if _UNPOLICEABLE.search(item)]
+    policeable = _glob_check()
+    kept = [item for item in items if policeable(item)]
+    return kept, [item for item in items if not policeable(item)]
 
 
 def policy_paths(result: Scan) -> tuple[list[str], list[str], list[str]]:
@@ -101,10 +182,13 @@ def policy_paths(result: Scan) -> tuple[list[str], list[str], list[str]]:
     every top-level directory stands in for the churn.
     """
 
+    # `[:CANDIDATE_LIMIT]`, because §3 and §4 both call these "the §3
+    # candidates": built from every ranked candidate, a repository matching more
+    # than three categories got a policy excluding paths no section named.
     exclusions = sorted(
         {
             f"{prefix.rstrip('/')}/**" if prefix.endswith("/") else prefix
-            for candidate in result.candidates
+            for candidate in result.candidates[:CANDIDATE_LIMIT]
             for prefix in candidate.prefixes
         }
     )[:64]
@@ -143,31 +227,60 @@ def starter_policy(result: Scan) -> dict:
     }
 
 
-def wrapped_mcp(config: dict, policy_path: str) -> tuple[dict, tuple[str, ...], tuple[str, ...]]:
+def wrapped_mcp(
+    config: dict, policy_path: str
+) -> tuple[dict, tuple[str, ...], tuple[tuple[str, str], ...], tuple[str, ...]]:
     """The MCP configuration with `egresswall proxy` in front of each server it can wrap.
 
-    Returns the configuration, the servers that were wrapped, and the servers
-    that were not: a server that names a URL rather than a command line is
-    reached over the network, and a proxy that wraps a command cannot screen
-    it. The report states both counts rather than saying "every server".
+    Returns the configuration, the servers that were wrapped, the servers that
+    were not with the reason for each, and the servers that already run a
+    screen. Four things stop a rewrite: a server that names a URL rather than a
+    command line is reached over the network and a proxy that wraps a command
+    cannot screen it; a server naming neither a command nor a URL configures
+    nothing, so there is no command line to put a proxy in front of; a server
+    whose command or `args` are not all strings cannot have its command line
+    rebuilt without inventing one, and `str()` on a JSON object writes a Python
+    repr into a shell argument; and a server already running `egresswall`,
+    `mcp-gateway` or `mcp-scan` comes back double-proxied if it is wrapped
+    again, while §2 reports it as screened. The report states
+    every count rather than saying "every server".
     """
 
-    key = "mcpServers" if "mcpServers" in config else "servers"
-    servers = dict(config.get(key) or {}) if isinstance(config.get(key), dict) else {}
-    wrapped, unwrapped = [], []
+    key, listed = servers_of(config)
+    servers = dict(listed) if isinstance(listed, dict) else {}
+    wrapped: list[str] = []
+    unwrapped: list[tuple[str, str]] = []
+    already: list[str] = []
     for name, entry in sorted(servers.items()):
         if not isinstance(entry, dict) or "command" not in entry:
-            unwrapped.append(str(name))
+            # Only the entries that name a URL are reached over the network. An
+            # entry naming neither a command nor a URL configures nothing, and
+            # the inventory's own row says exactly that -- one report described
+            # the same server two ways.
+            remote = isinstance(entry, dict) and bool(entry.get("url"))
+            unwrapped.append(
+                (
+                    str(name),
+                    "reached over the network, and a proxy in front of a command cannot screen it"
+                    if remote
+                    else "this entry configures no command to wrap",
+                )
+            )
             continue
         arguments = entry.get("args") if isinstance(entry.get("args"), list) else []
-        inner = [str(entry["command"]), *[str(item) for item in arguments]]
+        if not isinstance(entry["command"], str) or any(not isinstance(item, str) for item in arguments):
+            unwrapped.append((str(name), "its command line is not all strings, so this tool will not rebuild it"))
+            continue
+        if _screened(entry["command"], arguments):
+            already.append(str(name))
+            continue
         servers[name] = {
             **entry,
             "command": "egresswall",
-            "args": ["proxy", "--policy", policy_path, "--", *inner],
+            "args": ["proxy", "--policy", policy_path, "--", entry["command"], *arguments],
         }
         wrapped.append(str(name))
-    return {**config, key: servers}, tuple(wrapped), tuple(unwrapped)
+    return {**config, key: servers}, tuple(wrapped), tuple(unwrapped), tuple(already)
 
 
 def settings_snippet(slug: str) -> dict:
@@ -216,32 +329,62 @@ if path.startswith(PROTECTED):
 
 
 def one_line_test(prefixes: tuple[str, ...]) -> str:
-    """A shell one-liner that exits non-zero when a staged commit touches the paths."""
+    """A shell one-liner that exits non-zero when a staged commit touches the paths.
 
-    pattern = "|".join(re.escape(item) for item in prefixes)
-    return f"! git diff --cached --name-only | grep -qE '^({pattern})'"
+    The prefixes are filenames out of the repository under inspection, and the
+    report offers this line to a reader to paste into a shell. `re.escape` makes
+    a path safe for `grep`; it does not make it safe for `sh`, which is a
+    different question and the dangerous one -- a file named
+    ``stripe';id>PWNED;echo'.py`` closes the quote and appends a command. The
+    whole pattern is one `shlex.quote`d token, so nothing in a filename is shell
+    syntax.
+    """
+
+    pattern = "^(" + "|".join(re.escape(item) for item in prefixes) + ")"
+    return f"! git diff --cached --name-only | grep -qE {shlex.quote(pattern)}"
 
 
-def _documents(result: Scan) -> tuple[list[str], list[str]]:
+def _documents(result: Scan) -> tuple[list[str], list[str], int]:
+    """The checked-in policy and plan documents, and how many were not read.
+
+    `result.all_files`, not the `--max-files` slice: "No document in
+    agent-plan-lint's schema was found" read off a truncated listing is a false
+    statement about a repository whose policy sorted past the cap, and §2 states
+    it as a fact about the repository. The same rule the inventory follows.
+
+    SIGNATURE_SCAN_BYTES and SIGNATURE_SCAN_FILES bound the reading instead,
+    because the listing does not bound itself: the first is what a file costs to
+    read, the second what it costs to open. The third value is how many `.json`
+    files were left unopened when either budget ran out, and §2 says so rather
+    than reporting an absence over files nobody read.
+    """
+
     policies, plans = [], []
-    for relative in result.files:
+    budget, files, skipped = SIGNATURE_SCAN_BYTES, SIGNATURE_SCAN_FILES, 0
+    for relative in result.all_files or result.files:
         if not relative.endswith(".json"):
             continue
-        text = _read(result.root, relative)
+        if budget <= 0 or files <= 0:
+            skipped += 1
+            continue
+        files -= 1
+        text = _record(result, relative, _read(result.root, relative))
         if text is None:
             continue
+        budget -= len(text)
         if all(f'"{key}"' in text for key in POLICY_KEYS):
             policies.append(relative)
         elif all(f'"{key}"' in text for key in PLAN_KEYS):
             plans.append(relative)
-    return policies, plans
+    return policies, plans, skipped
 
 
 def compose(result: Scan, policy_path: str) -> Composition:
     """Run the siblings over what the scan found, and draft what it did not."""
 
-    out = Composition()
-    policy_names, plan_names = _documents(result)
+    DocumentError, load_plan, load_policy, validate_plan, Policy, check = _siblings()
+    out = Composition(policy_path=policy_path)
+    policy_names, plan_names, out.signature_skipped = _documents(result)
     loaded_policy = None
     for relative in policy_names:
         try:
@@ -261,7 +404,13 @@ def compose(result: Scan, policy_path: str) -> Composition:
             continue
         validated = validate_plan(loaded_policy, plan)
         out.plans.append((relative, "within policy" if validated.valid else f"{len(validated.issues)} issue(s)"))
-        out.validations.extend(f"{relative}: {issue.code} — {issue.message}" for issue in validated.issues)
+        # Raw here, escaped where it is rendered: this list is also the JSON
+        # document's `composition.validations`, which is data and not markdown.
+        # `relative` is a filename out of the checkout and `issue.detail` carries
+        # the plan's own write paths, so §2's renderer seals both in a code span
+        # -- a plan named `[click](evil.example) <img src=x onerror=…>.json` put
+        # a live link and a live image into a report a reader hands over.
+        out.validations.extend(f"{relative}: {issue.code} — {issue.detail}" for issue in validated.issues)
 
     if not policy_names:
         out.drafts["starter-policy.json"] = json.dumps(starter_policy(result), indent=2) + "\n"
@@ -269,12 +418,16 @@ def compose(result: Scan, policy_path: str) -> Composition:
 
     if result.mcp_config is not None:
         _, config = result.mcp_config
-        suggestion, out.wrapped, out.unwrapped = wrapped_mcp(config, policy_path)
+        suggestion, out.wrapped, out.unwrapped, out.already = wrapped_mcp(config, policy_path)
         out.drafts["mcp-wrapped.json"] = json.dumps(suggestion, indent=2) + "\n"
 
-    fixtures = [item for item in result.files if item.endswith(".json") and _FIXTURE_PATH.search(item)]
+    # The whole listing, for the same reason `_documents` reads it: "No
+    # checked-in JSON fixture was found to screen" off a truncated list is a
+    # statement about a repository, and FIXTURE_SAMPLE bounds the work anyway.
+    listing = result.all_files or result.files
+    fixtures = [item for item in listing if item.endswith(".json") and _FIXTURE_PATH.search(item)]
     for relative in fixtures[:FIXTURE_SAMPLE]:
-        text = _read(result.root, relative)
+        text = _record(result, relative, _read(result.root, relative))
         if text is None:
             continue
         try:
@@ -283,7 +436,7 @@ def compose(result: Scan, policy_path: str) -> Composition:
             continue
         out.screened.append((relative, [str(item) for item in check(payload, Policy())]))
 
-    for candidate in result.candidates[:3]:
+    for candidate in result.candidates[:CANDIDATE_LIMIT]:
         out.drafts[f"hooks/protect-{candidate.slug}.py"] = hook_script(candidate.slug, candidate.prefixes)
         out.drafts[f"hooks/settings-{candidate.slug}.json"] = (
             json.dumps(settings_snippet(candidate.slug), indent=2) + "\n"

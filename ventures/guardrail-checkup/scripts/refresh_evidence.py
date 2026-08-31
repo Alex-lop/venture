@@ -6,6 +6,11 @@ a diff. Every anchor below is a phrase one of those documents quotes; if a
 source stops containing one, this script fails rather than writing evidence
 that no longer supports the page.
 
+It fetches two hosts over https and no others: `code.claude.com` for the two
+documentation pages in PAGES, and `api.github.com` for the repository metadata
+of the two projects in REPOS. `urls()` is the whole list; tests/test_comparison_truth.py
+counts the distinct hosts in it against the number CONTRIBUTING.md states.
+
     python3 scripts/refresh_evidence.py
 """
 
@@ -32,22 +37,51 @@ PAGES: dict[str, tuple[str, list[str]]] = {
         "https://code.claude.com/docs/en/hooks",
         ["PreToolUse", "matcher", "CLAUDE_PROJECT_DIR", "tool_input", "Blocks the tool call"],
     ),
+    # Every span docs/comparison.md quotes from this page, not just the two
+    # words that name the command: a refresh that cannot fail on the sentences
+    # the comparison row leans on is a refresh that proves nothing.
     "claude-code-commands": (
         "https://code.claude.com/docs/en/commands",
-        ["doctor", "setup checkup"],
+        [
+            "doctor",
+            "setup checkup",
+            "Run a setup checkup that diagnoses issues and can fix them.",
+            "Checks installation health, including duplicate or leftover installs, PATH problems, and "
+            "unparseable settings files.",
+            "trims checked-in CLAUDE.md files by cutting content Claude could derive from the codebase",
+            "prints read-only installation diagnostics without starting a session.",
+        ],
     ),
 }
 
-#: repository -> the phrases the documents quote from its description or README
+#: repository -> the phrases the documents quote from its metadata. An empty
+#: list here would mean a refresh can never fail on what the page claims, so
+#: every quoted span in docs/comparison.md's "What it does" column is listed.
 REPOS: dict[str, list[str]] = {
-    "microsoft/agentrc": [],
-    "kenryu42/cc-safety-net": [],
+    "microsoft/agentrc": ["Get your repo ready for AI."],
+    "kenryu42/cc-safety-net": [
+        "A pre-execution guard for AI coding agents.",
+        "It blocks destructive Git and file system commands, plus common attempts to access sensitive files, "
+        "before a tool call runs.",
+    ],
 }
+
+
+#: Where a repository's metadata is read from. Named here rather than built at
+#: the call site, so `urls()` can be the whole list and the host count cannot
+#: drift from what the docstring and CONTRIBUTING.md say.
+REPO_METADATA = "https://api.github.com/repos/{repository}"
+
+
+def urls() -> list[str]:
+    """Every URL this script requests. Two hosts, four URLs, and nothing else."""
+
+    return [url for url, _ in PAGES.values()] + [REPO_METADATA.format(repository=item) for item in REPOS]
 
 
 def fetch(url: str, accept: str = "text/html") -> str:
     request = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": accept})
-    # https only, fixed hosts; the module docstring says which
+    # https only, and only the URLs `urls()` lists; the module docstring names the hosts
     with urllib.request.urlopen(request, timeout=60) as response:
         return response.read().decode("utf-8", "replace")
 
@@ -75,7 +109,7 @@ def main() -> int:
                 missing.append(f"{slug}: {anchor!r} is no longer at {url}")
         write(slug, url, text)
     for repository, anchors in REPOS.items():
-        payload = json.loads(fetch(f"https://api.github.com/repos/{repository}", "application/vnd.github+json"))
+        payload = json.loads(fetch(REPO_METADATA.format(repository=repository), "application/vnd.github+json"))
         kept = {
             key: payload.get(key)
             for key in (
@@ -93,7 +127,7 @@ def main() -> int:
         for anchor in anchors:
             if anchor not in body:
                 missing.append(f"{repository}: {anchor!r} is no longer in the repository metadata")
-        write(repository.replace("/", "__"), f"https://api.github.com/repos/{repository}", body)
+        write(repository.replace("/", "__"), REPO_METADATA.format(repository=repository), body)
     for line in missing:
         print(line, file=sys.stderr)
     return 1 if missing else 0

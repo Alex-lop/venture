@@ -7,7 +7,7 @@ cb84928 hotfix: migration ran twice in staging
 
 == 2. One command, one report, nothing written into the repository ==
 $ guardrail-checkup run shipfast --out REPORT.md --emit-dir drafts
-guardrail-checkup: wrote REPORT.md — 16 inventory finding(s), 2 invariant candidate(s), 6 draft(s) in drafts
+guardrail-checkup: wrote REPORT.md — 17 inventory finding(s), 2 invariant candidate(s), 6 draft(s) in drafts
 $ git -C shipfast status --porcelain | wc -l
 0
 
@@ -30,21 +30,21 @@ Bash -> exit status: 0
 == 5. The report ==
 # Agent guardrail checkup — shipfast
 
-Run 2026-08-31 · read-only · shipfast · HEAD `a866fe98c841`
+Run 2026-08-31 · read-only · `shipfast` · HEAD `a866fe98c841`
 Produced by `guardrail-checkup`, a deterministic offline reader. No model was called for anything below; every judgement in §3 is yours to make.
 
 ## 1. Scope
 
 - **Repository:** `shipfast`, as given on the command line
 - **HEAD:** `a866fe98c841b07967adf5af733b3882c7c93a91`
-- **Size:** 9 file(s) considered, 1,926 bytes on disk
+- **Size:** 9 file(s) considered, 1,926 bytes (apparent size)
 - **File list:** `git ls-files` — tracked files plus untracked files `.gitignore` does not exclude
 - **Language mix** (by file extension):
   - `.py` — 4
   - `.json` — 2
   - `.md` — 2
   - `.sql` — 1
-- **Read:** the named guardrail artifacts listed in §2, every checked-in `.json` file (scanned for agent-plan-lint's signature keys), and up to 1 JSON fixture(s) screened in §2. A file over 1 MiB, or one whose first 8 KiB contains a NUL byte, is listed and not read.
+- **Read:** the named guardrail artifacts listed in §2, `pyproject.toml`, `setup.cfg`, `package.json` (for the linter falsifier), every checked-in `.json` file the signature scan reached before its 64 MiB and 10,000 file budgets were spent, and up to 1 JSON fixture(s) screened in §2. A file over 1 MiB, or one whose first 8 KiB contains a NUL byte, is listed and not read.
 - **Not read:** everything else. No source file was interpreted, no test was run, no command from this repository was executed, and nothing was sent anywhere.
 
 ## 2. Tool results — and what they got wrong
@@ -59,13 +59,14 @@ Produced by `guardrail-checkup`, a deterministic offline reader. No model was ca
 | .cursor/rules: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
 | .github/copilot-instructions.md: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
 | GEMINI.md: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
-| .claude/settings.json: absent | `-` | no PreToolUse or PostToolUse hook runs, so nothing inspects a tool call before it happens |
+| .claude/settings.json: absent | `-` | no PreToolUse or PostToolUse hook is configured here; this tool reads the two settings files in the checkout and nothing on the machine outside it |
+| .claude/settings.local.json: absent | `-` | no PreToolUse or PostToolUse hook is configured here; this tool reads the two settings files in the checkout and nothing on the machine outside it |
 | .mcp.json: MCP server 'support-tools' runs `python -m support_tools`; no screen in the command line | `.mcp.json:3` | whatever this server returns reaches the agent's context unscreened |
 | .mcp.json: MCP server 'warehouse' runs `npx -y @example/warehouse-mcp`; no screen in the command line | `.mcp.json:7` | whatever this server returns reaches the agent's context unscreened |
 | .pre-commit-config.yaml: absent | `-` | no commit-time check runs on a contributor's machine |
 | .git/hooks: no installed hook (samples only) | `.git/hooks:1` | nothing is checked at commit time |
-| CODEOWNERS: absent | `-` | no path requires a named reviewer, so any path can be merged by anyone |
-| .github/workflows: absent | `-` | no automated check runs on a change at all |
+| CODEOWNERS: absent | `-` | no path in this repository names a required reviewer; branch protection on the host was not read |
+| .github/workflows: absent | `-` | no GitHub Actions workflow is checked in here; CI configured elsewhere was not read |
 | secret scanning: not configured (no gitleaks, trufflehog or detect-secrets) | `-` | a credential an agent pastes into a file is committed with everything else |
 | lockfiles: none found | `-` | no pinned dependency set, so a hook or a test run is not reproducible |
 | tests: 2 file(s) in a test path | `tests/fixtures/support_reply.json:1` | there is a suite a hook or a CI gate can call |
@@ -78,11 +79,11 @@ Produced by `guardrail-checkup`, a deterministic offline reader. No model was ca
 ### egresswall
 
 - `tests/fixtures/support_reply.json` — **2 violation(s)** under egresswall's default policy:
-  - RAW_IDENTIFIER at response.customer.contact_email: the email detector matched
-  - FORBIDDEN_KEY at response.integration.api_key: field name 'api_key' is forbidden by policy
+  - `RAW_IDENTIFIER at response.customer.contact_email: the email detector matched`
+  - `FORBIDDEN_KEY at response.integration.api_key: field name 'api_key' is forbidden by policy`
 
 A violation names a code and a path, never a value. These are checked-in fixtures; the same screen in front of a live MCP server is what stops the real answer.
-- Your MCP configuration (`.mcp.json`) was rewritten as a **suggestion** with `egresswall proxy` in front of each server. It was not applied; see §4.
+- Your MCP configuration (`.mcp.json`) was rewritten as a **suggestion** with `egresswall proxy` in front of 2 of 2 server(s). It was not applied; see §4.
 
 ### What a generic scorer will get wrong here
 
@@ -90,13 +91,13 @@ A violation names a code and a path, never a value. These are checked-in fixture
 
 | A generic readiness scorer will say | True here | Command that shows it |
 | --- | --- | --- |
-| “Testing: 0/0 (0%)” | 2 file(s) sit in a test path | `find . -path ./.git -prune -o -name 'test_*' -print \| wc -l` |
+| “Testing: 0/0 (0%)” | 2 file(s) sit in a test path | `git ls-files --cached --others --exclude-standard \| grep -cE '(^\|/)(tests?\|spec)/\|(^\|/)test_[^/]+$\|_test\.[a-z]+$\|\.(test\|spec)\.[jt]sx?$'` |
 
-## 3. The three invariants
+## 3. Invariant candidates
 
 **Candidates — a human confirms or replaces them.** They are ranked by evidence, not by judgement: score = repair commits in the history that touched these paths (a commit that also touched a regression test counts twice) + 2 if CODEOWNERS names one of them + 1 if the path heuristic matched at all. This tool does not know your architecture and does not claim to.
 
-Only 2 candidate(s) had evidence. The runbook's rule applies: do not invent a third.
+Only 2 of the categories this tool knows matched a path here, so it names 2 candidate(s) and not three. The runbook's rule applies: do not invent a third.
 
 ### Invariant candidate 1 — An agent does not write to the schema and query layer without a human deciding first.
 
@@ -149,7 +150,7 @@ if path.startswith(PROTECTED):
 
 - **Governs:** `app/checkout.py`, `tests/test_checkout.py`
 - **Evidence (score 2):**
-  - path heuristic: 2 file(s) matching app/checkout.py, tests/test_checkout.py
+  - path heuristic: 2 file(s) matching app/checkout.py, tests/test\_checkout.py
   - git history: 1 repair commit(s) touched these paths — a866fe9 revert: back out the checkout retry change
 - **An agent breaks it by:** reading two files nearby, inferring the pattern, and writing the change here rather than asking — which is the correct move everywhere else in this repository.
 - **Hook** — `.claude/settings.json`:
@@ -195,8 +196,8 @@ if path.startswith(PROTECTED):
 ## 4. Monday list
 
 1. Read invariant candidate 1 (db) in §3 and decide whether it is right. If it is, copy `drafts/hooks/protect-db.py` into `.claude/hooks/`, `chmod +x` it, and merge `drafts/hooks/settings-db.json` into `.claude/settings.json`.
-2. Create `.claude/settings.json` with the hooks block from §3. There is no hook file at all today, so every candidate in §3 has nowhere to live.
-3. Compare `drafts/mcp-wrapped.json` with your own MCP configuration. It is the same servers with `egresswall proxy` in front of each; nothing was applied.
+2. Create `.claude/settings.json` with the hooks block from §3. Neither settings file exists in this repository today, so every candidate in §3 has nowhere to live.
+3. Compare `drafts/mcp-wrapped.json` with your own MCP configuration. It is the same servers with `egresswall proxy` in front of the 2 it could wrap; nothing was applied. Its `--policy` names `/etc/egresswall/policy.json`, a placeholder — point it at an egresswall policy you write, because this tool writes none.
 4. Review `drafts/starter-policy.json` — a valid agent-plan-lint policy whose exclusions are the §3 candidates. Fix the write globs to the paths your agents really own, then run `agent-plan-lint check <plan.json> --policy starter-policy.json`.
 5. Add gitleaks or detect-secrets to CI or to `.pre-commit-config.yaml`. §5 explains why this tool cannot do it for you.
 
@@ -206,8 +207,10 @@ if path.startswith(PROTECTED):
 - **Production systems.** No credential, no VPN, no CI, no deploy, no live database was touched.
 - **Secrets already in history.** This reads the working tree, not every blob. Run `gitleaks detect`, `trufflehog git`, or `detect-secrets scan` for that.
 - **Runtime behaviour.** Nothing here was executed. A hook that has never run does not go on anyone's screen — run the emitted one before you trust it.
-- **Anything needing a model.** No model was called. §3 is a ranked list of places, not a reading of your architecture, and the one judgement that matters — is candidate 3 the right one — is not in this file.
-- **Whether the rules that exist are followed.** Presence is checked; compliance is not.
+- **Anything needing a model.** No model was called. §3 is a ranked list of places, not a reading of your architecture, and the judgement — whether these are the right places — is not in this file.
+- **Hooks configured outside this checkout.** The inventory reads `.claude/settings.json` and `.claude/settings.local.json`. A hook in `~/.claude/settings.json`, in an enterprise policy, or in an installed plugin is on the machine and not in this repository, and was not read.
+- **Whether the rules that exist are followed.** Presence is checked; compliance is not. A hook is reported by its matcher, not by what it does: nothing here was executed, so a `PreToolUse` entry that only writes a log line reads exactly like one that blocks.
+- **What the three tools next to this one do.** None of them ran here, and this replaces none of them. Claude Code's `/doctor` “prints read-only installation diagnostics without starting a session”. `kenryu42/cc-safety-net` “blocks destructive Git and file system commands, plus common attempts to access sensitive files, before a tool call runs”. `microsoft/agentrc` says only “Get your repo ready for AI.” — its own description, and this report characterises it no further. The first two are better at those jobs than anything here; install them. This one reports, and the report is what you read before deciding what to enforce.
 
 ## 6. Provenance
 
@@ -219,4 +222,4 @@ if path.startswith(PROTECTED):
 - **Built on:** `agent-plan-lint` 0.1.0 (policy and plan validation), `egresswall` 0.1.0 (fixture screening, MCP proxy suggestion).
 - **Lineage:** the plan gate comes from Graphene's admission validator and the screen from RegLineage's egress firewall, both the author's own prior work, extracted and re-tested as packages.
 - **AI assistance:** this tool was written with AI assistance. **This report was not** — it is deterministic output from the files listed in §1, and re-running the command above on the same commit produces it again byte for byte.
-- **No guarantee** is made about anything not listed in §1. The third-party tools named in §2 are unaffiliated with this one.
+- **No guarantee** is made about anything not listed in §1. The third-party tools named in §2 and §5 are unaffiliated with this one.

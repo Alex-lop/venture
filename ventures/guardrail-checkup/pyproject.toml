@@ -9,7 +9,7 @@ build-backend = "hatchling.build"
 # src/guardrail_checkup directory, which is the import name).
 name = "guardrail-checkup"
 dynamic = ["version"]
-description = "Run it on your own repository and get the six-section agent-guardrail report: what is enforced, what a generic scorer gets wrong here, and three invariant candidates worth a hook."
+description = "Run it on your own repository and get the six-section agent-guardrail report: what is enforced, what a generic scorer gets wrong here, and up to three invariant candidates worth a hook."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
@@ -37,8 +37,8 @@ dependencies = ["agent-plan-lint>=0.1,<1", "egresswall>=0.1,<1"]
 guardrail-checkup = "guardrail_checkup._cli:main"
 
 # The package's own repository, which is what the README's from-source install
-# names and what PyPI renders in the sidebar. Release checklist: every one of
-# them must return 200 before a publish (see CONTRIBUTING.md).
+# names and what PyPI renders in the sidebar. Release checklist: each URL here
+# must return 200 before a publish (see CONTRIBUTING.md).
 [project.urls]
 Homepage = "https://github.com/Alex-lop/guardrail-checkup"
 Source = "https://github.com/Alex-lop/guardrail-checkup"
@@ -54,7 +54,11 @@ agent-plan-lint = { path = "../plan-lint", editable = false }
 egresswall = { path = "../egress-guard", editable = false }
 
 [dependency-groups]
-dev = ["pytest>=8.0", "ruff>=0.6"]
+dev = [
+    "markdown-it-py>=3",
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
 
 [tool.hatch.version]
 path = "src/guardrail_checkup/__init__.py"

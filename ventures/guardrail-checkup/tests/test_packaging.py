@@ -69,6 +69,35 @@ def test_the_wheel_installs_into_a_fresh_venv_and_the_console_script_runs(
     assert module.stdout.strip() == done.stdout.strip()
 
 
+def test_the_console_script_without_the_siblings_is_one_line_and_exit_two(built: Path, tmp_path: Path) -> None:
+    """The real partial environment: the wheel installed with --no-deps, in its own venv.
+
+    The promise is exit 2 and one line for every error a user can reach. A
+    module-level sibling import made this a two-level traceback and exit 1.
+    """
+
+    venv = tmp_path / "bare"
+    subprocess.run(["uv", "venv", "-p", sys.executable, str(venv)], check=True, capture_output=True)
+    python = venv / "bin" / "python"
+    subprocess.run(
+        ["uv", "pip", "install", "--python", str(python), "--no-deps", str(next(built.glob("*.whl")))],
+        check=True,
+        capture_output=True,
+    )
+    (tmp_path / "repo").mkdir()
+    done = subprocess.run(
+        [str(venv / "bin" / guardrail_checkup.NAME), "run", str(tmp_path / "repo"), "--out", str(tmp_path / "r.md")],
+        capture_output=True,
+        text=True,
+        timeout=300,
+    )
+
+    assert done.returncode == 2, (done.returncode, done.stderr)
+    assert "Traceback" not in done.stderr
+    assert len(done.stderr.strip().splitlines()) == 1, done.stderr
+    assert "pip install guardrail-checkup" in done.stderr
+
+
 def test_the_installed_package_carries_its_type_marker(built: Path) -> None:
     with zipfile.ZipFile(next(built.glob("*.whl"))) as wheel:
         assert "guardrail_checkup/py.typed" in wheel.namelist()
@@ -103,12 +132,14 @@ def test_the_sdist_ships_the_demo_the_docs_and_the_tests(built: Path) -> None:
     for item in required:
         assert item in names, item
     read_by_the_suite = {
-        line.split('"')[1]
-        for path in sorted((Path(__file__).parent).glob("test_*.py"))
-        for line in path.read_text(encoding="utf-8").splitlines()
-        if "repo_root / " in line and line.count('"') >= 2
+        found
+        for path in sorted(Path(__file__).parent.glob("*.py"))
+        if path.name != Path(__file__).name  # this file names the pattern itself
+        for found in re.findall(r'repo_root / "([^"]+)"', path.read_text(encoding="utf-8"))
     }
-    assert read_by_the_suite <= set(names) | {"README.md", "pyproject.toml"}, sorted(read_by_the_suite - set(names))
+    shipped = set(names) | {"pyproject.toml"}
+    for item in sorted(read_by_the_suite):
+        assert item in shipped or any(name.startswith(f"{item}/") for name in names), item
 
 
 def test_the_wheel_ships_the_package_and_nothing_else(built: Path) -> None:
@@ -178,6 +209,38 @@ def test_no_url_in_the_shipped_source_names_another_repository(repo_root: Path) 
                 if "github.com/Alex-lop" not in url:
                     continue  # a third party's URL is evidence, not this package's identity
                 assert url.startswith(source), (path.name, url)
+
+
+def test_every_test_file_on_disk_is_tracked_by_git(repo_root: Path) -> None:
+    """A clean clone has to collect the count the README's runnable block asserts.
+
+    `tests/test_limits.py` was the one file in the package git did not track and
+    was not gitignored either: `pytest --collect-only` reported 318 here and 314
+    from a clone, and `CHANGELOG.md` named a file that was not in the repository.
+    """
+
+    inside = subprocess.run(
+        ["git", "-C", str(repo_root), "rev-parse", "--is-inside-work-tree"], capture_output=True, check=False
+    )
+    if inside.returncode != 0:
+        # An unpacked sdist is not a git work tree, and the sdist ships this
+        # suite. The check applies to a clone; there it is `CalledProcessError`.
+        pytest.skip("not a git checkout; the tracked-file check only applies to a clone")
+    done = subprocess.run(["git", "-C", str(repo_root), "ls-files", "-z", "tests"], capture_output=True, check=True)
+    tracked = {item for item in done.stdout.decode("utf-8", "replace").split("\0") if item}
+    on_disk = {f"tests/{path.name}" for path in sorted((repo_root / "tests").glob("test_*.py"))}
+    assert on_disk <= tracked, sorted(on_disk - tracked)
+
+
+def test_every_project_url_names_this_packages_own_repository(repo_root: Path) -> None:
+    """A URL repointed at another repository is a claim PyPI renders in the sidebar."""
+
+    urls = project(repo_root)["urls"]
+    source = urls["Source"]
+    assert source == "https://github.com/Alex-lop/guardrail-checkup"
+    assert urls["Homepage"] == source
+    for name, url in urls.items():
+        assert url.startswith(source), (name, url)
 
 
 def test_the_changelog_records_that_the_path_sources_flip_at_release(repo_root: Path) -> None:
