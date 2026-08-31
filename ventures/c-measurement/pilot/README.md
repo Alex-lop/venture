@@ -44,41 +44,47 @@ the details and the caveats — read it before quoting any number from here.
   6,000 tests and errors on 10 modules is visibly different from one that collects nothing.
 
 <!--SUMMARY-->
-## Interim results
+## Results
 
-**The run is not finished.** Rows in `results.csv`: **1 of 60** repos in
-`candidates-v2.csv`; the remaining 59 are queued or in flight
-(the job is still running, pid 68598).
+**The run is complete:** all **60** repos in `candidates-v2.csv` have a row in `results.csv`.
 Every number below is regenerated from `results.csv` by `fill_readme.py` — none of it is
-typed by hand. **Do not quote these against the 30% gate:** the finished set is what the
-gate is about, and the corpus is ordered so the first rows are the largest repos.
+typed by hand.
 
 | step | n | share of attempted |
 |---|---:|---:|
-| attempted | 1 | — |
-| `install_ok` | 0 | 0% |
-| `collect_ok` | 0 | 0% |
-| **`run_ok` (reached a verdict)** | **0** | **0%** |
+| attempted | 60 | — |
+| `install_ok` | 48 | 80% |
+| `collect_ok` | 34 | 57% |
+| **`run_ok` (reached a verdict)** | **29** | **48%** |
 
-Tests collected in total, including partial collections that then errored: **0**.
+Tests collected in total, including partial collections that then errored: **185077**.
 
 | failure_class | n |
 |---|---:|
-| `no-lock` | 1 |
+| `tests-failed-at-base` | 17 |
+| `clean-pass` | 12 |
+| `collection-error` | 11 |
+| `python-version` | 8 |
+| `no-lock` | 4 |
+| `other` | 3 |
+| `env-var/secret required` | 3 |
+| `timeout` | 1 |
+| `network-at-test-time` | 1 |
 
 | lock_kind | reached a verdict | attempted |
 |---|---:|---:|
-| `pinned-requirements` | 0 | 1 |
+| `pinned-requirements` | 2 | 7 |
+| `poetry.lock` | 1 | 3 |
+| `uv.lock` | 26 | 50 |
 <!--/SUMMARY-->
 
 ## Status
 
-The run is **still going** in the background: pid 68598, started by
-`nohup ./run.sh > run.log 2>&1 &` from this directory. It writes `results.csv` one row at a
-time under an `flock` with an `fsync`, so it can be killed at any moment and lose at most
-the rows in flight.
+The run **finished 2026-08-30** at 60 of 60 repos; `results.csv` is complete and the block
+above is regenerated from it. It writes one row at a time under an `flock` with an `fsync`,
+so a kill loses at most the rows in flight — which is why re-running is safe.
 
-**To resume after a kill, or to finish the run on another machine:**
+**To re-run, or to finish a partial run on another machine:**
 
 ```sh
 cd ventures/c-measurement/pilot
@@ -93,11 +99,11 @@ worst case for one repo is 40 minutes — 10 clone + 10 install + 5 collect + 15
 three run at once, so the tail of the corpus lands long after the head. Judge progress by
 `results.csv` rows, not by elapsed time.
 
-**Housekeeping while it runs.** `docker builder prune -af` after the six images are built
+**Housekeeping.** `docker builder prune -af` after the six images are built
 reclaims a few GB; per-repo volumes are destroyed as each row is written, so steady-state
 disk is the six images plus the two shared caches (`pilot-uvcache`, `pilot-pipcache`).
 
-## What the first rows already show
+## What the rows show
 
 - `omicverse/omicverse` is recorded in the corpus as `pinned:requirements.txt`, but its
   `requirements.txt` at the base commit has **41 unpinned lines** (`scipy < 1.12`,
