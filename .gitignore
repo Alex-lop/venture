@@ -2,3 +2,4 @@ assets/
 ventures/*/node_modules/
 ventures/*/.venv/
 .DS_Store
+private/
