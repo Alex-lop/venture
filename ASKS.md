@@ -6,6 +6,13 @@ Newest on top. Each ASK: what, why, cost, deadline, what happens if declined. Re
 
 ## Session 2 batch — 2026-08-30 (each ASK has a default and the date it applies; nothing waits)
 
+## ASK-015 — Publish to PyPI: one command per package (the agent's publish step was declined by the harness permission layer) — **no default; the upload is yours**
+- **What:** `agent-plan-lint` 0.1.0 is released on GitHub — [https://github.com/Alex-lop/agent-plan-lint](https://github.com/Alex-lop/agent-plan-lint), tag `v0.1.0`, 437 passed / 51 skipped on its pinned 3.11, 488 collected — but not on PyPI: the agent's session declined the publish step (the keychain-token read + `uv publish`), and no other session may route around that decline. From a clone of the repository at `v0.1.0`:
+  `uv build && UV_PUBLISH_TOKEN="$(security find-generic-password -s pypi-token -w)" uv publish dist/*`
+  The same one-liner applies to `egresswall` and `guardrail-checkup` when their repositories exist; the agent lists each here as its repo and tag go live. The standing approval for PyPI is already yes — the block is the tool, not the policy.
+- **After the upload:** the agent adds the site's `RELEASED` flag and install line, the `pip install` sentence on Graphene #14, and `{PYPI_URL}` in `outreach/queue.md` §A, and the launch order in queue.md §C can start.
+- **Cost:** $0. **If not done:** the package is installable from source only (`uv pip install git+https://github.com/Alex-lop/agent-plan-lint`) and none of the launch drafts can be posted.
+
 ## ASK-014 — Veto window: package and family names (default applies 2026-09-02)
 - **What:** `agent-plan-lint` (was plan-lint — PyPI name taken by an abandoned 2025 project), `egresswall` (was egress-guard — PyPI name taken 2026-08-29 by an adjacent project), `guardrail-checkup` (was agent-autopsy — "Autopsy" is a registered forensic-tool trademark), `readonly-gateway` and `change-receipt` unchanged, docs-site family `guardposts`. Evidence and runners-up: `research/naming.md` §3.
 - **Cost:** $0. **If vetoed:** the runner-up in naming.md is used; nothing has been published under any name yet.
