@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "support-tools": {
+      "command": "python",
+      "args": ["-m", "support_tools"]
+    },
+    "warehouse": {
+      "command": "npx",
+      "args": ["-y", "@example/warehouse-mcp"]
+    }
+  }
+}

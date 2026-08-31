@@ -1,0 +1,19 @@
+# source: https://api.github.com/repos/microsoft/agentrc
+# fetched: 2026-08-31
+
+{
+  "archived": false,
+  "description": "Get your repo ready for AI.",
+  "forks_count": 93,
+  "full_name": "microsoft/agentrc",
+  "license": {
+    "key": "mit",
+    "name": "MIT License",
+    "node_id": "MDc6TGljZW5zZTEz",
+    "spdx_id": "MIT",
+    "url": "https://api.github.com/licenses/mit"
+  },
+  "open_issues_count": 56,
+  "pushed_at": "2026-08-26T05:54:41Z",
+  "stargazers_count": 1037
+}

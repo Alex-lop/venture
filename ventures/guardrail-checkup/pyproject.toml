@@ -1,0 +1,97 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+# The distribution name appears here, as the console script below, and as NAME in
+# src/guardrail_checkup/__init__.py. tests/test_packaging.py fails if the three ever
+# disagree, so renaming the package means changing all three (and the
+# src/guardrail_checkup directory, which is the import name).
+name = "guardrail-checkup"
+dynamic = ["version"]
+description = "Run it on your own repository and get the six-section agent-guardrail report: what is enforced, what a generic scorer gets wrong here, and three invariant candidates worth a hook."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Alexander Lopez" }]
+keywords = ["agents", "ai-agents", "guardrails", "claude-code", "mcp", "hooks", "audit", "report"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: System Administrators",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Quality Assurance",
+  "Typing :: Typed",
+]
+# The two sibling packages and nothing else. Both are the author's own; the
+# report's Provenance section names their installed versions.
+dependencies = ["agent-plan-lint>=0.1,<1", "egresswall>=0.1,<1"]
+
+[project.scripts]
+guardrail-checkup = "guardrail_checkup._cli:main"
+
+# The package's own repository, which is what the README's from-source install
+# names and what PyPI renders in the sidebar. Release checklist: every one of
+# them must return 200 before a publish (see CONTRIBUTING.md).
+[project.urls]
+Homepage = "https://github.com/Alex-lop/guardrail-checkup"
+Source = "https://github.com/Alex-lop/guardrail-checkup"
+Changelog = "https://github.com/Alex-lop/guardrail-checkup/blob/main/CHANGELOG.md"
+Issues = "https://github.com/Alex-lop/guardrail-checkup/issues"
+
+# PRE-RELEASE ONLY. agent-plan-lint and egresswall are not on PyPI yet, so the
+# lock resolves them from the sibling working copies. The release flips this to
+# the PyPI ranges declared above by deleting this table and re-locking; see
+# CHANGELOG.md 0.1.0.
+[tool.uv.sources]
+agent-plan-lint = { path = "../plan-lint", editable = false }
+egresswall = { path = "../egress-guard", editable = false }
+
+[dependency-groups]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[tool.hatch.version]
+path = "src/guardrail_checkup/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/guardrail_checkup"]
+
+[tool.hatch.build.targets.sdist]
+# The sdist ships everything the suite reads, because the suite has to run in
+# it: .github for the README's CI-matrix claim, .python-version for the
+# interpreter floor, CHANGELOG.md and CONTRIBUTING.md for the doc-truth tests.
+# tests/test_packaging.py fails when a file the suite reads is not on this list.
+include = [
+  ".github",
+  ".python-version",
+  "src",
+  "tests",
+  "demo",
+  "docs",
+  "scripts",
+  "README.md",
+  "CHANGELOG.md",
+  "CONTRIBUTING.md",
+  "LICENSE",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+# ruff formats Python code blocks inside Markdown, which would rewrite the
+# checked-in report and make it differ from what the tool actually printed; and
+# demo/fixture is a synthetic repository whose bytes the demo output depends on.
+extend-exclude = ["demo/OUTPUT.md", "demo/fixture"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

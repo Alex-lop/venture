@@ -1,0 +1,10 @@
+{
+  "ticket": "SUP-4417",
+  "customer": {
+    "name": "A. Customer",
+    "contact_email": "member-88231@northgate-clinic.test"
+  },
+  "integration": {
+    "api_key": "sk-proj-EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLE"
+  }
+}

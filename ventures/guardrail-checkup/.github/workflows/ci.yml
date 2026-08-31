@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv lock --check
+      - run: uv sync --group dev --python ${{ matrix.python }}
+      - run: uv run --python ${{ matrix.python }} ruff check .
+      - run: uv run --python ${{ matrix.python }} ruff format --check .
+      - run: uv run --python ${{ matrix.python }} pytest -q
+      - run: uv build
+      - name: install the built wheel into a fresh venv and run the CLI and the demo
+        run: |
+          uv venv --python ${{ matrix.python }} "${RUNNER_TEMP}/venv"
+          uv pip install --python "${RUNNER_TEMP}/venv/bin/python" dist/*.whl
+          "${RUNNER_TEMP}/venv/bin/guardrail-checkup" --help
+          "${RUNNER_TEMP}/venv/bin/guardrail-checkup" --version
+          PATH="${RUNNER_TEMP}/venv/bin:${PATH}" ./demo/demo.sh "${RUNNER_TEMP}/keep" > "${RUNNER_TEMP}/demo.txt" 2>&1
+          diff -u demo/OUTPUT.txt "${RUNNER_TEMP}/demo.txt"
+          diff -u demo/OUTPUT.md "${RUNNER_TEMP}/keep/OUTPUT.md"
+
+  docs-truth:
+    name: doc-truth (README and comparison)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --group dev
+      - run: uv run pytest tests/test_readme_truth.py tests/test_comparison_truth.py tests/test_readonly.py -q

@@ -1,0 +1,192 @@
+# Agent guardrail checkup — shipfast
+
+Run 2026-08-31 · read-only · shipfast · HEAD `a866fe98c841`
+Produced by `guardrail-checkup`, a deterministic offline reader. No model was called for anything below; every judgement in §3 is yours to make.
+
+## 1. Scope
+
+- **Repository:** `shipfast`, as given on the command line
+- **HEAD:** `a866fe98c841b07967adf5af733b3882c7c93a91`
+- **Size:** 9 file(s) considered, 1,926 bytes on disk
+- **File list:** `git ls-files` — tracked files plus untracked files `.gitignore` does not exclude
+- **Language mix** (by file extension):
+  - `.py` — 4
+  - `.json` — 2
+  - `.md` — 2
+  - `.sql` — 1
+- **Read:** the named guardrail artifacts listed in §2, every checked-in `.json` file (scanned for agent-plan-lint's signature keys), and up to 1 JSON fixture(s) screened in §2. A file over 1 MiB, or one whose first 8 KiB contains a NUL byte, is listed and not read.
+- **Not read:** everything else. No source file was interpreted, no test was run, no command from this repository was executed, and nothing was sent anywhere.
+
+## 2. Tool results — and what they got wrong
+
+### Guardrail inventory — what exists, and what an agent can do because of it
+
+| Fact | Where | What an agent can do |
+| --- | --- | --- |
+| CLAUDE.md: 300 bytes, 8 lines, no line both forbids something and names a path | `CLAUDE.md:1` | an agent reading this learns no path is off limits, and writes wherever the task leads |
+| AGENTS.md: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
+| .cursorrules: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
+| .cursor/rules: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
+| .github/copilot-instructions.md: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
+| GEMINI.md: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
+| .claude/settings.json: absent | `-` | no PreToolUse or PostToolUse hook runs, so nothing inspects a tool call before it happens |
+| .mcp.json: MCP server 'support-tools' runs `python -m support_tools`; no screen in the command line | `.mcp.json:3` | whatever this server returns reaches the agent's context unscreened |
+| .mcp.json: MCP server 'warehouse' runs `npx -y @example/warehouse-mcp`; no screen in the command line | `.mcp.json:7` | whatever this server returns reaches the agent's context unscreened |
+| .pre-commit-config.yaml: absent | `-` | no commit-time check runs on a contributor's machine |
+| .git/hooks: no installed hook (samples only) | `.git/hooks:1` | nothing is checked at commit time |
+| CODEOWNERS: absent | `-` | no path requires a named reviewer, so any path can be merged by anyone |
+| .github/workflows: absent | `-` | no automated check runs on a change at all |
+| secret scanning: not configured (no gitleaks, trufflehog or detect-secrets) | `-` | a credential an agent pastes into a file is committed with everything else |
+| lockfiles: none found | `-` | no pinned dependency set, so a hook or a test run is not reproducible |
+| tests: 2 file(s) in a test path | `tests/fixtures/support_reply.json:1` | there is a suite a hook or a CI gate can call |
+
+### agent-plan-lint
+
+- No document in agent-plan-lint's schema was found (no `.json` file carries both `policy_id` and `allowed_write_globs`, or both `mission_id` and `tasks`).
+- A starter policy was drafted instead; see §4. It was **not** written into your repository.
+
+### egresswall
+
+- `tests/fixtures/support_reply.json` — **2 violation(s)** under egresswall's default policy:
+  - RAW_IDENTIFIER at response.customer.contact_email: the email detector matched
+  - FORBIDDEN_KEY at response.integration.api_key: field name 'api_key' is forbidden by policy
+
+A violation names a code and a path, never a value. These are checked-in fixtures; the same screen in front of a live MCP server is what stops the real answer.
+- Your MCP configuration (`.mcp.json`) was rewritten as a **suggestion** with `egresswall proxy` in front of each server. It was not applied; see §4.
+
+### What a generic scorer will get wrong here
+
+**guardrail-checkup did not run any of these tools.** It contacts no network and starts no `npx`. This is the falsifier list to have ready when you do run them, built from this repository's own files:
+
+| A generic readiness scorer will say | True here | Command that shows it |
+| --- | --- | --- |
+| “Testing: 0/0 (0%)” | 2 file(s) sit in a test path | `find . -path ./.git -prune -o -name 'test_*' -print \| wc -l` |
+
+## 3. The three invariants
+
+**Candidates — a human confirms or replaces them.** They are ranked by evidence, not by judgement: score = repair commits in the history that touched these paths (a commit that also touched a regression test counts twice) + 2 if CODEOWNERS names one of them + 1 if the path heuristic matched at all. This tool does not know your architecture and does not claim to.
+
+Only 2 candidate(s) had evidence. The runbook's rule applies: do not invent a third.
+
+### Invariant candidate 1 — An agent does not write to the schema and query layer without a human deciding first.
+
+- **Governs:** `db/` — for example `db/migrations/0001_orders.sql`, `db/queries.py`
+- **Evidence (score 3):**
+  - path heuristic: 2 file(s) matching db/
+  - git history: 2 repair commit(s) touched these paths — cb84928 hotfix: migration ran twice in staging; 529bb9b fix: refund left the order marked paid
+- **An agent breaks it by:** reading two files nearby, inferring the pattern, and writing the change here rather than asking — which is the correct move everywhere else in this repository.
+- **Hook** — `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/protect-db.py"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+  and `.claude/hooks/protect-db.py` (emitted; exit 2 blocks the call):
+
+```python
+#!/usr/bin/env python3
+"""Block an agent write under a protected path. Drafted by guardrail-checkup; a human confirms it."""
+import json, os, sys
+
+PROTECTED = ('db/',)
+event = json.load(sys.stdin)
+if event.get("tool_name") not in ("Write", "Edit", "MultiEdit"):
+    sys.exit(0)
+target = event.get("tool_input", {}).get("file_path", "")
+path = os.path.relpath(target, event.get("cwd", ".")) if target else ""
+if path.startswith(PROTECTED):
+    print(f"BLOCKED: {path} is under db, which a human decides. Ask, do not edit.", file=sys.stderr)
+    sys.exit(2)
+```
+
+- **Test** (exits non-zero when a staged commit violates it): `! git diff --cached --name-only | grep -qE '^(db/)'`
+
+### Invariant candidate 2 — An agent does not write to money without a human deciding first.
+
+- **Governs:** `app/checkout.py`, `tests/test_checkout.py`
+- **Evidence (score 2):**
+  - path heuristic: 2 file(s) matching app/checkout.py, tests/test_checkout.py
+  - git history: 1 repair commit(s) touched these paths — a866fe9 revert: back out the checkout retry change
+- **An agent breaks it by:** reading two files nearby, inferring the pattern, and writing the change here rather than asking — which is the correct move everywhere else in this repository.
+- **Hook** — `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/protect-payments.py"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+  and `.claude/hooks/protect-payments.py` (emitted; exit 2 blocks the call):
+
+```python
+#!/usr/bin/env python3
+"""Block an agent write under a protected path. Drafted by guardrail-checkup; a human confirms it."""
+import json, os, sys
+
+PROTECTED = ('app/checkout.py', 'tests/test_checkout.py')
+event = json.load(sys.stdin)
+if event.get("tool_name") not in ("Write", "Edit", "MultiEdit"):
+    sys.exit(0)
+target = event.get("tool_input", {}).get("file_path", "")
+path = os.path.relpath(target, event.get("cwd", ".")) if target else ""
+if path.startswith(PROTECTED):
+    print(f"BLOCKED: {path} is under payments, which a human decides. Ask, do not edit.", file=sys.stderr)
+    sys.exit(2)
+```
+
+- **Test** (exits non-zero when a staged commit violates it): `! git diff --cached --name-only | grep -qE '^(app/checkout\.py|tests/test_checkout\.py)'`
+
+## 4. Monday list
+
+1. Read invariant candidate 1 (db) in §3 and decide whether it is right. If it is, copy `drafts/hooks/protect-db.py` into `.claude/hooks/`, `chmod +x` it, and merge `drafts/hooks/settings-db.json` into `.claude/settings.json`.
+2. Create `.claude/settings.json` with the hooks block from §3. There is no hook file at all today, so every candidate in §3 has nowhere to live.
+3. Compare `drafts/mcp-wrapped.json` with your own MCP configuration. It is the same servers with `egresswall proxy` in front of each; nothing was applied.
+4. Review `drafts/starter-policy.json` — a valid agent-plan-lint policy whose exclusions are the §3 candidates. Fix the write globs to the paths your agents really own, then run `agent-plan-lint check <plan.json> --policy starter-policy.json`.
+5. Add gitleaks or detect-secrets to CI or to `.pre-commit-config.yaml`. §5 explains why this tool cannot do it for you.
+
+## 5. What this did not cover
+
+- **Branch protection and required reviews.** They live on the host, not in the checkout; this tool never asked one.
+- **Production systems.** No credential, no VPN, no CI, no deploy, no live database was touched.
+- **Secrets already in history.** This reads the working tree, not every blob. Run `gitleaks detect`, `trufflehog git`, or `detect-secrets scan` for that.
+- **Runtime behaviour.** Nothing here was executed. A hook that has never run does not go on anyone's screen — run the emitted one before you trust it.
+- **Anything needing a model.** No model was called. §3 is a ranked list of places, not a reading of your architecture, and the one judgement that matters — is candidate 3 the right one — is not in this file.
+- **Whether the rules that exist are followed.** Presence is checked; compliance is not.
+
+## 6. Provenance
+
+- **Tool:** `guardrail-checkup` 0.1.0
+- **Command:** `guardrail-checkup run shipfast --out REPORT.md --emit-dir drafts`
+- **Repository commit:** `a866fe98c841b07967adf5af733b3882c7c93a91`
+- **Repair commits examined:** 3, from the last 2000 non-merge commits
+- **What left this machine: nothing.** This tool opens no socket and makes no model call. The git subcommands it runs are `ls-files`, `rev-parse` and `log`, all read-only. It wrote no file inside the repository it read.
+- **Built on:** `agent-plan-lint` 0.1.0 (policy and plan validation), `egresswall` 0.1.0 (fixture screening, MCP proxy suggestion).
+- **Lineage:** the plan gate comes from Graphene's admission validator and the screen from RegLineage's egress firewall, both the author's own prior work, extracted and re-tested as packages.
+- **AI assistance:** this tool was written with AI assistance. **This report was not** — it is deterministic output from the files listed in §1, and re-running the command above on the same commit produces it again byte for byte.
+- **No guarantee** is made about anything not listed in §1. The third-party tools named in §2 are unaffiliated with this one.
