@@ -16,7 +16,7 @@ MCP stdio proxy, a Claude Code hook, and a CI check.
 **Status: 0.1.0 — [source released](https://github.com/Alex-lop/egresswall) (tag `v0.1.0`); release in progress; install lines appear here when the PyPI upload lands.**
 The source, tests, demo and comparison page are public at
 [`Alex-lop/egresswall`](https://github.com/Alex-lop/egresswall); the package-index upload is pending
-the principal's action (ASK-015 in the venture repo). Until it lands there is no `pip install` line here.
+the principal's action (ASK-015 in the venture repo). Until it lands, this page carries no install line.
 
 Why refuse rather than redact: a redacted response still means your tool assembled the
 value, put it on the wire, and something downstream had to be trusted to remove it. A
