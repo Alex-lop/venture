@@ -103,7 +103,9 @@ UNPRINTABLE = re.compile(
 #: these are category Mn -- the combining grapheme joiner, the Khmer inherent
 #: vowels, the Mongolian free variation selectors and the 256 variation
 #: selectors -- and Python calls every one of those printable. The rest are
-#: Cf, Cn or the Hangul fillers, which it does not.
+#: Cf or Cn, which it does not, plus the four Hangul fillers (U+115F, U+1160,
+#: U+3164, U+FFA0), which are category Lo and which it DOES call printable --
+#: the reason this lists the property rather than the categories.
 DEFAULT_IGNORABLE = re.compile(
     r"[\u00ad\u034f\u061c\u115f\u1160\u17b4\u17b5\u180b-\u180f"
     r"\u200b-\u200f\u202a-\u202e\u2060-\u206f\u3164\ufe00-\ufe0f\ufeff"
