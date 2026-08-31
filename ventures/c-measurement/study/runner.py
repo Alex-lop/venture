@@ -61,6 +61,15 @@ PR_COLUMNS = [
 TEST_COLUMNS = ["repo", "pr", "test_id", "pre_patch_outcome", "base_outcome",
                 "candidate_outcome", "verdict"]
 
+_EMAIL_SHAPED = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
+
+
+def scrub_id(test_id: str) -> str:
+    """Test ids are third-party strings; parametrized ids can embed email-shaped fixtures.
+    Nothing email-shaped may enter a tracked file (CLAUDE.md §2), so mask it here."""
+    return _EMAIL_SHAPED.sub("<email>", test_id)
+
+
 CAP_CLONE = 900     # clone + fetch + diff + apply, network on
 CAP_RUN = 900       # 15 minutes per pytest invocation (the brief's cap)
 MAX_JUNIT_BYTES = 512_000   # nemisis/junit.py's cap, kept identical
@@ -251,7 +260,7 @@ def build_rows(repo: str, num: str, b1: Obs, b2: Obs, c1: Obs, c2: Obs, pre: Obs
     for tid in sorted(set(b1[0]) | set(b2[0]) | set(c1[0]) | set(c2[0])):
         b, c = side2(tid, b1, b2), side2(tid, c1, c2)
         p = side_outcome(tid, *pre)
-        rows.append({"repo": repo, "pr": num, "test_id": tid,
+        rows.append({"repo": repo, "pr": num, "test_id": scrub_id(tid),
                      "pre_patch_outcome": "absent" if p == "missing" else p,
                      "base_outcome": b, "candidate_outcome": c,
                      "verdict": "UNRESOLVED" if fatal else verdict(b, c)})
