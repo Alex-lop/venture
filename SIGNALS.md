@@ -98,6 +98,8 @@ re-open rule and spawns `signal-dossier-writer`.
 ## Weekly entries
 
 Each entry: date, the diff against the previous week's totals, gate status, and any action the
-diff triggers. Nothing here yet — Week 0 is the baseline.
+diff triggers. Week 0 is the baseline; the first weekly entry is due 2026-09-06.
 
-_(none yet)_
+**Interim 2026-08-31 04:35 EDT (session 2b; not a weekly entry):** non-fork stars 3 (unchanged) ·
+stranger issues/PRs since 08-24 **0** (the one non-owner item, Graphene #6, is imgbot[bot] — bots never count) ·
+packages released **0** · downloads **0** · inbound **0**. Gate distance unchanged. No action triggered.
