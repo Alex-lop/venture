@@ -1,0 +1,123 @@
+selfcheck OK
+[pilot] 60 candidates, 0 already done, 60 to run, jobs=3
+[pilot] START crewAIInc/crewAI
+[pilot] START omicverse/omicverse
+[pilot] START Soju06/codex-lb
+[pilot] DONE  omicverse/omicverse install=0 collect=0 run=0 class=no-lock 14.0s
+[pilot] START ohdearquant/lionagi
+[pilot] DONE  crewAIInc/crewAI install=1 collect=0 run=0 class=collection-error 364.3s
+[pilot] START brcampidelli/chimera-agent
+[pilot] DONE  ohdearquant/lionagi install=1 collect=0 run=0 class=collection-error 361.3s
+[pilot] START openshift-eng/art-tools
+[pilot] DONE  openshift-eng/art-tools install=0 collect=0 run=0 class=python-version 15.5s
+[pilot] START microsoft/apm
+[pilot] DONE  Soju06/codex-lb install=1 collect=1 run=1 class=tests-failed-at-base 435.9s
+[pilot] START OpenHands/software-agent-sdk
+[pilot] DONE  microsoft/apm install=1 collect=1 run=1 class= 83.8s
+[pilot] START agentcage/agentcage
+[pilot] DONE  agentcage/agentcage install=1 collect=1 run=1 class= 53.3s
+[pilot] START Charli3-Official/charli3-dendrite
+[pilot] DONE  Charli3-Official/charli3-dendrite install=1 collect=0 run=0 class=collection-error 40.9s
+[pilot] START helpfulengineering/supply-graph-ai
+[pilot] DONE  OpenHands/software-agent-sdk install=1 collect=1 run=1 class=tests-failed-at-base 191.7s
+[pilot] START SenolIsci/mykg
+[pilot] DONE  SenolIsci/mykg install=1 collect=1 run=1 class=tests-failed-at-base 29.1s
+[pilot] START cymoo/lovia
+[pilot] DONE  cymoo/lovia install=1 collect=1 run=1 class=tests-failed-at-base 37.2s
+[pilot] START eniklas/gamatrix
+[pilot] DONE  brcampidelli/chimera-agent install=1 collect=0 run=0 class=collection-error 327.8s
+[pilot] START paulomtts/pyjinhx
+[pilot] DONE  helpfulengineering/supply-graph-ai install=1 collect=1 run=1 class= 160.9s
+[pilot] START headroomlabs-ai/headroom
+[pilot] DONE  eniklas/gamatrix install=1 collect=0 run=0 class=collection-error 41.4s
+[pilot] START usestrix/strix
+[pilot] DONE  paulomtts/pyjinhx install=1 collect=1 run=1 class=tests-failed-at-base 67.0s
+[pilot] START Datus-ai/Datus-agent
+[pilot] DONE  usestrix/strix install=1 collect=1 run=1 class=tests-failed-at-base 73.4s
+[pilot] START commit-check/commit-check
+[pilot] DONE  commit-check/commit-check install=1 collect=1 run=1 class=tests-failed-at-base 108.0s
+[pilot] START DoRmAmMu1997/My-Algo-Trading-Code
+[pilot] DONE  headroomlabs-ai/headroom install=0 collect=0 run=0 class=python-version 254.5s
+[pilot] START debpalash/VoiceStudio
+[pilot] DONE  DoRmAmMu1997/My-Algo-Trading-Code install=1 collect=0 run=0 class=collection-error 71.4s
+[pilot] START karanhudia/borg-ui
+[pilot] DONE  karanhudia/borg-ui install=1 collect=1 run=1 class=tests-failed-at-base 87.1s
+[pilot] START vllm-project/guidellm
+[pilot] DONE  debpalash/VoiceStudio install=0 collect=0 run=0 class=python-version 164.1s
+[pilot] START experientiallabs/experiential
+[pilot] DONE  vllm-project/guidellm install=1 collect=1 run=0 class=other 94.7s
+[pilot] START OpenRAL/openral
+[pilot] DONE  Datus-ai/Datus-agent install=1 collect=1 run=1 class=tests-failed-at-base 422.8s
+[pilot] START AvaCodeSolutions/django-email-learning
+[pilot] DONE  experientiallabs/experiential install=0 collect=0 run=0 class=python-version 80.5s
+[pilot] START cdnwetzel/pxx
+[pilot] DONE  AvaCodeSolutions/django-email-learning install=1 collect=1 run=1 class= 97.0s
+[pilot] START MadSkittles/Router-Maestro
+[pilot] DONE  cdnwetzel/pxx install=1 collect=1 run=0 class=env-var/secret required 55.7s
+[pilot] START vamseeachanta/workspace-hub
+[pilot] DONE  OpenRAL/openral install=0 collect=0 run=0 class=python-version 128.8s
+[pilot] START mcp-hangar/mcp-hangar
+[pilot] DONE  MadSkittles/Router-Maestro install=1 collect=1 run=1 class=tests-failed-at-base 43.1s
+[pilot] START synaptent/aragora
+[pilot] DONE  mcp-hangar/mcp-hangar install=1 collect=1 run=1 class= 217.7s
+[pilot] START taoq-ai/ziran
+[pilot] DONE  vamseeachanta/workspace-hub install=1 collect=0 run=0 class=collection-error 364.0s
+[pilot] START FalkorDB/QueryWeaver
+[pilot] DONE  synaptent/aragora install=1 collect=0 run=0 class=timeout 351.5s
+[pilot] START partcad/partcad
+[pilot] DONE  FalkorDB/QueryWeaver install=1 collect=0 run=0 class=network-at-test-time 56.1s
+[pilot] START Ikalus1988/MisakaNet
+[pilot] DONE  taoq-ai/ziran install=1 collect=1 run=1 class= 259.5s
+[pilot] START UiPath/coder_eval
+[pilot] DONE  partcad/partcad install=1 collect=0 run=0 class=collection-error 127.2s
+[pilot] START cyzus/suzent
+[pilot] DONE  Ikalus1988/MisakaNet install=1 collect=0 run=0 class=collection-error 304.5s
+[pilot] START Jamie-BitFlight/claude_skills
+[pilot] DONE  cyzus/suzent install=1 collect=1 run=1 class= 235.1s
+[pilot] START pvliesdonk/markdown-vault-mcp
+[pilot] DONE  Jamie-BitFlight/claude_skills install=0 collect=0 run=0 class=python-version 42.1s
+[pilot] START Consiliency/pmcp
+[pilot] DONE  Consiliency/pmcp install=1 collect=1 run=1 class=tests-failed-at-base 69.5s
+[pilot] START PostHog/posthog
+[pilot] DONE  pvliesdonk/markdown-vault-mcp install=1 collect=1 run=1 class=tests-failed-at-base 93.3s
+[pilot] START gadievron/raptor
+[pilot] DONE  PostHog/posthog install=0 collect=0 run=0 class=python-version 95.3s
+[pilot] START Kohei-Wada/taskdog
+[pilot] DONE  Kohei-Wada/taskdog install=1 collect=0 run=0 class=collection-error 29.3s
+[pilot] START Ishannaik/agent-sweep
+[pilot] DONE  Ishannaik/agent-sweep install=1 collect=1 run=1 class= 16.8s
+[pilot] START CERTCC/Vultron
+[pilot] DONE  UiPath/coder_eval install=1 collect=1 run=0 class=env-var/secret required 524.6s
+[pilot] START mvanhorn/last30days-skill
+[pilot] DONE  gadievron/raptor install=1 collect=1 run=1 class=tests-failed-at-base 231.3s
+[pilot] START harbor-framework/harbor
+[pilot] DONE  CERTCC/Vultron install=1 collect=1 run=0 class=other 117.4s
+[pilot] START Project-N-E-K-O/N.E.K.O
+[pilot] DONE  mvanhorn/last30days-skill install=1 collect=1 run=0 class=other 74.7s
+[pilot] START xyTom/coding-tools-mcp
+[pilot] DONE  Project-N-E-K-O/N.E.K.O install=0 collect=0 run=0 class=python-version 94.3s
+[pilot] START promptdriven/pdd
+[pilot] DONE  promptdriven/pdd install=0 collect=0 run=0 class=no-lock 8.9s
+[pilot] START open-reaction-database/ord-data
+[pilot] DONE  xyTom/coding-tools-mcp install=1 collect=0 run=0 class=env-var/secret required 109.5s
+[pilot] START ffroliva/gflow-cli
+[pilot] DONE  open-reaction-database/ord-data install=1 collect=1 run=1 class= 60.7s
+[pilot] START TeichAI/teich
+[pilot] DONE  harbor-framework/harbor install=1 collect=1 run=1 class=tests-failed-at-base 218.9s
+[pilot] START Azure/gpt-rag-orchestrator
+[pilot] DONE  Azure/gpt-rag-orchestrator install=0 collect=0 run=0 class=no-lock 3.1s
+[pilot] START FZJ-IEK3-VSA/HiSim
+[pilot] DONE  TeichAI/teich install=1 collect=1 run=1 class= 41.2s
+[pilot] START ifnull/ha-airspace
+[pilot] DONE  FZJ-IEK3-VSA/HiSim install=0 collect=0 run=0 class=no-lock 10.6s
+[pilot] START djtelicloud/grok-mcp-server
+[pilot] DONE  djtelicloud/grok-mcp-server install=1 collect=1 run=1 class= 9.6s
+[pilot] START Azure/agentops
+[pilot] DONE  ifnull/ha-airspace install=1 collect=1 run=1 class= 22.1s
+[pilot] START druide67/asiai
+[pilot] DONE  Azure/agentops install=1 collect=1 run=1 class=tests-failed-at-base 26.7s
+[pilot] START FunFR/ha-indygo-pool
+[pilot] DONE  FunFR/ha-indygo-pool install=1 collect=0 run=0 class=collection-error 9.6s
+[pilot] DONE  druide67/asiai install=1 collect=1 run=1 class=tests-failed-at-base 44.2s
+[pilot] DONE  ffroliva/gflow-cli install=1 collect=1 run=1 class=tests-failed-at-base 224.4s
+[pilot] all done
