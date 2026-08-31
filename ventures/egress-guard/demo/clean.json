@@ -1,0 +1,8 @@
+{
+  "ticket": "SUP-4417",
+  "status": "ESCALATED",
+  "cohort_size": 25,
+  "week_2_abandonment_rate": "0.7200",
+  "patient": { "mrn": "DENY" },
+  "summary": "Three of fourteen accounts in this cohort escalated twice."
+}

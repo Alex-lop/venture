@@ -1,0 +1,72 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+# The distribution name appears here, as the console script below, and as NAME in
+# src/egresswall/__init__.py. tests/test_readme_truth.py and tests/test_packaging.py
+# fail if the three ever disagree, so renaming the package means changing all three
+# (and the src/egresswall directory, which is the import name).
+name = "egresswall"
+dynamic = ["version"]
+description = "A value-level egress firewall for agent tool responses: blocks identifiers, secrets and denied fields instead of redacting them."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Alexander Lopez" }]
+keywords = ["mcp", "agent", "security", "dlp", "egress", "guardrails", "claude-code", "pii"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: System Administrators",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security",
+  "Topic :: Software Development :: Quality Assurance",
+  "Typing :: Typed",
+]
+dependencies = []
+
+[project.scripts]
+egresswall = "egresswall._cli:main"
+
+# The package's own repository, which is what the README's from-source install
+# names and what PyPI renders in the sidebar. Release checklist: every one of
+# them must return 200 before a publish (see CONTRIBUTING.md).
+# tests/test_readme_truth.py fails if the README and these ever name different
+# repositories.
+[project.urls]
+Homepage = "https://github.com/Alex-lop/egresswall"
+Source = "https://github.com/Alex-lop/egresswall"
+Changelog = "https://github.com/Alex-lop/egresswall/blob/main/CHANGELOG.md"
+Issues = "https://github.com/Alex-lop/egresswall/issues"
+
+[dependency-groups]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[tool.hatch.version]
+path = "src/egresswall/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/egresswall"]
+
+[tool.hatch.build.targets.sdist]
+# .github ships because tests/test_readme_truth.py checks the README's CI-matrix
+# claim against the workflow; without it the suite in the sdist cannot run.
+include = [".github", "src", "tests", "demo", "docs", "scripts", "README.md", "CHANGELOG.md", "CONTRIBUTING.md", "LICENSE"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

@@ -1,0 +1,11 @@
+{
+  "ticket": "SUP-4417",
+  "requested_by": "support-bot",
+  "customer": {
+    "contact_email": "member-88231@northgate-clinic.test",
+    "national_id": "412-88-7690"
+  },
+  "patient": { "mrn": "NG-88231" },
+  "integration": { "api_key": "sk-proj-EXAMPLEKEY0NotARealSecret1234567890abcdEFGH" },
+  "note": "escalated per ACME-INTERNAL-CASE-9931"
+}

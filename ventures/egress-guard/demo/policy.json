@@ -1,0 +1,4 @@
+{
+  "denied_field_paths": ["patient.mrn"],
+  "forbidden_values": ["ACME-INTERNAL-CASE-9931"]
+}

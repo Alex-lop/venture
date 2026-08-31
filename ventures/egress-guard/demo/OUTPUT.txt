@@ -1,0 +1,28 @@
+== 1. A governed aggregate leaves the boundary ==
+$ egresswall check demo/clean.json --policy demo/policy.json
+CLEAN: demo/clean.json
+exit status: 0
+
+== 2. The same tool, one bad row: blocked whole, never redacted ==
+$ egresswall check demo/leaky.json --policy demo/policy.json
+BLOCKED: demo/leaky.json
+  RAW_IDENTIFIER at response.customer.contact_email: the email detector matched
+  RAW_IDENTIFIER at response.customer.national_id: the ssn detector matched
+  DENIED_FIELD_PATH at response.patient.mrn: denied field 'patient.mrn' carries a value
+  FORBIDDEN_KEY at response.integration.api_key: field name 'api_key' is forbidden by policy
+  SECRET_MATERIAL at response.integration.api_key: the openai_key detector matched
+  FORBIDDEN_VALUE at response.note: a forbidden literal value was assembled
+6 violations
+exit status: 1
+
+== 3. In front of a live MCP server, the client gets an error, not the value ==
+$ egresswall proxy --policy demo/policy.json -- python3 demo/fake_mcp_server.py
+{"jsonrpc":"2.0","id":1,"result":{"content":[{"type":"text","text":"{\"cohort_size\": 25, \"week_2_abandonment_rate\": \"0.7200\"}"}],"isError":false}}
+{"jsonrpc":"2.0","id":2,"error":{"code":-32001,"message":"egresswall blocked this result: RAW_IDENTIFIER at tools/call.result.content[0].text","data":{"code":"RAW_IDENTIFIER","path":"tools/call.result.content[0].text","detail":"the email detector matched"}}}
+
+== 4. As a Claude Code PostToolUse hook ==
+$ echo '<hook event>' | egresswall hook --policy demo/policy.json
+egresswall: mcp__support__lookup_customer returned a value that must not leave the boundary.
+  RAW_IDENTIFIER at tool_response.contact_email: the email detector matched
+Do not repeat this call and do not restate the value.
+exit status: 2
