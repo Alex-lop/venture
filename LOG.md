@@ -1,5 +1,27 @@
 # LOG — daily: done / learned / next (newest on top)
 
+## 2026-08-31 — session 2b (04:21–05:40 EDT): a second orchestrator on the same checkout — checkpoints, site truth, the Nemisis README PR repaired
+
+**Done (files, not chat; one commit per artifact)**
+- **Two orchestrators, one checkout.** `ListAgents` showed session 2a alive and mid-round on the package trees; the split was agreed by message — 2a: fix → verify → release for the three packages; 2b: everything else — with the shared-index protocol written into `STATE.md` §Concurrency.
+- **Working copies on the remote.** `ventures/plan-lint` (e8a95c3) and `ventures/guardrail-checkup` (dfdf07f) were untracked — nothing of either was on origin — and are now labelled checkpoints; `scripts/check-launch-cites.py` (0bb451f). egresswall stays untracked until 2a renames one fixture local whose shape the pre-push secret regex matches.
+- **Clean-clone verification of the checkpoints** (git-archive exports; nothing run in the live trees): agent-plan-lint GREEN — 437 passed / 0 failed, wheel installs in a fresh 3.12 venv, demo byte-identical; guardrail-checkup RED — 4 of 168 (stale demo outputs, README count 128 vs 168, a packaging-test scrape), handed to 2a's builder.
+- **Site truth.** The guardposts pages said the working copies were not pushed and that guardrail-checkup had no code; both false after the checkpoint. Fixed on venture (e045dfe) and `Alex-lop/guardposts` (b43434e); Pages rebuilt; `check_site.py --skip-packages` passes.
+- **Nemisis README PR #2 repaired.** It was CONFLICTING with CI failing: Alex pushed 12 commits to main on 08-30 21:39–22:17 EDT after the branch was cut. main was merged into the branch (merge commit ec0336e — no force-push), README/PROOF/STATUS conflicts resolved, 54 claims re-verified against the merged tree and 11 corrected where main had made them false (the CI failure itself was a hard-coded bundle digest in the pasted console block; now elided, the claim that it prints one kept). 270 tests + ruff + mypy green locally, CI green, PR MERGEABLE/CLEAN; an independent verifier passed it with two non-blocking notes (`docs/STATUS.md`'s "267 tests" escapes the new staleness regex; three external-literature figures are unverifiable offline and attributed as such).
+- **Signals interim:** 3 non-fork stars, 0 stranger issues (the one non-owner item since 08-24 is imgbot), nothing released, nothing inbound.
+
+**Not done, and why**
+- **No package published, no package repo created.** 2a's round-8 red team found real blockers (path guard passes Default_Ignorable code points; YAML loader lets three exception types escape; egresswall's embedded-document check bypassed by a leading format character; three CHANGELOG sentences describe code that is not shipped). Publishing that tree would put a false CHANGELOG under Alex's name (CLAUDE.md §2). Round 9 returns ~05:45–06:00 EDT, after this window; the fallback the sprint order names — checkpoint + reason in `STATE.md` — is what landed.
+- **egresswall is on no remote** until the fixture rename; 2a owns that and will commit it labelled as a mid-round checkpoint.
+
+**Learned**
+- Two sessions on one checkout work only if the index is treated as shared: explicit paths, never `git add -A`, never `stash` or `pull --rebase` (both move the other session's uncommitted edits) — fetch and compare instead.
+- The pre-push hook scans the working-tree content of every tracked file, so tracking the package trees means the other session's mid-edit fixtures can block a push; quoting one such line in `STATE.md` tripped it too.
+- A README that pins the digest of an artifact whose bytes move with the code fails on the next unrelated commit; elide the digest and keep the sentence that says one is printed.
+
+**Next (session 3)**
+- 2a's release sequence (agent-plan-lint → egresswall → guardrail-checkup) once round 9 is clean; then `STATE.md` open task 3 (site RELEASED flag, RELEASE-LINK commits, launch-draft re-sync). egresswall checkpoint. ASK-012: all eight PRs are mergeable again. Weekly `signal-watcher` and the A1 screen on 2026-09-06.
+
 ## 2026-08-30 → 2026-08-31 — session 2: brief v2 installed; hygiene, instrument repair, two packages to release bar, the study run and written
 
 **Done (files, not chat; every artifact verified by an adversarial pass before commit; one commit per artifact)**
