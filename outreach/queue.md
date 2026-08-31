@@ -6,6 +6,222 @@ Nothing here is sent by the agent. Every item is a draft for Alex to send (RED a
 
 ---
 
+## Package launches — agent-plan-lint and egresswall (drafted 2026-08-31; post only after the PyPI upload and the RELEASE-LINK commits land)
+
+> **Release-time re-sync required (orchestrator, 2026-08-31):** the two packages were still in their final verification round when this was drafted, so test counts and `PL:`/`EW:` README line cites drift. Before posting: re-read both READMEs, re-run `pytest --collect-only -q | grep -c ::` in each, re-check `demo/OUTPUT.txt`, add `git clone {REPO_URL} && cd egresswall &&` before `demo/demo.sh` in §B.1 (the wheel does not ship `demo/`), relabel the 60/80-word and 80-char caps as self-imposed budgets (neither venue publishes a limit), and apply the `mcp-server` topic to egresswall only.
+
+**Status: DRAFTED. Nothing sent, nothing posted.** The agent posts nothing (`CLAUDE.md` §2 RED); the principal posts every item. **No price and no hosted tier appears anywhere here** — Changelog News bars us outright if we look commercial ("🚫 Commercial products/services. Sponsorship is your path.", `research/channels.md:32`) — and nothing names a person. **Blocked on:** `{PYPI_URL}` / `{REPO_URL}` / `{SITE_URL}` / `{CONTACT_EMAIL}` are placeholders the release fills, so are the three counts `{PL_TESTS}` / `{EW_TESTS}` / `{EW_HOSTILE_SERVERS}` (see the number rule below and §C row 0b), `{STUDY_URL}` stays a placeholder until Track M is public, and for egresswall the `mcp-name:` token in §B.3 must land in the README **before** the upload.
+
+**Truth rule.** Every capability sentence below is a README sentence with a test behind it: `ventures/plan-lint/README.md` = **PL**, `ventures/egress-guard/README.md` = **EW**. Both READMEs are held to their code by `tests/test_readme_truth.py` (PL §How it is tested, EW §How it is tested), which is what makes citing them worth anything. **AI-assistance disclosure is in every draft and is not optional.** Tone is `outreach/track-h/opener.md`: what it does, what it never does, what is unproven, and "nothing yet" when asked what it sells.
+
+**Cites are section anchors, not line numbers (changed 2026-08-31).** A cite is a README section heading — `(PL §What it does not do)` — with the load-bearing phrase quoted where an exact sentence carries the claim, so a cite is checked with `grep -nF '<phrase>' README.md` rather than by counting lines. Every line cite this section used to carry had gone stale inside a day while other agents edited the same files: PL drifted +1 from line 57 (a `<!-- claim: ... -->` marker was inserted), EW drifted +19 to +47, so `EW:284` — cited here for the test count — had come to land on a sentence about not persisting state. Headings survive that. plan-lint's suite pins its own heading list (`tests/test_readme_truth.py::test_the_readme_has_exactly_the_sections_this_file_checks`); egresswall's does not, so an EW anchor that stops matching is the signal to re-read that section before posting, not to guess a line. `scripts/check-launch-cites.py` is the mechanical form of that rule: it re-reads both READMEs, asserts every heading cited here still exists and every quoted phrase is still on one line, and exits non-zero otherwise.
+
+**Every count in these drafts is a placeholder until the package is frozen (changed 2026-08-31).** `{PL_TESTS}`, `{EW_TESTS}` and `{EW_HOSTILE_SERVERS}` are filled at release from the frozen README, never typed in by hand here. The drafts previously read "364 tests" for plan-lint and "368 tests, 38 hostile servers" for egresswall and all three were false: while they were being verified the real counts moved 406 → 408 → 411 and 368 → 405 → 413, and the packages' own doc-truth tests were failing on exactly those claims. A wrong test count in a Show HN is the first thing a hostile reader checks. §C row 0b is the gate that fills them.
+
+**The rules that govern both HN posts.** All quoted from `research/channels.md` §4.1, which quotes https://news.ycombinator.com/showhn.html as fetched 2026-08-30 (`:83`; that file's verification appendix marks each quoted rule below VERIFIED, rows 6, 8, 9, 10 and 14 at `:282-291`).
+
+- "Please don't ask friends to upvote or comment. That's not ok on HN." (`:94`) — no upvote request, no seeding, no coordinated comments.
+- On topic for a package: "things people can run on their computers" (`:86`), and `pip install` clears the venue's other test, "Please make it easy for users to try your thing out, ideally without barriers such as signups or emails" (`:90`).
+- "The project should be non-trivial. **Don't post quickly-generated one-offs; anybody can do that now.** Share something that is deeply personal and interesting to you. Explain how and why." (`:88`) — satisfied by what each package is: an extraction from a system that already ran it, with its provenance section and its suite (PL §Where it came from, EW §Where it came from). AI-assisted and disclosed is not the same as quickly generated; §A.4 and §B.6 are the "how and why".
+- "The project must be something you've worked on personally and which you're around to discuss." (`:89`) — this is what the disclosed "I reviewed every line … the mistakes are mine" sentence answers, and what the ~4-hour comment window is for. It is also why the principal posts and replies, and the agent never does (`CLAUDE.md` §2 RED).
+- "one Show HN per package, not per release" (`:96`) — this one is `channels.md`'s own operational consequence, not a sentence on showhn.html; it is quoted here as the file states it.
+- **Agent's scheduling judgement, not a venue rule:** space the two Show HNs 2–4 days apart so they do not compete for the same readers. Nothing in `channels.md` §4.1 — which quotes showhn.html's rules in full at `:85-94` — says anything about posting frequency or two Show HNs in one day.
+
+---
+
+## A. agent-plan-lint
+
+### A.1 Show HN — title (70 chars, cap is 80) and first comment
+
+> Show HN: agent-plan-lint – reject an agent's plan before anything runs
+
+> Your coding agent proposes a plan; your project has a policy. This decides, statically, whether the plan fits inside the policy before anything runs — dependency cycles, writes outside the allowed paths, two parallel tasks writing the same file, success criteria the agent would grade itself on, attempt budgets that do not add up — and exits non-zero with a typed code per finding (PL opening: "exits non-zero with a typed code per finding").
+>
+> Sixty seconds, from a clean install:
+>
+> ```
+> $ pip install agent-plan-lint
+> $ git clone {REPO_URL} && cd agent-plan-lint/demo
+> $ agent-plan-lint check plan-bad.json --policy policy.json
+> invalid: 4 issues in plan-bad.json
+>   criterion_model_assertion [criterion-checkout-works]: a model assertion cannot verify a success criterion
+>   cycle: task dependency graph contains a cycle
+>   parallel_write_conflict: tasks work-api, work-models overlap write scope: app/api.py
+>   write_path_not_allowed [work-tests]: write path is forbidden: docs/guide.md
+> exit status: 1
+>
+> $ agent-plan-lint check plan-good.json --policy policy.json
+> ok: plan-good.json is within policy.json
+> order: work-api -> work-models -> work-tests -> assemble -> verify
+> exit status: 0
+> ```
+>
+> That is `demo/OUTPUT.txt` verbatim; `tests/test_cli.py` compares the demo script's output to it byte for byte, so it fails if this stops being true (PL §How it is tested: "the demo script's output compared byte").
+>
+> What it never does: it does not execute, spawn or sandbox anything — there is no subprocess in the package. It does not open a socket. It does not read the files your plan names, only the plan and policy documents you point it at. No `--fix`, no `--watch`, no plugin system, no config file — the policy document is the configuration (PL §What it does not do). Exit 0 in policy, 1 out of policy, 2 when a document cannot be loaded, the command line is wrong, or the tool itself fails unexpectedly — so it drops into CI or an admission hook as-is (PL §60 seconds: "so it drops into CI or an admission hook as-is").
+>
+> Where it came from: the plan admission gate out of Graphene, my publication-control layer for parallel coding agents, ported with its issue codes and its tests (PL §Where it came from). {PL_TESTS} tests on CPython 3.11/3.12/3.13, Ubuntu and macOS (PL §How it is tested); one runtime dependency, pydantic (PL §How it is tested: "The only runtime dependency is `pydantic>=2.7`").
+>
+> What is unproven: nobody but me has run this on a real plan, and I have no evidence that the findings it reports correlate with agent failures you would actually have suffered — that is what I want out of posting it. The `plan-lint` package on PyPI had the idea first and owns that name and that console script, which is why this one is `agent-plan-lint` (`docs/comparison.md` §The one direct predecessor: "the same idea, published first"). The full comparison — OPA/Rego, Cedar, Kyverno, LangGraph, CrewAI, Claude Code hooks, Cursor rules — is at {SITE_URL}. It cannot tell you whether the plan is a *good idea*; it checks a plan against a policy and nothing else (PL §What it does not do: "It does not know whether the work is a good idea").
+>
+> Written with AI assistance (Claude Code). I reviewed every line, the tests are why I trust it, and the mistakes are mine.
+
+### A.2 Newsletters
+
+**PyCoder's Weekly** — https://pycoders.com/submissions → "Submit Your Link »", $0, and "we cannot guarantee to feature every submitted link" (`research/channels.md:33`). **Blurb, 60 words (cap 60):**
+
+> agent-plan-lint statically validates a coding agent's proposed plan against a project policy before it runs: dependency cycles, writes outside the allowed paths, two parallel tasks writing one file, success criteria the model grades itself on. 36 typed codes, non-zero exit, one dependency. Extracted from a parallel-agent control plane. Apache-2.0. Written with AI assistance (Claude Code), reviewed by me. {PYPI_URL} {REPO_URL}
+
+**Changelog News** — https://changelog.com/news/submit, $0. "Submitting your own work is also encouraged"; "🚫 How-to's and tutorials."; "🚫 Commercial products/services. Sponsorship is your path."; "Do your best to convince us why something is newsworthy." (`research/channels.md:32`). No tutorial framing, no product, lead with the gap. **Blurb, 80 words (cap 80):**
+
+> Coding agents now write a plan before the code, and nothing checks the plan. agent-plan-lint checks it statically: cycles, writes outside the allowed paths, two parallel tasks fighting over one file, success criteria the model would grade itself on. 36 typed codes, non-zero exit, drops into CI. Extracted from a control plane for parallel agents; every claim in its README is asserted against the code by a test. Apache-2.0. Written with AI assistance (Claude Code), reviewed by me. {PYPI_URL} {REPO_URL}
+
+*Cites for both blurbs, as anchors: PL opening (what it catches); PL §What it catches ("`agent-plan-lint codes` prints them with their meanings" — the block under it prints 36); PL §60 seconds (exit status and CI); PL §How it is tested (one runtime dependency, and the README held to the code by tests); PL §Where it came from (extracted from Graphene). The 36 is re-checked at §C row 0b with everything else countable.*
+
+### A.3 Bluesky thread — 4 posts, measured with the real URLs substituted and `{PL_TESTS}` standing in for a 3-digit count: 295 / 264 / 228 / 287 of 300
+
+> **1/** agent-plan-lint is on PyPI. Your coding agent proposes a plan; your project has a policy. It decides statically whether the plan fits inside the policy, before anything runs, and exits non-zero with a typed code per finding.
+>
+> pip install agent-plan-lint
+> {PYPI_URL}
+
+> **2/** What it catches: dependency cycles, writes outside the allowed paths, two parallel tasks writing the same file, success criteria the model would grade itself on, attempt budgets that do not add up. 36 codes; `agent-plan-lint codes` prints them with their meanings.
+
+> **3/** What it does not do: no subprocess, no socket, no --fix, no config file, no daemon. It does not read the files your plan names. It cannot tell you whether the work is a good idea. It checks a plan against a policy, nothing else.
+
+> **4/** Extracted from Graphene, my publication-control layer for parallel coding agents. {PL_TESTS} tests on CPython 3.11-3.13, plus a suite that fails when the README claims something no test backs. Written with AI assistance (Claude Code), reviewed by me.
+> {REPO_URL}
+
+*Cites, as anchors: PL opening; PL §What it catches (the 36 codes); PL §What it does not do (the does-not-do list, and "It does not know whether the work is a good idea"); PL §How it is tested ({PL_TESTS}, the CI matrix, and the README-truth suite); PL §Where it came from.*
+
+### A.4 "Why this exists" — one paragraph, for the docs site and any reply that asks
+
+> I build the seatbelt layer for coding agents, and a plan is the cheapest place to catch a mistake: after it runs you are reading a diff, before it runs you are reading a document. This package is that gate, lifted out of a larger control plane and made to stand alone. It is a package and not a service because I have nothing to sell you — the measurement I am actually running is separate and public ({STUDY_URL}), and it asks how often a merged agent PR's own tests pass on the commit it branched from, which is the same worry one layer later. If the gate is wrong about your plan, open an issue or mail {CONTACT_EMAIL}; that is the whole business model today. It was written with AI assistance (Claude Code) and reviewed line by line; the repo says so too.
+
+---
+
+## B. egresswall
+
+### B.1 Show HN — title (75 chars) and first comment
+
+> Show HN: egresswall – refuse an agent tool response instead of redacting it
+
+> When an agent's tool hands back a customer's email address, an API key, or a record your policy never approved, egresswall refuses the whole response instead of redacting it. A redacted response still means your tool assembled the value, put it on the wire, and something downstream had to be trusted to remove it; a refused one never left the tool boundary. There is no redaction mode and it will not grow one (EW opening: "by refusing the whole response instead of redacting it", "egresswall has no redaction mode").
+>
+> Sixty seconds — `pip install egresswall`, then `demo/demo.sh`. Both blocks below are executed, not typed. The first is section 2 of `demo/OUTPUT.txt`, which `tests/test_readme_truth.py::test_the_demo_script_still_prints_what_output_txt_records` re-runs and compares; the second is the second runnable block of the README, which the same file executes and compares to what is printed there (EW §How it is tested: "executes every command block in this README marked runnable"):
+>
+> ```
+> $ egresswall check demo/leaky.json --policy demo/policy.json
+> BLOCKED: demo/leaky.json
+>   RAW_IDENTIFIER at response.customer.contact_email: the email detector matched
+>   RAW_IDENTIFIER at response.customer.national_id: the ssn detector matched
+>   DENIED_FIELD_PATH at response.patient.mrn: denied field 'patient.mrn' carries a value
+>   FORBIDDEN_KEY at response.integration.api_key: field name 'api_key' is forbidden by policy
+>   SECRET_MATERIAL at response.integration.api_key: the openai_key detector matched
+>   FORBIDDEN_VALUE at response.note: a forbidden literal value was assembled
+> 6 violations
+> exit status: 1
+> ```
+>
+> In front of a live MCP server the client gets an error naming the reason and the path, never the value, and neither the server nor the client had to change (EW §60 seconds):
+>
+> ```
+> $ printf '%s\n' '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"lookup_customer"}}' | egresswall proxy --policy demo/policy.json -- python3 demo/fake_mcp_server.py
+> {"jsonrpc":"2.0","id":2,"error":{"code":-32001,"message":"egresswall blocked this result: RAW_IDENTIFIER at tools/call.result.content[0].text","data":{"code":"RAW_IDENTIFIER","path":"tools/call.result.content[0].text","detail":"the email detector matched"}}}
+> ```
+>
+> One screening core, three surfaces: the MCP stdio proxy, a Claude Code `PostToolUse` hook, and a CI check. Zero runtime dependencies, Python 3.11+ (EW opening: "Zero runtime dependencies, Python 3.11+, one screening core and three places to put it").
+>
+> What it never does: it does not redact, mask or rewrite — no `--redact`, no `--mask`, no `--fix`. It does not screen tool inputs. It does not recognise names, addresses or free-text PII — ten regexes, no model, no network call, no training data. It does not speak HTTP or SSE; the proxy is newline-delimited JSON-RPC over stdio. It does not persist state, phone home or write files. And it does not stop a Claude Code tool call: the hook runs after the tool ran, so it gets the violation into the transcript and the model's context, not ahead of the value — only the proxy refuses a value before its reader sees it. (Every sentence there is a bullet of EW §What it does not do; the hook's limit is also EW §Putting it in front of your agent, which quotes Claude Code's own exit-code table — "Shows stderr to Claude; the tool already ran".)
+>
+> What is unproven, and where it breaks: it does not defeat obfuscation — the ten regexes match ASCII literals, so a Unicode-confusable separator or a base64-wrapped value passes, and it assumes a buggy tool rather than an adversarial one (EW §What it does not do: "It does not defeat obfuscation"). The defaults are deliberately blunt: a response with a field called `rows` is refused until you decide it should not be (EW §What it catches: "Those defaults are deliberately blunt"). And no one but me has run it against a production tool.
+>
+> Where it came from: extracted from RegLineage, my capability-lease runtime for AI data access, where this screen sat on the model-facing and MCP-facing boundaries (EW §Where it came from). {EW_TESTS} tests, including {EW_HOSTILE_SERVERS} hand-written hostile MCP servers, one per test function (EW §How it is tested). How it compares to Presidio, LLM Guard, Snyk Agent Scan, Lasso's MCP Gateway, Guardrails AI and Claude Code's own permissions is at {SITE_URL}; the short version is that most of them detect and then rewrite.
+>
+> Written with AI assistance (Claude Code). I reviewed every line and the mistakes are mine.
+
+### B.2 Newsletters (mechanics and quoted rules as in §A.2)
+
+**PyCoder's Weekly — blurb, 60 words (cap 60):**
+
+> egresswall screens what an agent's tools hand back — email addresses, SSNs, API keys, denied fields — and refuses the whole response instead of redacting it. Three surfaces over one core: MCP stdio proxy, Claude Code hook, CI check. Zero dependencies, ten regex detectors, no model. Apache-2.0. Written with AI assistance (Claude Code), reviewed by me. {PYPI_URL} {REPO_URL}
+
+**Changelog News — blurb, 78 words (cap 80):**
+
+> Almost every tool in this space detects and then rewrites. egresswall refuses instead: when an agent's tool response carries a raw identifier, secret material, or a denied field, the whole payload is blocked and the MCP client gets a JSON-RPC error naming the reason and the path, never the value. A redacted response still means the value was assembled and put on the wire. Zero runtime dependencies, Apache-2.0. Written with AI assistance (Claude Code), reviewed by me. {PYPI_URL} {REPO_URL}
+
+*Cites for both blurbs, as anchors: EW opening (refuse, not redact; three surfaces, zero dependencies, 3.11+); EW §What it catches (the reason codes); EW §60 seconds (the JSON-RPC error names the path, never the value); EW §What it does not do ("Ten regular expressions", no model, no network call); EW §How it is tested (README held to the code by tests).*
+
+### B.3 MCP Registry publishing checklist — step 1 is **not done** and blocks the PyPI upload
+
+The registry verifies PyPI ownership by reading the README: "The MCP Registry verifies ownership of PyPI packages by checking for the existence of an `mcp-name: $SERVER_NAME` string in the package README (which becomes the package description on PyPI). The string may be hidden in a comment, but the `$SERVER_NAME` portion **MUST** match the server name from `server.json`." (`research/channels.md:105`; server-name form `io.github.username/database-query-mcp`, same line.)
+
+1. **BLOCKING, verified missing 2026-08-31** — `grep -rn "mcp-name" ventures/egress-guard/` returns nothing. Put this on its own line in `ventures/egress-guard/README.md` **before** the sdist/wheel is built, since the token has to be inside the README that becomes the PyPI description: `mcp-name: io.github.Alex-lop/egresswall`. Confirm the namespace's capitalisation with `mcp-publisher` before publishing — the token and `server.json` must match exactly, and only the tool can say which spelling it accepts.
+2. **One judgement call first:** egresswall is a proxy *in front of* an MCP server, not a server. The registry is permissive — "We only remove illegal content, malware, spam, and completely broken servers", spam being "A server that doesn't do anything but provide a fixed response with some marketing copy" (`:105`) — so this is not a spam risk, but decide deliberately whether it is listed as a server or only linked from awesome-mcp-servers.
+3. Rebuild and upload to PyPI **after** step 1 lands (`tests/test_packaging.py` builds the wheel, installs it into a throwaway venv and runs the console script — EW §How it is tested: "runs `uv build`, installs the wheel into a throwaway virtualenv").
+4. `mcp-publisher init` → `mcp-publisher login github` → `mcp-publisher publish`; the CLI is "installed from GitHub releases or `brew install mcp-publisher`" (`:105`).
+5. Expect "currently in preview. Breaking changes or data resets may occur before general availability." (`:105`) — build nothing on the listing persisting.
+6. Nothing more for the mirrors: PulseMCP's submit page is paused and says "if you have a server to share, publish it to the Official MCP Registry… we will pick it up automatically once we are back" (`:106`); Glama auto-indexes from GitHub and only 4.1% of its 80,479 listings are "Claimed", so claiming is a five-minute differentiator — account needed, so ASK (`:107`, `:180`).
+
+### B.4 punkpeye/awesome-mcp-servers PR
+
+Rules from the repo's own CONTRIBUTING.md (`research/channels.md:110`; re-fetched 2026-08-31, unchanged): "Contributions are welcome and encouraged!" · "**If you are an automated agent, we have a streamlined process for merging agent PRs. Just add `🤖🤖🤖` to the end of the PR title to opt-in. Merging your PR will be fast-tracked.**" · "Alphabetical order: Maintain alphabetical order within each category" · "One server per line" · and for a new entry: "The server name, linked to its repository. · A brief description of the server's functionality. · Categorize the server appropriately under the relevant section."
+
+Section `### 🔒 Security`; legend emoji from the README, re-fetched today: `🐍` Python codebase, `🏠` Local Service. PR title `Add egresswall to Security 🤖🤖🤖` — the `🤖🤖🤖` is the required disclosure here, not decoration (`CLAUDE.md` §2, `research/channels.md:179`). One line, in the list's format:
+
+```
+- [Alex-lop/egresswall]({REPO_URL}) 🐍 🏠 - Value-level egress firewall for MCP tool responses. Screens every server message whole and refuses it — there is no redaction mode — when it carries a raw identifier, secret material, a forbidden field name or a denied field path; the client gets a JSON-RPC error naming the reason and the path, never the value. Zero runtime dependencies. `pip install egresswall`
+```
+
+Place it at `Alex-lop`'s alphabetical position in that section. (The section as fetched today is not actually sorted; follow the stated rule, not the file.)
+
+### B.5 Bluesky thread — 4 posts, measured with the real URLs and 3-digit / 2-digit counts standing in for `{EW_TESTS}` / `{EW_HOSTILE_SERVERS}`: 291 / 282 / 274 / 290 of 300
+
+> **1/** egresswall is on PyPI. When an agent's tool hands back a customer's email address, an API key, or a record your policy never approved, it refuses the whole response instead of redacting it. Zero runtime dependencies, Python 3.11+.
+>
+> pip install egresswall
+> {PYPI_URL}
+
+> **2/** Why refuse rather than redact: a redacted response still means your tool assembled the value, put it on the wire, and something downstream had to be trusted to remove it. A refused response means it never left the tool boundary. There is no redaction mode and there will not be one.
+
+> **3/** Three places to put one screening core: an MCP stdio proxy (the client gets a JSON-RPC error naming the reason and the path, never the value), a Claude Code PostToolUse hook, and a CI check. The honest limit: the hook runs after the tool ran. Only the proxy stops the value.
+
+> **4/** Ten regexes, no model, no network call. It does not defeat obfuscation; it assumes a buggy tool, not an adversarial one. Extracted from RegLineage. {EW_TESTS} tests, {EW_HOSTILE_SERVERS} hostile MCP servers among them. Written with AI assistance (Claude Code), reviewed by me.
+> {REPO_URL}
+
+*Cites, as anchors: EW opening (refuse not redact; zero dependencies, 3.11+); EW §60 seconds; EW §Putting it in front of your agent, with EW §What it does not do (the hook runs after the tool ran); EW §What it does not do (ten regexes; does not defeat obfuscation); EW §How it is tested ({EW_TESTS}, {EW_HOSTILE_SERVERS}); EW §Where it came from.*
+
+### B.6 "Why this exists" — one paragraph
+
+> The teams I want to be useful to are running agents next to governed data, and the failure they describe is not a jailbreak — it is a tool that answered honestly with one field too many. Everything on the shelf detects and then rewrites, which leaves you trusting the rewriter; this refuses instead, at the value, at the transport, and reports the path rather than the value so the log is safe to keep. It came out of a lease runtime where that rule already existed, and it is a package and not a service because there is nothing here to sell — the measurement I am running asks the same question from the other end ({STUDY_URL}): whether the checks we put around agent work actually discriminate. If it blocks something it should not, that is an issue I want to read — the repo's Issues, or {CONTACT_EMAIL}. It was written with AI assistance (Claude Code) and reviewed line by line; the repo says so too.
+
+---
+
+## C. Posting order and timing
+
+Order is `research/channels.md:201-207` — "By 2026-09-06: PyPI release #1 with `mcp-name` token, GitHub topics set, registry publish… By 2026-09-13: Show HN for package #1; same week, PyCoder's + Changelog submissions; awesome-mcp-servers PR" — i.e. **registry → HN → newsletters**. The thing being tested is one dated gate: **Track I, ≥5 unsolicited inbound contacts by 2026-10-31** (`CLAUDE.md` §9). Every item carries the same reply address, repo Issues plus the principal's public email, because a contact with no channel back cannot be counted (`:207`). That is why all four newsletter blurbs now carry `{REPO_URL}` next to `{PYPI_URL}` — a blurb with only a PyPI link has no native reply channel — and why `{CONTACT_EMAIL}` is a placeholder the release fills, in §A.4, §B.6 and both repo READMEs.
+
+| # | When | Channel | What | Gatekeeper | How its contribution is measured |
+|---|---|---|---|---|---|
+| 0 | before any upload | egresswall README | `mcp-name:` token (§B.3.1) | none | blocks everything after it; done = `grep mcp-name README.md` hits |
+| 0b | after the package is frozen, before each of #4 and #5 | the drafts above | fill `{PL_TESTS}` / `{EW_TESTS}` / `{EW_HOSTILE_SERVERS}` from that README, then re-grep every `§`-anchored quote with `python3 scripts/check-launch-cites.py` | none | blocks the post; done = that script exits 0, and in a clean venv, `pytest --collect-only -q \| grep -c ::` equals the README's own count equals the number in the draft, `agent-plan-lint codes \| wc -l` still prints 36. Each README's own count is pinned by its suite (PL `test_every_console_block_prints_what_the_readme_shows`, EW `test_the_readme_test_count_matches_the_suite` and `test_the_readme_hostile_server_count_matches_the_suite`), so a disagreement is a package bug: fix the README and re-freeze, never edit the number in the draft |
+| 1 | by 2026-09-06 | PyPI | `agent-plan-lint`, then `egresswall` | none | `pypistats recent <pkg>` weekly into `SIGNALS.md` — the §9 ≥500 downloads/month gate |
+| 2 | same day | GitHub topics | `mcp-server`, `claude-code` on both repos | none | 14-day views/clones diff in `SIGNALS.md`; `mcp-server` is the only findable topic (`:176`) |
+| 3 | same day | Official MCP Registry | egresswall only (§B.3) | none | listing exists; Glama/PulseMCP pickup checked at 2 weeks. No per-contact attribution — record as UNMEASURABLE, not as zero |
+| 4 | by 2026-09-13 | Show HN | agent-plan-lint (§A.1) | none, but ~4h of attention | strongest per-contact signal: comments and issues opened within 48h, logged in the `SIGNALS.md` inbound table with channel `hn` |
+| 5 | +2–4 days after #4 | Show HN | egresswall (§B.1) | same | same. "one Show HN per package, not per release" (`:96`); the 2–4 day gap is the agent's scheduling judgement, not a venue rule — no fetched HN rule mentions posting frequency |
+| 6 | week of #4 | PyCoder's Weekly | both blurbs | editorial, "cannot guarantee" | inclusion is visible in the issue; downloads step that week, or it did nothing |
+| 7 | week of #4 | Changelog News | both blurbs | editorial, notified only on publication | same. A rejection is silent, so absence at 3 weeks counts as no |
+| 8 | week of #4 | awesome-mcp-servers PR | §B.4, title ends `🤖🤖🤖` | maintainer review | merged / not merged, then referral traffic in the 14-day views+clones diff |
+| 9 | after #4–#5 land | Bluesky | §A.3, §B.5 | none | the one channel where the principal's own network amplifies without a gatekeeper (`:199`); count replies, not likes |
+| 10 | held | Console.dev, LibHunt, Claude Code plugin marketplace | — | account/ASK, or needs a live quickstart | out of this batch; re-open if #4–#8 produce fewer than 2 contacts |
+
+**What "measured" means.** Each item gets a row in the `SIGNALS.md` inbound log on the day it goes out, and every contact it produces gets a row tagged with the channel above and a value tag (`paid-signal` / `pilot` / `technical` / `noise`). A bot account is never a stranger and never an inbound contact. Two `paid-signal` rows from independent parties naming the same capability fire the §9 re-open rule. If 2026-10-31 arrives under 5 contacts, what was wrong is the ranking in `research/channels.md:171-185` — an explicit hypothesis, not a finding ("Conversion rate for both is **UNVERIFIED**", `:4`) — and `inbound-channel-mapper` re-runs against these observed numbers.
+
+**Deliberately not in this batch:** every Discord (MCP Contributor Discord — "Service or product marketing - Keep discussions vendor-neutral", `research/channels.md:73`; Python Discord rule 6 — "Do not post unapproved advertising.", `:74`, where a showcase post needs staff approval first). **r/Python and every other subreddit: UNVERIFIED** — `reddit.com/robots.txt` is `Disallow: /`, so no rule text could be fetched and none is quoted here; the principal must read each sidebar in a browser before posting anything there (`:98-99`).
+
+---
+
 ## Track M study — launch drafts (2026-08-31, **revised after the red-team pass**)
 
 **Status:** DRAFTED. Nothing sent. The principal posts every item below; the agent posts
