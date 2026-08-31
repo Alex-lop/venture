@@ -6,13 +6,14 @@ brief: CLAUDE.md v2 (installed this session; v1 kept at private/CLAUDE-v1.md)
 principal_file: private/PRINCIPAL.md (merged; US resident; standing approvals: repos=yes pypi=yes oss-prs=yes track-h=yes)
 current_wave: 2 (ship: verification round 9 in flight, session 2a) + 4 (inbound wiring, session 2b) — waves 0, 1, 3, DECISION v4, Track H prep, README rewrites, docs site complete
 push_rule: the redaction commit lands on origin before any other session-2 commit (done: f4e68d4)
-last_checkpoint: 2026-08-31 05:00 EDT (session 2b) — agent-plan-lint source release wired; PyPI = ASK-015
+last_checkpoint: 2026-08-31 05:13 EDT (session 2b, FINAL — its window closes 05:41; STATE.md/LOG.md return to session 2a after this commit)
 
 ## Concurrency (2026-08-31, from 04:21 EDT)
 - **Session 2a** (`money-maker-9a`, started 2026-08-30 20:42 EDT) owns `ventures/plan-lint`, `ventures/egress-guard`, `ventures/guardrail-checkup`: fix → verify → release. Running: `wf_b255ee0e-ece` = round 9 (agent-plan-lint + egresswall; red team + claims re-verify; started ~04:15, ETA 05:45–06:00 EDT); `wf_955ab038-512` = guardrail-checkup build + up to two verify/fix rounds (started ~03:35, ETA 06:30–07:30 EDT). `wf_e071a665-382` (round 8) finished.
 - **Session 2b** (`money-maker-29`, 04:21–05:40 EDT window) owns everything else: checkpoint commits, the docs site, STATE/LOG/SIGNALS/LEDGER, README-PR repair.
 - Shared-checkout protocol (agreed by message): stage+commit atomically with explicit paths, never `git add -A`; message the other session before any `git add` under the three package trees and before every commit to `main`; `git pull --rebase` before push; the pre-push hook on every push; no force-push ever; no `check.sh`/`pytest` inside the three trees from 2b (they write `.venvs/`, `dist/`).
 - **No publish, no package repo, no merge from 2b** — 2a's round-8 red team found real blockers (below), and CLAUDE.md §2 forbids shipping a CHANGELOG that describes code other than what is shipped. The in-window fallback is the checkpoint commit + this file.
+- **2b final state (05:13 EDT):** venture main 13f2c18 (LOG addendum) on top of 6c7fe93 (wiring); Alex-lop/guardposts 8a4dea1 (Pages rebuilt from it); Graphene #14 head a159860 — MERGEABLE, checks: wheel+sdist, Linux 3.13, Firestore, Node 22, CodeRabbit all pass, `Python 3.13 / macOS sandbox` still pending at 05:12 (a docs-only change; 2a or the next session records its conclusion). Nothing else from 2b is in flight.
 - Resume rule for any later session: run `ListAgents` first. If a peer session is alive and busy on the package trees, leave them to it and take the rest.
 
 ## Waves
