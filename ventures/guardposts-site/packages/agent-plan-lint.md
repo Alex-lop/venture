@@ -14,10 +14,12 @@ the same file, success criteria the agent would grade itself on, attempt budgets
 not add up — and exits non-zero with a typed code per finding.
 
 **Status: 0.1.0, release in progress; install lines appear here when the PyPI upload lands.**
-Until then there is nothing to install and nothing public to read: the working copy
-(`ventures/plan-lint/`, with its tests, demo and comparison page) is not pushed to
-[`Alex-lop/venture`](https://github.com/Alex-lop/venture) as of 2026-08-31. The path and the
-issue tracker appear here when that push lands.
+Until then there is nothing to install, but there is something to read: the working copy —
+source, tests, demo and comparison page — is
+[`ventures/plan-lint/`](https://github.com/Alex-lop/venture/tree/main/ventures/plan-lint) in
+`Alex-lop/venture`, checkpointed 2026-08-31 while its final verification round runs. A
+working copy is not a release: what is there can still change before the upload, and there
+is no package repository or issue tracker until then.
 
 ## What it prints
 

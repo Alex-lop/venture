@@ -7,19 +7,27 @@ title: guardrail-checkup
 
 # guardrail-checkup
 
-**In design. Not built. There is no code, no repository and no date.** This page exists so
-that the shape is written down in public before anything is promised about it, and so that
-anyone who wants a different shape can say so in an issue while it is still cheap.
+**Built as a working copy; in verification; not released, and no date.** The source, tests,
+a demo fixture and the report the tool produced from it are
+[`ventures/guardrail-checkup/`](https://github.com/Alex-lop/venture/tree/main/ventures/guardrail-checkup)
+in `Alex-lop/venture`, checkpointed 2026-08-31 while its build-and-verify rounds run. There
+is nothing to install: it composes [`agent-plan-lint`](agent-plan-lint.md) and
+[`egresswall`](egresswall.md), neither of which is released, so its own upload comes after
+theirs, and what is there can still change. This page was written before the code so that the
+shape was public before anything was promised about it; anyone who wants a different shape
+can still say so in an issue while it is cheap.
 
 The idea: run it on your own repository and get back a report of the places where an agent
 could confidently do the wrong plausible thing, and what would stop each one. It is the
 self-serve version of a manual session I have written a runbook for and have not yet run
-with anyone — which is why the report shape below is specified and the tool is not.
+with anyone.
 
 ## The six-section report shape
 
 Taken from `outreach/track-h/runbook.md` §3, where it is the deliverable of the manual
-version. Marked **UNVERIFIED, not built** in that file, and it is marked that here too.
+version and is marked **UNVERIFIED** — the session has not been run with anyone. The working
+copy's README names the same six sections in the same order; the descriptions below are the
+runbook's, and the tool's own wording governs once it is released.
 
 1. **Scope** — what was read, what was *not* read (no production, no CI, no data), how
    long, and who was in the room.
@@ -43,8 +51,8 @@ version. Marked **UNVERIFIED, not built** in that file, and it is marked that he
   section 2 exists because their output is frequently wrong about a specific repository.
 - Not a hosted service, and not the free tier of one.
 - Not a promise. If [`agent-plan-lint`](agent-plan-lint.md) and [`egresswall`](egresswall.md)
-  do not earn their own dated gates on the [about page](../about.md), this is not built at all,
-  and that decision gets written down here rather than quietly dropped.
+  do not earn their own dated gates on the [about page](../about.md), this is not released
+  at all, and that decision gets written down here rather than quietly dropped.
 
 If you want this, or want it to be something else, the useful thing is an issue on
 [`Alex-lop/venture`](https://github.com/Alex-lop/venture/issues) saying what your repository

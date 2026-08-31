@@ -23,15 +23,16 @@ and no email address on this site. If you want to reach me, open a GitHub issue.
 | --- | --- | --- |
 | [`agent-plan-lint`](packages/agent-plan-lint.md) | Does this proposed agent plan fit inside this project's policy — before anything runs? Exits non-zero with a typed code per finding. | 0.1.0, release in progress; install lines appear here when the PyPI upload lands |
 | [`egresswall`](packages/egresswall.md) | Does this MCP tool response carry an identifier, a secret or a denied field? If so it is refused whole, never redacted. | 0.1.0, release in progress; install lines appear here when the PyPI upload lands |
-| [`guardrail-checkup`](packages/guardrail-checkup.md) | Run it on your own repo, get the six-section report of what an agent could do here that nothing stops. | In design. Not built. |
+| [`guardrail-checkup`](packages/guardrail-checkup.md) | Run it on your own repo, get the six-section report of what an agent could do here that nothing stops. | 0.1.0 working copy, in verification; not released |
 
-The first two exist as complete working copies — tests, a runnable demo script, a captured
-`OUTPUT.txt` of what that script printed, and a comparison page each — but **neither is in
-the public monorepo yet.** As of 2026-08-31 `ventures/plan-lint/` and
-`ventures/egress-guard/` are not pushed to
-[`Alex-lop/venture`](https://github.com/Alex-lop/venture), so there is nothing here to link
-to and nothing you can read before installing. Those paths appear here when the push lands,
-alongside the install lines.
+All three exist as complete working copies — tests, a runnable demo script, a captured
+`OUTPUT.txt` of what that script printed, and a comparison page each. Two are in the public
+monorepo since 2026-08-31, checkpointed mid-verification:
+[`ventures/plan-lint/`](https://github.com/Alex-lop/venture/tree/main/ventures/plan-lint) and
+[`ventures/guardrail-checkup/`](https://github.com/Alex-lop/venture/tree/main/ventures/guardrail-checkup).
+`egresswall`'s working copy (`ventures/egress-guard/`) is not pushed yet; its path appears
+here when that push lands. **None is a release:** what is there can still change, and the
+install lines appear here when each upload lands.
 
 ## The study
 
