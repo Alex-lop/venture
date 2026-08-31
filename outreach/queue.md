@@ -10,7 +10,7 @@ Nothing here is sent by the agent. Every item is a draft for Alex to send (RED a
 
 > **Release-time re-sync required (orchestrator, 2026-08-31):** the two packages were still in their final verification round when this was drafted, so test counts and `PL:`/`EW:` README line cites drift. Before posting: re-read both READMEs, re-run `pytest --collect-only -q | grep -c ::` in each, re-check `demo/OUTPUT.txt`, add `git clone {REPO_URL} && cd egresswall &&` before `demo/demo.sh` in §B.1 (the wheel does not ship `demo/`), relabel the 60/80-word and 80-char caps as self-imposed budgets (neither venue publishes a limit), and apply the `mcp-server` topic to egresswall only.
 
-**Status: DRAFTED. Nothing sent, nothing posted.** The agent posts nothing (`CLAUDE.md` §2 RED); the principal posts every item. **No price and no hosted tier appears anywhere here** — Changelog News bars us outright if we look commercial ("🚫 Commercial products/services. Sponsorship is your path.", `research/channels.md:32`) — and nothing names a person. **Blocked on:** `{PYPI_URL}` / `{REPO_URL}` / `https://alex-lop.github.io/guardposts/` / `{CONTACT_EMAIL}` are placeholders the release fills, so are the three counts `{PL_TESTS}` / `{EW_TESTS}` / `{EW_HOSTILE_SERVERS}` (see the number rule below and §C row 0b), `https://alex-lop.github.io/guardposts/study.html` stays a placeholder until Track M is public, and for egresswall the `mcp-name:` token in §B.3 must land in the README **before** the upload.
+**Status: DRAFTED. Nothing sent, nothing posted.** *(2026-08-31: agent-plan-lint's source is released — https://github.com/Alex-lop/agent-plan-lint at v0.1.0 — so §A's `{REPO_URL}` and `{PL_TESTS}` (488 collected on the released tree, 3.11–3.13) are filled; `{PYPI_URL}` stays a placeholder until the package-index upload, which is ASK-015. §B unchanged.)* The agent posts nothing (`CLAUDE.md` §2 RED); the principal posts every item. **No price and no hosted tier appears anywhere here** — Changelog News bars us outright if we look commercial ("🚫 Commercial products/services. Sponsorship is your path.", `research/channels.md:32`) — and nothing names a person. **Blocked on:** `{PYPI_URL}` / `{REPO_URL}` / `https://alex-lop.github.io/guardposts/` / `{CONTACT_EMAIL}` are placeholders the release fills, so are the three counts `{PL_TESTS}` / `{EW_TESTS}` / `{EW_HOSTILE_SERVERS}` (see the number rule below and §C row 0b), `https://alex-lop.github.io/guardposts/study.html` stays a placeholder until Track M is public, and for egresswall the `mcp-name:` token in §B.3 must land in the README **before** the upload.
 
 **Truth rule.** Every capability sentence below is a README sentence with a test behind it: `ventures/plan-lint/README.md` = **PL**, `ventures/egress-guard/README.md` = **EW**. Both READMEs are held to their code by `tests/test_readme_truth.py` (PL §How it is tested, EW §How it is tested), which is what makes citing them worth anything. **AI-assistance disclosure is in every draft and is not optional.** Tone is `outreach/track-h/opener.md`: what it does, what it never does, what is unproven, and "nothing yet" when asked what it sells.
 
@@ -41,7 +41,7 @@ Nothing here is sent by the agent. Every item is a draft for Alex to send (RED a
 >
 > ```
 > $ pip install agent-plan-lint
-> $ git clone {REPO_URL} && cd agent-plan-lint/demo
+> $ git clone https://github.com/Alex-lop/agent-plan-lint && cd agent-plan-lint/demo
 > $ agent-plan-lint check plan-bad.json --policy policy.json
 > invalid: 4 issues in plan-bad.json
 >   criterion_model_assertion [criterion-checkout-works]: a model assertion cannot verify a success criterion
@@ -60,7 +60,7 @@ Nothing here is sent by the agent. Every item is a draft for Alex to send (RED a
 >
 > What it never does: it does not execute, spawn or sandbox anything — there is no subprocess in the package. It does not open a socket. It does not read the files your plan names, only the plan and policy documents you point it at. No `--fix`, no `--watch`, no plugin system, no config file — the policy document is the configuration (PL §What it does not do). Exit 0 in policy, 1 out of policy, 2 when a document cannot be loaded, the command line is wrong, or the tool itself fails unexpectedly — so it drops into CI or an admission hook as-is (PL §60 seconds: "so it drops into CI or an admission hook as-is").
 >
-> Where it came from: the plan admission gate out of Graphene, my publication-control layer for parallel coding agents, ported with its issue codes and its tests (PL §Where it came from). {PL_TESTS} tests on CPython 3.11/3.12/3.13, Ubuntu and macOS (PL §How it is tested); one runtime dependency, pydantic (PL §How it is tested: "The only runtime dependency is `pydantic>=2.7`").
+> Where it came from: the plan admission gate out of Graphene, my publication-control layer for parallel coding agents, ported with its issue codes and its tests (PL §Where it came from). 488 tests on CPython 3.11/3.12/3.13, Ubuntu and macOS (PL §How it is tested); one runtime dependency, pydantic (PL §How it is tested: "The only runtime dependency is `pydantic>=2.7`").
 >
 > What is unproven: nobody but me has run this on a real plan, and I have no evidence that the findings it reports correlate with agent failures you would actually have suffered — that is what I want out of posting it. The `plan-lint` package on PyPI had the idea first and owns that name and that console script, which is why this one is `agent-plan-lint` (`docs/comparison.md` §The one direct predecessor: "the same idea, published first"). The full comparison — OPA/Rego, Cedar, Kyverno, LangGraph, CrewAI, Claude Code hooks, Cursor rules — is at https://alex-lop.github.io/guardposts/. It cannot tell you whether the plan is a *good idea*; it checks a plan against a policy and nothing else (PL §What it does not do: "It does not know whether the work is a good idea").
 >
@@ -70,15 +70,15 @@ Nothing here is sent by the agent. Every item is a draft for Alex to send (RED a
 
 **PyCoder's Weekly** — https://pycoders.com/submissions → "Submit Your Link »", $0, and "we cannot guarantee to feature every submitted link" (`research/channels.md:33`). **Blurb, 60 words (cap 60):**
 
-> agent-plan-lint statically validates a coding agent's proposed plan against a project policy before it runs: dependency cycles, writes outside the allowed paths, two parallel tasks writing one file, success criteria the model grades itself on. 36 typed codes, non-zero exit, one dependency. Extracted from a parallel-agent control plane. Apache-2.0. Written with AI assistance (Claude Code), reviewed by me. {PYPI_URL} {REPO_URL}
+> agent-plan-lint statically validates a coding agent's proposed plan against a project policy before it runs: dependency cycles, writes outside the allowed paths, two parallel tasks writing one file, success criteria the model grades itself on. 36 typed codes, non-zero exit, one dependency. Extracted from a parallel-agent control plane. Apache-2.0. Written with AI assistance (Claude Code), reviewed by me. {PYPI_URL} https://github.com/Alex-lop/agent-plan-lint
 
 **Changelog News** — https://changelog.com/news/submit, $0. "Submitting your own work is also encouraged"; "🚫 How-to's and tutorials."; "🚫 Commercial products/services. Sponsorship is your path."; "Do your best to convince us why something is newsworthy." (`research/channels.md:32`). No tutorial framing, no product, lead with the gap. **Blurb, 80 words (cap 80):**
 
-> Coding agents now write a plan before the code, and nothing checks the plan. agent-plan-lint checks it statically: cycles, writes outside the allowed paths, two parallel tasks fighting over one file, success criteria the model would grade itself on. 36 typed codes, non-zero exit, drops into CI. Extracted from a control plane for parallel agents; every claim in its README is asserted against the code by a test. Apache-2.0. Written with AI assistance (Claude Code), reviewed by me. {PYPI_URL} {REPO_URL}
+> Coding agents now write a plan before the code, and nothing checks the plan. agent-plan-lint checks it statically: cycles, writes outside the allowed paths, two parallel tasks fighting over one file, success criteria the model would grade itself on. 36 typed codes, non-zero exit, drops into CI. Extracted from a control plane for parallel agents; every claim in its README is asserted against the code by a test. Apache-2.0. Written with AI assistance (Claude Code), reviewed by me. {PYPI_URL} https://github.com/Alex-lop/agent-plan-lint
 
 *Cites for both blurbs, as anchors: PL opening (what it catches); PL §What it catches ("`agent-plan-lint codes` prints them with their meanings" — the block under it prints 36); PL §60 seconds (exit status and CI); PL §How it is tested (one runtime dependency, and the README held to the code by tests); PL §Where it came from (extracted from Graphene). The 36 is re-checked at §C row 0b with everything else countable.*
 
-### A.3 Bluesky thread — 4 posts, measured with the real URLs substituted and `{PL_TESTS}` standing in for a 3-digit count: 295 / 264 / 228 / 287 of 300
+### A.3 Bluesky thread — 4 posts, measured with the real URLs substituted and `488` standing in for a 3-digit count: 295 / 264 / 228 / 287 of 300
 
 > **1/** agent-plan-lint is on PyPI. Your coding agent proposes a plan; your project has a policy. It decides statically whether the plan fits inside the policy, before anything runs, and exits non-zero with a typed code per finding.
 >
@@ -89,10 +89,10 @@ Nothing here is sent by the agent. Every item is a draft for Alex to send (RED a
 
 > **3/** What it does not do: no subprocess, no socket, no --fix, no config file, no daemon. It does not read the files your plan names. It cannot tell you whether the work is a good idea. It checks a plan against a policy, nothing else.
 
-> **4/** Extracted from Graphene, my publication-control layer for parallel coding agents. {PL_TESTS} tests on CPython 3.11-3.13, plus a suite that fails when the README claims something no test backs. Written with AI assistance (Claude Code), reviewed by me.
-> {REPO_URL}
+> **4/** Extracted from Graphene, my publication-control layer for parallel coding agents. 488 tests on CPython 3.11-3.13, plus a suite that fails when the README claims something no test backs. Written with AI assistance (Claude Code), reviewed by me.
+> https://github.com/Alex-lop/agent-plan-lint
 
-*Cites, as anchors: PL opening; PL §What it catches (the 36 codes); PL §What it does not do (the does-not-do list, and "It does not know whether the work is a good idea"); PL §How it is tested ({PL_TESTS}, the CI matrix, and the README-truth suite); PL §Where it came from.*
+*Cites, as anchors: PL opening; PL §What it catches (the 36 codes); PL §What it does not do (the does-not-do list, and "It does not know whether the work is a good idea"); PL §How it is tested (488, the CI matrix, and the README-truth suite); PL §Where it came from.*
 
 ### A.4 "Why this exists" — one paragraph, for the docs site and any reply that asks
 
