@@ -231,10 +231,18 @@ so and report the `(none)` stratum's size rather than quietly widening back to a
    the PR itself touched, because the question is about the PR's tests. A repo-wide
    regression that the PR causes elsewhere is invisible to this instrument.
 2. **`error` at base counts as `FAIL` when the candidate passes.** SWE-bench's log parsers
-   do the same (a test that cannot import at base is a failing test), and it is the
-   dominant discriminating shape for PRs that add a module and its test together. The
-   safeguard against the obvious abuse — a broken environment erroring everything — is the
-   whole-run fatal rule above, plus the buildable-set admission criterion.
+   do the same (a test that cannot import at base is a failing test). **It is not one
+   mechanism.** Crosstabbing `base_outcome` against `pre_patch_outcome` over the 2,948
+   `FAIL_TO_PASS` rows (`python3 analysis.py`, `== RED-TEAM PASS ==` block, tag `[A2]`)
+   gives: 1,727 rows (58.6%) are ids that existed and *passed* on the unpatched base and
+   were turned into collection errors by an import the PR's own test-only patch added;
+   only 454 (15.4%) are the module-arrives-with-its-test shape; 635 (21.5%) are newly-added
+   tests failing an assertion. An earlier draft of this file called the second the dominant
+   shape; it is not, and `WRITEUP.md` §Results 3 publishes the full table. The safeguard
+   against the obvious abuse — a broken environment erroring everything — is the whole-run
+   fatal rule above, plus the buildable-set admission criterion; the safeguard against the
+   *collateral* shape driving a headline is that the per-PR result is re-scored without
+   those rows and is unchanged at 0/99.
 3. **`--continue-on-collection-errors`.** Without it a single unimportable module aborts
    the whole pytest session (exit 2) and erases the evidence for every other file in the
    run set. With it, that module's tests are `error` and the rest still report.

@@ -92,3 +92,127 @@ selfcheck OK
 [study] START helpfulengineering/supply-graph-ai#425
 [study] DONE  cyzus/suzent#127 DISCRIMINATING tests=19 f2p=12 p2p=7 unres=0  86.4s
 [study] START helpfulengineering/supply-graph-ai#424
+[study] DONE  helpfulengineering/supply-graph-ai#428 DISCRIMINATING tests=8 f2p=8 p2p=0 unres=0  151.4s
+[study] START helpfulengineering/supply-graph-ai#423
+[study] DONE  helpfulengineering/supply-graph-ai#424 DISCRIMINATING tests=16 f2p=12 p2p=4 unres=0  79.3s
+[study] START helpfulengineering/supply-graph-ai#422
+[study] DONE  helpfulengineering/supply-graph-ai#423 DISCRIMINATING tests=14 f2p=14 p2p=0 unres=0  35.3s
+[study] START druide67/asiai#90
+[study] DONE  druide67/asiai#90 DISCRIMINATING tests=51 f2p=10 p2p=41 unres=0  21.4s
+[study] START druide67/asiai#88
+[study] DONE  helpfulengineering/supply-graph-ai#425 DISCRIMINATING tests=15 f2p=10 p2p=5 unres=0  131.8s
+[study] START druide67/asiai#85
+[study] DONE  druide67/asiai#85 DISCRIMINATING tests=41 f2p=2 p2p=39 unres=0  20.3s
+[study] START cymoo/lovia#197
+[study] DONE  druide67/asiai#88 DISCRIMINATING tests=42 f2p=2 p2p=40 unres=0  30.5s
+[study] START cymoo/lovia#196
+[study] DONE  cymoo/lovia#196 DISCRIMINATING tests=49 f2p=5 p2p=44 unres=0  42.5s
+[study] START cymoo/lovia#194
+[study] DONE  cymoo/lovia#197 DISCRIMINATING tests=48 f2p=1 p2p=47 unres=0  57.6s
+[study] START cymoo/lovia#193
+[study] DONE  cymoo/lovia#194 DISCRIMINATING tests=165 f2p=149 p2p=16 unres=0  49.0s
+[study] START cymoo/lovia#192
+[study] DONE  cymoo/lovia#193 DISCRIMINATING tests=193 f2p=11 p2p=182 unres=0  63.2s
+[study] START taoq-ai/ziran#406
+[study] DONE  helpfulengineering/supply-graph-ai#422 DISCRIMINATING tests=10 f2p=1 p2p=8 unres=1  189.6s
+[study] START taoq-ai/ziran#403
+[study] DONE  cymoo/lovia#192 DISCRIMINATING tests=209 f2p=50 p2p=137 unres=22  90.9s
+[study] START taoq-ai/ziran#402
+[study] DONE  taoq-ai/ziran#406 DISCRIMINATING tests=20 f2p=19 p2p=0 unres=1  83.9s
+[study] START taoq-ai/ziran#401
+[study] DONE  taoq-ai/ziran#403 DISCRIMINATING tests=30 f2p=12 p2p=18 unres=0  108.0s
+[study] START taoq-ai/ziran#391
+[study] DONE  taoq-ai/ziran#402 DISCRIMINATING tests=24 f2p=23 p2p=1 unres=0  79.3s
+[study] START agentcage/agentcage#337
+[study] DONE  taoq-ai/ziran#401 DISCRIMINATING tests=11 f2p=1 p2p=10 unres=0  83.4s
+[study] START agentcage/agentcage#336
+[study] DONE  taoq-ai/ziran#391 DISCRIMINATING tests=67 f2p=38 p2p=29 unres=0  59.4s
+[study] START agentcage/agentcage#335
+[study] DONE  agentcage/agentcage#337 DISCRIMINATING tests=51 f2p=10 p2p=41 unres=0  24.3s
+[study] START agentcage/agentcage#334
+[study] DONE  agentcage/agentcage#336 DISCRIMINATING tests=72 f2p=5 p2p=67 unres=0  14.4s
+[study] START agentcage/agentcage#329
+[study] DONE  agentcage/agentcage#335 DISCRIMINATING tests=35 f2p=35 p2p=0 unres=0  12.8s
+[study] START karanhudia/borg-ui#854
+[study] DONE  agentcage/agentcage#334 DISCRIMINATING tests=41 f2p=41 p2p=0 unres=0  12.7s
+[study] START karanhudia/borg-ui#853
+[study] DONE  agentcage/agentcage#329 DISCRIMINATING tests=210 f2p=49 p2p=161 unres=0  20.3s
+[study] START karanhudia/borg-ui#852
+[study] DONE  karanhudia/borg-ui#854 DISCRIMINATING tests=68 f2p=1 p2p=67 unres=0  36.2s
+[study] START karanhudia/borg-ui#851
+[study] DONE  karanhudia/borg-ui#852 DISCRIMINATING tests=47 f2p=6 p2p=41 unres=0  142.9s
+[study] START karanhudia/borg-ui#850
+[study] DONE  karanhudia/borg-ui#851 DISCRIMINATING tests=66 f2p=7 p2p=59 unres=0  156.8s
+[study] START ffroliva/gflow-cli#527
+[study] DONE  karanhudia/borg-ui#850 DISCRIMINATING tests=20 f2p=1 p2p=19 unres=0  34.1s
+[study] START ffroliva/gflow-cli#525
+[study] DONE  ffroliva/gflow-cli#525 DISCRIMINATING tests=288 f2p=20 p2p=268 unres=0  69.9s
+[study] START ffroliva/gflow-cli#518
+[study] DONE  ffroliva/gflow-cli#527 DISCRIMINATING tests=239 f2p=11 p2p=228 unres=0  74.5s
+[study] START MadSkittles/Router-Maestro#166
+[study] DONE  ffroliva/gflow-cli#518 DISCRIMINATING tests=56 f2p=2 p2p=54 unres=0  48.7s
+[study] START MadSkittles/Router-Maestro#162
+[study] DONE  MadSkittles/Router-Maestro#166 DISCRIMINATING tests=730 f2p=16 p2p=713 unres=1  48.0s
+[study] START MadSkittles/Router-Maestro#160
+[study] DONE  MadSkittles/Router-Maestro#162 DISCRIMINATING tests=36 f2p=4 p2p=32 unres=0  23.2s
+[study] START MadSkittles/Router-Maestro#157
+[study] DONE  MadSkittles/Router-Maestro#160 DISCRIMINATING tests=117 f2p=9 p2p=108 unres=0  23.5s
+[study] START MadSkittles/Router-Maestro#156
+[study] DONE  MadSkittles/Router-Maestro#157 DISCRIMINATING tests=131 f2p=6 p2p=106 unres=19  23.4s
+[study] START pvliesdonk/markdown-vault-mcp#1171
+[study] DONE  MadSkittles/Router-Maestro#156 DISCRIMINATING tests=583 f2p=90 p2p=493 unres=0  44.4s
+[study] START pvliesdonk/markdown-vault-mcp#1169
+[study] DONE  pvliesdonk/markdown-vault-mcp#1171 DISCRIMINATING tests=423 f2p=55 p2p=367 unres=1  108.8s
+[study] START pvliesdonk/markdown-vault-mcp#1141
+[study] DONE  pvliesdonk/markdown-vault-mcp#1169 DISCRIMINATING tests=749 f2p=84 p2p=665 unres=0  87.1s
+[study] START pvliesdonk/markdown-vault-mcp#1132
+[study] DONE  pvliesdonk/markdown-vault-mcp#1132 DISCRIMINATING tests=91 f2p=3 p2p=88 unres=0  60.6s
+[study] START pvliesdonk/markdown-vault-mcp#1000
+[study] DONE  pvliesdonk/markdown-vault-mcp#1141 DISCRIMINATING tests=45 f2p=3 p2p=42 unres=0  62.7s
+[study] START mcp-hangar/mcp-hangar#662
+[study] DONE  pvliesdonk/markdown-vault-mcp#1000 DISCRIMINATING tests=383 f2p=11 p2p=372 unres=0  47.6s
+[study] START mcp-hangar/mcp-hangar#661
+[study] DONE  mcp-hangar/mcp-hangar#662 DISCRIMINATING tests=21 f2p=12 p2p=9 unres=0  53.8s
+[study] START mcp-hangar/mcp-hangar#660
+[study] DONE  mcp-hangar/mcp-hangar#661 DISCRIMINATING tests=9 f2p=9 p2p=0 unres=0  34.4s
+[study] START mcp-hangar/mcp-hangar#657
+[study] DONE  mcp-hangar/mcp-hangar#660 DISCRIMINATING tests=19 f2p=9 p2p=10 unres=0  56.8s
+[study] START mcp-hangar/mcp-hangar#656
+[study] DONE  mcp-hangar/mcp-hangar#657 DISCRIMINATING tests=6 f2p=6 p2p=0 unres=0  38.9s
+[study] START harbor-framework/harbor#2862
+[study] DONE  karanhudia/borg-ui#853 DISCRIMINATING tests=185 f2p=14 p2p=171 unres=0  672.7s
+[study] START harbor-framework/harbor#2857
+[study] DONE  mcp-hangar/mcp-hangar#656 DISCRIMINATING tests=7 f2p=6 p2p=1 unres=0  55.7s
+[study] START harbor-framework/harbor#2605
+[study] DONE  harbor-framework/harbor#2605 DISCRIMINATING tests=57 f2p=45 p2p=12 unres=0  94.9s
+[study] START Soju06/codex-lb#1978
+[study] DONE  harbor-framework/harbor#2862 DISCRIMINATING tests=10 f2p=6 p2p=4 unres=0  142.5s
+[study] START Soju06/codex-lb#1977
+[study] DONE  harbor-framework/harbor#2857 DISCRIMINATING tests=79 f2p=12 p2p=67 unres=0  166.2s
+[study] START Soju06/codex-lb#1974
+[study] DONE  Soju06/codex-lb#1977 DISCRIMINATING tests=159 f2p=29 p2p=122 unres=8  485.3s
+[study] START Soju06/codex-lb#1973
+[study] DONE  Soju06/codex-lb#1978 DISCRIMINATING tests=1320 f2p=25 p2p=1295 unres=0  509.2s
+[study] START Soju06/codex-lb#1972
+[study] DONE  Soju06/codex-lb#1973 DISCRIMINATING tests=743 f2p=742 p2p=0 unres=1  107.9s
+[study] START Datus-ai/Datus-agent#1370
+[study] DONE  Datus-ai/Datus-agent#1370 DISCRIMINATING tests=62 f2p=10 p2p=52 unres=0  101.7s
+[study] START Datus-ai/Datus-agent#1369
+[study] DONE  Soju06/codex-lb#1972 DISCRIMINATING tests=813 f2p=8 p2p=804 unres=1  191.4s
+[study] START Datus-ai/Datus-agent#1361
+[study] DONE  Datus-ai/Datus-agent#1361 DISCRIMINATING tests=40 f2p=4 p2p=36 unres=0  94.0s
+[study] START Datus-ai/Datus-agent#1358
+[study] DONE  Datus-ai/Datus-agent#1369 DISCRIMINATING tests=269 f2p=48 p2p=206 unres=15  120.3s
+[study] START Datus-ai/Datus-agent#1354
+[study] DONE  Datus-ai/Datus-agent#1358 DISCRIMINATING tests=148 f2p=1 p2p=73 unres=74  79.4s
+[study] START gadievron/raptor#922
+[study] DONE  gadievron/raptor#922 DISCRIMINATING tests=24 f2p=5 p2p=16 unres=3  44.8s
+[study] START gadievron/raptor#921
+[study] DONE  gadievron/raptor#921 DISCRIMINATING tests=43 f2p=7 p2p=36 unres=0  30.9s
+[study] START gadievron/raptor#920
+[study] DONE  Soju06/codex-lb#1974 DISCRIMINATING tests=1919 f2p=748 p2p=1170 unres=1  1484.2s
+[study] START gadievron/raptor#919
+[study] DONE  gadievron/raptor#919 DISCRIMINATING tests=43 f2p=1 p2p=30 unres=12  33.1s
+[study] DONE  gadievron/raptor#920 UNRESOLVED tests=2 f2p=0 p2p=0 unres=2 base_run: timeout 1829.5s
+[study] DONE  Datus-ai/Datus-agent#1354 UNRESOLVED tests=0 f2p=0 p2p=0 unres=0 base_run: timeout 4575.9s
+[study] all done

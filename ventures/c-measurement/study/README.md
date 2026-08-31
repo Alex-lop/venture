@@ -50,6 +50,12 @@ python3 runner.py --selfcheck    # parser + verdict asserts; no docker, no netwo
   data.
 - `logs/`, `raw/` — per-phase container output and cached API responses. **Gitignored:**
   raw PR payloads carry author logins and emails, which never reach a tracked file.
+- `analysis.py` — reprints every number in `WRITEUP.md` / `SUMMARY.md` from the two CSVs plus
+  `../pilot/results.csv`, `../corpus/candidates-v2.csv` and `../corpus/funnel-v2.csv`
+  (the tracked funnel). `--selfcheck` runs the interval
+  maths against closed forms; no docker, no network, writes nothing.
+- `WRITEUP.md` — the study. `SUMMARY.md` — one page. `DATASET-CARD.md` — the columns, the
+  provenance, the licensing, and what is deliberately absent.
 
 ## Before quoting a number
 
