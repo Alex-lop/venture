@@ -14,12 +14,11 @@ the same file, success criteria the agent would grade itself on, attempt budgets
 not add up — and exits non-zero with a typed code per finding.
 
 **Status: 0.1.0, release in progress; install lines appear here when the PyPI upload lands.**
-Until then there is nothing to install, but there is something to read: the working copy —
-source, tests, demo and comparison page — is
-[`ventures/plan-lint/`](https://github.com/Alex-lop/venture/tree/main/ventures/plan-lint) in
-`Alex-lop/venture`, checkpointed 2026-08-31 while its final verification round runs. A
-working copy is not a release: what is there can still change before the upload, and there
-is no package repository or issue tracker until then.
+The source is released: [`Alex-lop/agent-plan-lint`](https://github.com/Alex-lop/agent-plan-lint) at tag
+[`v0.1.0`](https://github.com/Alex-lop/agent-plan-lint/releases/tag/v0.1.0) — code, tests, demo and comparison page, with
+[its own issue tracker](https://github.com/Alex-lop/agent-plan-lint/issues). The upload to the package index is a step only the
+principal can run (`ASKS.md` ASK-015 in the monorepo); until it lands there is nothing to
+install, and the install line appears here in the same commit that records the upload.
 
 ## What it prints
 
@@ -70,7 +69,7 @@ are not a shape a runtime can execute. The full table is in the package README.
 
 ## How it is tested
 
-411 collected tests, on CPython 3.11, 3.12 and 3.13, on Ubuntu and macOS. The suite
+488 collected tests, on CPython 3.11, 3.12 and 3.13, on Ubuntu and macOS. The suite
 includes the CLI driven as a subprocess with the demo output compared byte for byte
 against `demo/OUTPUT.txt`; a doc-truth test (`tests/test_readme_truth.py`) that asserts the
 README's codes, commands, output, "does not do" list and version against the code, and
