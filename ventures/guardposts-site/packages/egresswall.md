@@ -13,11 +13,10 @@ record your policy never approved — by refusing the whole response instead of 
 Zero runtime dependencies, Python 3.11+, one screening core and three places to put it: an
 MCP stdio proxy, a Claude Code hook, and a CI check.
 
-**Status: 0.1.0, release in progress; install lines appear here when the PyPI upload lands.**
-Until then there is nothing to install and nothing public to read: the working copy
-(`ventures/egress-guard/`, with its tests, demo and comparison page) is not pushed to
-[`Alex-lop/venture`](https://github.com/Alex-lop/venture) as of 2026-08-31. The path and the
-issue tracker appear here when that push lands.
+**Status: 0.1.0 — [source released](https://github.com/Alex-lop/egresswall) (tag `v0.1.0`); release in progress; install lines appear here when the PyPI upload lands.**
+The source, tests, demo and comparison page are public at
+[`Alex-lop/egresswall`](https://github.com/Alex-lop/egresswall); the package-index upload is pending
+the principal's action (ASK-015 in the venture repo). Until it lands there is no `pip install` line here.
 
 Why refuse rather than redact: a redacted response still means your tool assembled the
 value, put it on the wire, and something downstream had to be trusted to remove it. A
@@ -79,12 +78,12 @@ position, `<key#3>`, and never by its text — so the report is safe to log.
 
 ## How it is tested
 
-413 collected tests, on CPython 3.11, 3.12 and 3.13, on ubuntu-latest and macos-latest;
+675 collected tests, on CPython 3.11, 3.12 and 3.13, on ubuntu-latest and macos-latest;
 `./scripts/check.sh` runs exactly what CI runs. Every detector has a positive and a
 negative case, and a payload carrying the most text a policy allows screens in under a
 second in each of six adversarial shapes, so a test fails if matching stops being cheap.
 The proxy is driven against a real MCP server process, including a 200-call conversation
-that would surface a deadlock and 44 hand-written hostile servers, one per test function.
+that would surface a deadlock and 49 hand-written hostile servers, one per test function.
 `tests/test_readme_truth.py` executes every command block in the README marked runnable and
 compares the output; `tests/test_comparison_truth.py` holds every quotation, star count,
 licence and release date on the comparison page to an archived copy of the response it came

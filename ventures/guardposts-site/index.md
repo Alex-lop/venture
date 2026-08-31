@@ -22,7 +22,7 @@ and no email address on this site. If you want to reach me, open a GitHub issue.
 | Package | What it decides | Status |
 | --- | --- | --- |
 | [`agent-plan-lint`](packages/agent-plan-lint.md) | Does this proposed agent plan fit inside this project's policy — before anything runs? Exits non-zero with a typed code per finding. | 0.1.0 — [source released](https://github.com/Alex-lop/agent-plan-lint) (tag `v0.1.0`); release in progress; install lines appear here when the PyPI upload lands |
-| [`egresswall`](packages/egresswall.md) | Does this MCP tool response carry an identifier, a secret or a denied field? If so it is refused whole, never redacted. | 0.1.0, release in progress; install lines appear here when the PyPI upload lands |
+| [`egresswall`](packages/egresswall.md) | Does this MCP tool response carry an identifier, a secret or a denied field? If so it is refused whole, never redacted. | 0.1.0 — [source released](https://github.com/Alex-lop/egresswall) (tag `v0.1.0`); release in progress; install lines appear here when the PyPI upload lands |
 | [`guardrail-checkup`](packages/guardrail-checkup.md) | Run it on your own repo, get the six-section report of what an agent could do here that nothing stops. | 0.1.0 working copy, in verification; not released |
 
 All three exist as complete working copies — tests, a runnable demo script, a captured
@@ -31,9 +31,9 @@ source is released at [`Alex-lop/agent-plan-lint`](https://github.com/Alex-lop/a
 upload is pending the principal's action. `guardrail-checkup`'s working copy is in the public
 monorepo, checkpointed mid-verification:
 [`ventures/guardrail-checkup/`](https://github.com/Alex-lop/venture/tree/main/ventures/guardrail-checkup).
-`egresswall`'s working copy (`ventures/egress-guard/`) is not pushed yet; its path appears
-here when that push lands. **Nothing is installable yet:** the two unreleased trees can still
-change, and each install line appears here when its upload lands.
+`egresswall`'s source is released at [`Alex-lop/egresswall`](https://github.com/Alex-lop/egresswall) (tag `v0.1.0`); its
+package-index upload is pending the principal's action. **Nothing is installable yet:** each install line appears here when its upload lands, and the
+`guardrail-checkup` tree can still change.
 
 ## The study
 
