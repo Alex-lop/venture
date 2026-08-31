@@ -10,7 +10,7 @@ Nothing here is sent by the agent. Every item is a draft for Alex to send (RED a
 
 > **Release-time re-sync required (orchestrator, 2026-08-31):** the two packages were still in their final verification round when this was drafted, so test counts and `PL:`/`EW:` README line cites drift. Before posting: re-read both READMEs, re-run `pytest --collect-only -q | grep -c ::` in each, re-check `demo/OUTPUT.txt`, add `git clone {REPO_URL} && cd egresswall &&` before `demo/demo.sh` in §B.1 (the wheel does not ship `demo/`), relabel the 60/80-word and 80-char caps as self-imposed budgets (neither venue publishes a limit), and apply the `mcp-server` topic to egresswall only.
 
-**Status: DRAFTED. Nothing sent, nothing posted.** The agent posts nothing (`CLAUDE.md` §2 RED); the principal posts every item. **No price and no hosted tier appears anywhere here** — Changelog News bars us outright if we look commercial ("🚫 Commercial products/services. Sponsorship is your path.", `research/channels.md:32`) — and nothing names a person. **Blocked on:** `{PYPI_URL}` / `{REPO_URL}` / `{SITE_URL}` / `{CONTACT_EMAIL}` are placeholders the release fills, so are the three counts `{PL_TESTS}` / `{EW_TESTS}` / `{EW_HOSTILE_SERVERS}` (see the number rule below and §C row 0b), `{STUDY_URL}` stays a placeholder until Track M is public, and for egresswall the `mcp-name:` token in §B.3 must land in the README **before** the upload.
+**Status: DRAFTED. Nothing sent, nothing posted.** The agent posts nothing (`CLAUDE.md` §2 RED); the principal posts every item. **No price and no hosted tier appears anywhere here** — Changelog News bars us outright if we look commercial ("🚫 Commercial products/services. Sponsorship is your path.", `research/channels.md:32`) — and nothing names a person. **Blocked on:** `{PYPI_URL}` / `{REPO_URL}` / `https://alex-lop.github.io/guardposts/` / `{CONTACT_EMAIL}` are placeholders the release fills, so are the three counts `{PL_TESTS}` / `{EW_TESTS}` / `{EW_HOSTILE_SERVERS}` (see the number rule below and §C row 0b), `https://alex-lop.github.io/guardposts/study.html` stays a placeholder until Track M is public, and for egresswall the `mcp-name:` token in §B.3 must land in the README **before** the upload.
 
 **Truth rule.** Every capability sentence below is a README sentence with a test behind it: `ventures/plan-lint/README.md` = **PL**, `ventures/egress-guard/README.md` = **EW**. Both READMEs are held to their code by `tests/test_readme_truth.py` (PL §How it is tested, EW §How it is tested), which is what makes citing them worth anything. **AI-assistance disclosure is in every draft and is not optional.** Tone is `outreach/track-h/opener.md`: what it does, what it never does, what is unproven, and "nothing yet" when asked what it sells.
 
@@ -62,7 +62,7 @@ Nothing here is sent by the agent. Every item is a draft for Alex to send (RED a
 >
 > Where it came from: the plan admission gate out of Graphene, my publication-control layer for parallel coding agents, ported with its issue codes and its tests (PL §Where it came from). {PL_TESTS} tests on CPython 3.11/3.12/3.13, Ubuntu and macOS (PL §How it is tested); one runtime dependency, pydantic (PL §How it is tested: "The only runtime dependency is `pydantic>=2.7`").
 >
-> What is unproven: nobody but me has run this on a real plan, and I have no evidence that the findings it reports correlate with agent failures you would actually have suffered — that is what I want out of posting it. The `plan-lint` package on PyPI had the idea first and owns that name and that console script, which is why this one is `agent-plan-lint` (`docs/comparison.md` §The one direct predecessor: "the same idea, published first"). The full comparison — OPA/Rego, Cedar, Kyverno, LangGraph, CrewAI, Claude Code hooks, Cursor rules — is at {SITE_URL}. It cannot tell you whether the plan is a *good idea*; it checks a plan against a policy and nothing else (PL §What it does not do: "It does not know whether the work is a good idea").
+> What is unproven: nobody but me has run this on a real plan, and I have no evidence that the findings it reports correlate with agent failures you would actually have suffered — that is what I want out of posting it. The `plan-lint` package on PyPI had the idea first and owns that name and that console script, which is why this one is `agent-plan-lint` (`docs/comparison.md` §The one direct predecessor: "the same idea, published first"). The full comparison — OPA/Rego, Cedar, Kyverno, LangGraph, CrewAI, Claude Code hooks, Cursor rules — is at https://alex-lop.github.io/guardposts/. It cannot tell you whether the plan is a *good idea*; it checks a plan against a policy and nothing else (PL §What it does not do: "It does not know whether the work is a good idea").
 >
 > Written with AI assistance (Claude Code). I reviewed every line, the tests are why I trust it, and the mistakes are mine.
 
@@ -96,7 +96,7 @@ Nothing here is sent by the agent. Every item is a draft for Alex to send (RED a
 
 ### A.4 "Why this exists" — one paragraph, for the docs site and any reply that asks
 
-> I build the seatbelt layer for coding agents, and a plan is the cheapest place to catch a mistake: after it runs you are reading a diff, before it runs you are reading a document. This package is that gate, lifted out of a larger control plane and made to stand alone. It is a package and not a service because I have nothing to sell you — the measurement I am actually running is separate and public ({STUDY_URL}), and it asks how often a merged agent PR's own tests pass on the commit it branched from, which is the same worry one layer later. If the gate is wrong about your plan, open an issue or mail {CONTACT_EMAIL}; that is the whole business model today. It was written with AI assistance (Claude Code) and reviewed line by line; the repo says so too.
+> I build the seatbelt layer for coding agents, and a plan is the cheapest place to catch a mistake: after it runs you are reading a diff, before it runs you are reading a document. This package is that gate, lifted out of a larger control plane and made to stand alone. It is a package and not a service because I have nothing to sell you — the measurement I am actually running is separate and public (https://alex-lop.github.io/guardposts/study.html), and it asks how often a merged agent PR's own tests pass on the commit it branched from, which is the same worry one layer later. If the gate is wrong about your plan, open an issue or mail {CONTACT_EMAIL}; that is the whole business model today. It was written with AI assistance (Claude Code) and reviewed line by line; the repo says so too.
 
 ---
 
@@ -136,7 +136,7 @@ Nothing here is sent by the agent. Every item is a draft for Alex to send (RED a
 >
 > What is unproven, and where it breaks: it does not defeat obfuscation — the ten regexes match ASCII literals, so a Unicode-confusable separator or a base64-wrapped value passes, and it assumes a buggy tool rather than an adversarial one (EW §What it does not do: "It does not defeat obfuscation"). The defaults are deliberately blunt: a response with a field called `rows` is refused until you decide it should not be (EW §What it catches: "Those defaults are deliberately blunt"). And no one but me has run it against a production tool.
 >
-> Where it came from: extracted from RegLineage, my capability-lease runtime for AI data access, where this screen sat on the model-facing and MCP-facing boundaries (EW §Where it came from). {EW_TESTS} tests, including {EW_HOSTILE_SERVERS} hand-written hostile MCP servers, one per test function (EW §How it is tested). How it compares to Presidio, LLM Guard, Snyk Agent Scan, Lasso's MCP Gateway, Guardrails AI and Claude Code's own permissions is at {SITE_URL}; the short version is that most of them detect and then rewrite.
+> Where it came from: extracted from RegLineage, my capability-lease runtime for AI data access, where this screen sat on the model-facing and MCP-facing boundaries (EW §Where it came from). {EW_TESTS} tests, including {EW_HOSTILE_SERVERS} hand-written hostile MCP servers, one per test function (EW §How it is tested). How it compares to Presidio, LLM Guard, Snyk Agent Scan, Lasso's MCP Gateway, Guardrails AI and Claude Code's own permissions is at https://alex-lop.github.io/guardposts/; the short version is that most of them detect and then rewrite.
 >
 > Written with AI assistance (Claude Code). I reviewed every line and the mistakes are mine.
 
@@ -193,7 +193,7 @@ Place it at `Alex-lop`'s alphabetical position in that section. (The section as 
 
 ### B.6 "Why this exists" — one paragraph
 
-> The teams I want to be useful to are running agents next to governed data, and the failure they describe is not a jailbreak — it is a tool that answered honestly with one field too many. Everything on the shelf detects and then rewrites, which leaves you trusting the rewriter; this refuses instead, at the value, at the transport, and reports the path rather than the value so the log is safe to keep. It came out of a lease runtime where that rule already existed, and it is a package and not a service because there is nothing here to sell — the measurement I am running asks the same question from the other end ({STUDY_URL}): whether the checks we put around agent work actually discriminate. If it blocks something it should not, that is an issue I want to read — the repo's Issues, or {CONTACT_EMAIL}. It was written with AI assistance (Claude Code) and reviewed line by line; the repo says so too.
+> The teams I want to be useful to are running agents next to governed data, and the failure they describe is not a jailbreak — it is a tool that answered honestly with one field too many. Everything on the shelf detects and then rewrites, which leaves you trusting the rewriter; this refuses instead, at the value, at the transport, and reports the path rather than the value so the log is safe to keep. It came out of a lease runtime where that rule already existed, and it is a package and not a service because there is nothing here to sell — the measurement I am running asks the same question from the other end (https://alex-lop.github.io/guardposts/study.html): whether the checks we put around agent work actually discriminate. If it blocks something it should not, that is an issue I want to read — the repo's Issues, or {CONTACT_EMAIL}. It was written with AI assistance (Claude Code) and reviewed line by line; the repo says so too.
 
 ---
 
@@ -231,7 +231,7 @@ Sponsorship is your path.", `research/channels.md` §1), and the study is not a 
 
 **What is being launched:** the Track M study — `ventures/c-measurement/study/WRITEUP.md`,
 `SUMMARY.md`, `DATASET-CARD.md`, the two result CSVs and the instrument (`runner.py`,
-`analysis.py`). **Blocked on one thing:** a public URL. Every `{STUDY_URL}` below is a
+`analysis.py`). **Blocked on one thing:** a public URL. Every `https://alex-lop.github.io/guardposts/study.html` below is a
 placeholder; nothing here can be posted until the study is live somewhere linkable.
 
 **Revised 2026-08-31.** Three red teams reviewed the write-up; `WRITEUP.md` §Red-team pass
@@ -334,12 +334,12 @@ number computed on a different denominator.)*
 ### 2. Bluesky thread (6 posts, each ≤300 characters)
 
 Post 1/6 carries the link; the rest are replies in order. Measured lengths with a 36-character
-URL substituted for `{STUDY_URL}`: 268, 246, 254, 251, 243, 264. Bluesky counts a link as its
+URL substituted for `https://alex-lop.github.io/guardposts/study.html`: 268, 246, 254, 251, 243, 264. Bluesky counts a link as its
 full text, so a URL longer than ~70 characters breaks post 1 — shorten it or move it to 6/6.
 
 > **1/6** I ran the tests from 107 merged AI-agent pull requests against the commit each PR
 > branched from, to ask whether they could have caught anything. 25 Python repos, 99 reached a
-> verdict. Not a comparison to human PRs — no control arm. {STUDY_URL}
+> verdict. Not a comparison to human PRs — no control arm. https://alex-lop.github.io/guardposts/study.html
 
 > **2/6** The pre-registered number is about the tests each PR *adds*: 1 of 99 added only
 > tests that already passed at its base commit. Wilson 95% [0.2%, 5.5%]. On fix-titled PRs,
@@ -359,7 +359,7 @@ full text, so a URL longer than ~70 characters breaks post 1 — shorten it or m
 
 > **6/6** Caveats: 25 repos, chosen because their base installs from a lockfile and runs
 > offline. I called that the well-maintained tail; withdrawn — they have *fewer* stars than
-> the ones that failed to build. Method, CSVs, red-team log: {STUDY_URL}
+> the ones that failed to build. Method, CSVs, red-team log: https://alex-lop.github.io/guardposts/study.html
 
 ### 3. PyCoder's Weekly and Changelog News — submission blurb
 
@@ -368,7 +368,7 @@ Both take the same text. PyCoder's: https://pycoders.com/submissions → "Submit
 share"). Changelog News: https://changelog.com/news/submit ($0, free account; "Submitting
 your own work is also encouraged"; no how-tos, no commercial products). Both are weekly and
 notify only on publication. **Title:** *Do merged AI-agent PRs ship tests that could have
-caught anything?* **URL:** `{STUDY_URL}`
+caught anything?* **URL:** `https://alex-lop.github.io/guardposts/study.html`
 
 > A differential-execution study of 107 merged, agent-trailered pull requests across 25 public
 > Python repositories: each PR's own test files are applied to the PR's base commit, run twice
