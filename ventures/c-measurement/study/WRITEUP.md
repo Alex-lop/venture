@@ -265,8 +265,7 @@ commit" and as "existence-of-code evidence". **That is right for 15.4% of the ro
 for 58.6%.** The dominant shape is a pre-existing green test converted to an error by one
 import line the patch added — visible in `logs/Soju06__codex-lb__pr1973/run-base.log`
 (gitignored, present locally): `ImportError: cannot import name
-'HTTP_BRIDGE_EVENTLESS_TIMEOUT_CODE' from 'app.core.errors'` turns 742 previously-passing ids
-into `FAIL_TO_PASS` at once.
+'HTTP_BRIDGE_EVENTLESS_TIMEOUT_CODE' from 'app.core.errors'` turns 742 ids in one module into `FAIL_TO_PASS` at once, 729 of which passed on the unpatched base (13 were absent there).
 
 **This does not move the per-PR headline.** Re-scoring §Results 2 with every
 (`error`, `passed`) collateral row deleted still gives **0/99** [A]; and §Results 1's
@@ -421,9 +420,8 @@ runner — inflating the 7.5% unresolved rate, not the headline.
 
 **"Pre-registered" here means specified in writing before the run, in this repository — not
 lodged with a registry.** `research/precedents.md` (2026-08-30) states the quantity and the
-three objections; `METHOD.md` states the stratification and the verdict table; both predate
-`results-prs.csv`. Both live in the same git repository as the results, with no external
-timestamp, and `METHOD.md`'s mtime sits nine minutes after `smoke.log`'s and cites it. So this
+three objections; `METHOD.md` states the stratification and the verdict table; the commit predates the full run's rows. Both live in the same git repository as the results, with no external
+timestamp, and `METHOD.md`, `smoke.log` and the first `results-prs.csv` rows were committed together in `10fedb4` (2026-08-30 23:23 -0400, `git log --format='%h %ci' -- METHOD.md`); `METHOD.md` has since been edited by the red-team pass, so file mtimes no longer show the original ordering — the commit does. So this
 is **self-attestation**, and a reader who does not trust the author should treat it as such.
 **Two deviations from it matter, and both are recorded.**
 
