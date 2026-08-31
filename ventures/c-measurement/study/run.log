@@ -1,0 +1,94 @@
+selfcheck OK
+[study] 25 buildable repos, 0 PRs already done, 107 to run, jobs=3
+[study] uv cache 2763 MB (cap 8000 MB)
+[study] START open-reaction-database/ord-data#266
+[study] START open-reaction-database/ord-data#263
+[study] START open-reaction-database/ord-data#262
+[study] DONE  open-reaction-database/ord-data#262 UNRESOLVED tests=0 f2p=0 p2p=0 unres=0 install_failed_base 2.9s
+[study] START djtelicloud/grok-mcp-server#508
+[study] DONE  open-reaction-database/ord-data#263 DISCRIMINATING tests=20 f2p=20 p2p=0 unres=0  17.0s
+[study] START djtelicloud/grok-mcp-server#500
+[study] DONE  djtelicloud/grok-mcp-server#508 DISCRIMINATING tests=18 f2p=15 p2p=3 unres=0  16.6s
+[study] START djtelicloud/grok-mcp-server#33
+[study] DONE  open-reaction-database/ord-data#266 DISCRIMINATING tests=40 f2p=13 p2p=27 unres=0  24.0s
+[study] START Ishannaik/agent-sweep#12
+[study] DONE  djtelicloud/grok-mcp-server#500 DISCRIMINATING tests=19 f2p=6 p2p=13 unres=0  17.2s
+[study] START Ishannaik/agent-sweep#7
+[study] DONE  Ishannaik/agent-sweep#12 DISCRIMINATING tests=7 f2p=7 p2p=0 unres=0  12.6s
+[study] START Ishannaik/agent-sweep#3
+[study] DONE  Ishannaik/agent-sweep#3 UNRESOLVED tests=0 f2p=0 p2p=0 unres=0 install_failed_base 3.4s
+[study] START Ishannaik/agent-sweep#2
+[study] DONE  djtelicloud/grok-mcp-server#33 DISCRIMINATING tests=54 f2p=4 p2p=50 unres=0  23.4s
+[study] START commit-check/commit-check#540
+[study] DONE  Ishannaik/agent-sweep#2 UNRESOLVED tests=0 f2p=0 p2p=0 unres=0 install_failed_base 3.2s
+[study] START commit-check/commit-check#537
+[study] DONE  Ishannaik/agent-sweep#7 DISCRIMINATING tests=6 f2p=6 p2p=0 unres=0  10.6s
+[study] START commit-check/commit-check#534
+[study] DONE  commit-check/commit-check#534 DISCRIMINATING tests=164 f2p=3 p2p=161 unres=0  20.4s
+[study] START commit-check/commit-check#532
+[study] DONE  commit-check/commit-check#540 DISCRIMINATING tests=208 f2p=23 p2p=185 unres=0  22.6s
+[study] START commit-check/commit-check#506
+[study] DONE  commit-check/commit-check#537 DISCRIMINATING tests=211 f2p=18 p2p=193 unres=0  23.4s
+[study] START TeichAI/teich#26
+[study] DONE  commit-check/commit-check#506 DISCRIMINATING tests=38 f2p=2 p2p=36 unres=0  21.2s
+[study] START TeichAI/teich#25
+[study] DONE  commit-check/commit-check#532 DISCRIMINATING tests=161 f2p=3 p2p=157 unres=1  23.9s
+[study] START TeichAI/teich#23
+[study] DONE  TeichAI/teich#26 DISCRIMINATING tests=37 f2p=3 p2p=34 unres=0  36.3s
+[study] START ifnull/ha-airspace#63
+[study] DONE  TeichAI/teich#23 DISCRIMINATING tests=33 f2p=1 p2p=32 unres=0  30.5s
+[study] START ifnull/ha-airspace#59
+[study] DONE  TeichAI/teich#25 DISCRIMINATING tests=81 f2p=2 p2p=79 unres=0  35.9s
+[study] START ifnull/ha-airspace#58
+[study] DONE  ifnull/ha-airspace#63 DISCRIMINATING tests=66 f2p=10 p2p=56 unres=0  22.1s
+[study] START usestrix/strix#1025
+[study] DONE  ifnull/ha-airspace#59 DISCRIMINATING tests=50 f2p=2 p2p=48 unres=0  23.8s
+[study] START usestrix/strix#1024
+[study] DONE  ifnull/ha-airspace#58 DISCRIMINATING tests=181 f2p=19 p2p=162 unres=0  28.1s
+[study] START usestrix/strix#1023
+[study] DONE  usestrix/strix#1025 DISCRIMINATING tests=1 f2p=1 p2p=0 unres=0  39.7s
+[study] START usestrix/strix#1022
+[study] DONE  usestrix/strix#1023 DISCRIMINATING tests=3 f2p=2 p2p=1 unres=0  42.2s
+[study] START usestrix/strix#1021
+[study] DONE  usestrix/strix#1024 DISCRIMINATING tests=21 f2p=5 p2p=16 unres=0  50.0s
+[study] START Azure/agentops#308
+[study] DONE  usestrix/strix#1022 DISCRIMINATING tests=5 f2p=2 p2p=3 unres=0  39.9s
+[study] START Azure/agentops#307
+[study] DONE  usestrix/strix#1021 DISCRIMINATING tests=6 f2p=6 p2p=0 unres=0  23.8s
+[study] START Azure/agentops#306
+[study] DONE  Azure/agentops#308 DISCRIMINATING tests=90 f2p=19 p2p=70 unres=1  28.0s
+[study] START AvaCodeSolutions/django-email-learning#763
+[study] DONE  Azure/agentops#307 DISCRIMINATING tests=18 f2p=17 p2p=0 unres=1  19.2s
+[study] START AvaCodeSolutions/django-email-learning#760
+[study] DONE  AvaCodeSolutions/django-email-learning#760 UNRESOLVED tests=0 f2p=0 p2p=0 unres=0 no runnable test file (test paths were conftest/fixtures only) 1.2s
+[study] START AvaCodeSolutions/django-email-learning#735
+[study] DONE  Azure/agentops#306 DISCRIMINATING tests=72 f2p=2 p2p=70 unres=0  22.9s
+[study] START AvaCodeSolutions/django-email-learning#717
+[study] DONE  AvaCodeSolutions/django-email-learning#763 DISCRIMINATING tests=32 f2p=4 p2p=28 unres=0  69.6s
+[study] START AvaCodeSolutions/django-email-learning#711
+[study] DONE  AvaCodeSolutions/django-email-learning#735 DISCRIMINATING tests=33 f2p=24 p2p=9 unres=0  73.2s
+[study] START SenolIsci/mykg#61
+[study] DONE  AvaCodeSolutions/django-email-learning#717 DISCRIMINATING tests=23 f2p=7 p2p=16 unres=0  63.8s
+[study] START SenolIsci/mykg#59
+[study] DONE  SenolIsci/mykg#61 DISCRIMINATING tests=110 f2p=32 p2p=76 unres=2  45.0s
+[study] START SenolIsci/mykg#57
+[study] DONE  SenolIsci/mykg#59 UNRESOLVED tests=0 f2p=0 p2p=0 unres=0 base_run: junit xml unparseable 58.2s
+[study] START SenolIsci/mykg#56
+[study] DONE  AvaCodeSolutions/django-email-learning#711 DISCRIMINATING tests=41 f2p=9 p2p=32 unres=0  75.7s
+[study] START SenolIsci/mykg#52
+[study] DONE  SenolIsci/mykg#57 UNRESOLVED tests=22 f2p=0 p2p=6 unres=16 partial evidence: 16 unresolved rows 48.5s
+[study] START cyzus/suzent#159
+[study] DONE  SenolIsci/mykg#52 DISCRIMINATING tests=14 f2p=14 p2p=0 unres=0  28.6s
+[study] START cyzus/suzent#158
+[study] DONE  SenolIsci/mykg#56 DISCRIMINATING tests=77 f2p=4 p2p=72 unres=1  38.3s
+[study] START cyzus/suzent#157
+[study] DONE  cyzus/suzent#158 DISCRIMINATING tests=17 f2p=11 p2p=6 unres=0  192.4s
+[study] START cyzus/suzent#148
+[study] DONE  cyzus/suzent#157 DISCRIMINATING tests=42 f2p=25 p2p=17 unres=0  188.4s
+[study] START cyzus/suzent#127
+[study] DONE  cyzus/suzent#159 DISCRIMINATING tests=43 f2p=2 p2p=41 unres=0  197.5s
+[study] START helpfulengineering/supply-graph-ai#428
+[study] DONE  cyzus/suzent#148 DISCRIMINATING tests=9 f2p=9 p2p=0 unres=0  80.3s
+[study] START helpfulengineering/supply-graph-ai#425
+[study] DONE  cyzus/suzent#127 DISCRIMINATING tests=19 f2p=12 p2p=7 unres=0  86.4s
+[study] START helpfulengineering/supply-graph-ai#424
