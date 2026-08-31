@@ -1,0 +1,11 @@
+# GitHub Pages site for the guardposts family. No build tooling, no JS, no analytics.
+# Built-in GitHub Pages theme; no google_analytics key is set, so none is emitted.
+title: guardposts
+description: Small, tested guardrails for coding and data agents — extracted from working systems, with one measurement attached.
+theme: jekyll-theme-cayman
+show_downloads: false
+exclude:
+  - README.md
+  - LICENSE
+  - RELEASED
+  - scripts/
