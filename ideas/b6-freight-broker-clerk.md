@@ -27,10 +27,10 @@ Upload a rate confirmation, BOL, or POD; an AI clerk extracts and validates the 
    — r/FreightBrokers, https://www.reddit.com/r/FreightBrokers/comments/16i801z/converting_pdf_invoices_to_excel_spreadsheet/ , posted 2023-09-14. Broker with a backlog of thousands of PDF invoices. Genuine, unprompted, document-extraction pain — and the thread drew essentially no engagement.
 
 5. > "the uploading of documents can be tedious as you can only upload one doc at a time"
-   — Capterra, AscendTMS review by **Jacob N., AL Operations Manager, Transportation/Trucking/Railroad, 11–50 employees**, dated 2022-12-14. https://www.capterra.com/p/122488/AscendTMS-Logistics-Software/reviews/ (fetched 2026-08-30).
+   — Capterra, AscendTMS review by **a reviewer (Operations Manager, AL, transportation/trucking/railroad, 11–50 employees)**, dated 2022-12-14. https://www.capterra.com/p/122488/AscendTMS-Logistics-Software/reviews/ (fetched 2026-08-30).
 
 6. > "I would like to upload my blank BOL and rate cons. It doesn't seem to be saving them..."
-   — Capterra, AscendTMS review by **Lauren C., Freight Broker, Transportation/Trucking/Railroad, 6–12 months' use**, dated 2022-03-16. Same URL, fetched 2026-08-30. Document handling in the free TMS is genuinely weak.
+   — Capterra, AscendTMS review by **a reviewer (freight broker, transportation/trucking/railroad, 6–12 months' use)**, dated 2022-03-16. Same URL, fetched 2026-08-30. Document handling in the free TMS is genuinely weak.
 
 7. > "Our company uses Boon AI to auto fill some things in our TMS. What would cut down on my workload is automatically changing trailers in the system when detected. When a driver changes a trailer many times I need to ask them because they don't tell me. Then I need to manually change it in two apps. If you could code something that does this that would be sweet."
    — r/FreightBrokers, https://www.reddit.com/r/FreightBrokers/comments/1lek369/comment/myh0mmi/ , posted 2025-06-18. **Note what this says: the pain is real AND the buyer already bought a competitor (Boon AI) for it.** The residual ask is a two-app trailer-number sync, not document extraction.
@@ -50,7 +50,7 @@ Upload a rate confirmation, BOL, or POD; an AI clerk extracts and validates the 
     — r/FreightBrokers, https://www.reddit.com/r/FreightBrokers/comments/1lek369/comment/mygsrjc/ , posted 2025-06-18. **A founder who already ran this experiment and lost money on it.** Pain confirmed, adoption absent.
 
 12. > "As someone who is very tech forward I adopted many things into my firm, but ultimately still would do things by hand to save money. The pain is there, market may just be very volatile. Nice to have vs need."
-    — r/FreightBrokers, https://www.reddit.com/r/FreightBrokers/comments/1lek369/comment/mygvtpd/ , posted 2025-06-18. Written by the thread's OP — an ex-broker who ran his own small shop and now builds back-office SaaS. Self-diagnosed "nice to have vs need."
+    — r/FreightBrokers, https://www.reddit.com/r/FreightBrokers/comments/1lek369/comment/mygvtpd/ , posted 2025-06-18. Written by the thread's OP — an ex-broker. Self-diagnosed "nice to have vs need."
 
 13. > "cool idea but real world application idk. too many random number and shit on tenders, and every customer has different templates. youd have to individually program each different instance, probable take longer than having an ops guy just know which one is pickup vs appt number"
     — r/FreightBrokers, https://www.reddit.com/r/FreightBrokers/comments/198dsii/comment/kijzr0z/ , posted 2024-01-19. The technical objection: per-customer template variance means the extraction problem does not generalize cheaply, and the exception rate is where all the cost lives.
@@ -220,12 +220,12 @@ The pain is real and I found it in the buyers' own words — brokers do burn hou
 ## Verification (2026-08-30, adversarial pass)
 - Quotes: 26 checked, 21 verified, 2 unfetchable, 3 not found/altered/date-wrong
 
-**Reddit quote integrity is excellent.** All 17 numbered Pain-evidence and Counter-evidence items were re-pulled independently from Wayback snapshots (`t1_*-comment-rtjson-content` blocks) and every one matches verbatim, including punctuation and typos ("monitora", "logisitics", "wost"). Post dates confirmed from `created-timestamp` on `<shreddit-post>`: 198dsii = 2024-01-16, 16i801z = 2023-09-14, 1ip49c8 = 2025-02-14, 1k9l9ba = 2025-04-28, 1lek369 = 2025-06-18. Item 12's attribution to the thread OP is confirmed (author `Apart_Primary_7313` = OP of 1lek369). Both Capterra reviews confirmed at the cited URL with the stated names, dates, industries and company sizes.
+**Reddit quote integrity is excellent.** All 17 numbered Pain-evidence and Counter-evidence items were re-pulled independently from Wayback snapshots (`t1_*-comment-rtjson-content` blocks) and every one matches verbatim, including punctuation and typos ("monitora", "logisitics", "wost"). Post dates confirmed from `created-timestamp` on `<shreddit-post>`: 198dsii = 2024-01-16, 16i801z = 2023-09-14, 1ip49c8 = 2025-02-14, 1k9l9ba = 2025-04-28, 1lek369 = 2025-06-18. Item 12's attribution to the thread OP is confirmed (author one commenter = OP of 1lek369). Both Capterra reviews confirmed at the cited URL with the stated names, dates, industries and company sizes.
 
 Quote-level defects found:
 - **Item 2 (myhb9x6) — date_wrong.** Stated "posted 2024-06-18"; the comment and its parent thread are both 2025-06-18. The parenthetical hedge does not fix the stated date.
-- **Item 5 (Capterra, Jacob N.) — verified but selectively cropped.** Full sentence is conditional: *"If you don't have some sort of carrier setup integration, i.e. RIMS or similar service, the uploading of documents can be tedious as you can only upload one doc at a time."* The dropped clause says an integration solves it — which weakens its use as pain evidence.
-- **Items 9 and 10 are the same commenter** (`TehranBro`, 15:41 and 15:57 on 2025-06-18). The counter-evidence section reads as five independent skeptics; it is four.
+- **Item 5 (the Capterra operations-manager review) — verified but selectively cropped.** Full sentence is conditional: *"If you don't have some sort of carrier setup integration, i.e. RIMS or similar service, the uploading of documents can be tedious as you can only upload one doc at a time."* The dropped clause says an integration solves it — which weakens its use as pain evidence.
+- **Items 9 and 10 are the same commenter** (one commenter, 15:41 and 15:57 on 2025-06-18). The counter-evidence section reads as five independent skeptics; it is four.
 - **Drumkit "35% increase in loads per rep" — altered.** The site says *"Increase loads per rep by 35%"*. Same meaning, but it is presented as verbatim and is not.
 - **Vooma "up to 10 minutes per load" — not found.** Not on vooma.com (homepage, /solutions/build, /customers, or any case study). The nearest text is Sunset's *"most shipments are awarded within 10 minutes of a client's request"* — a bidding window, not an entry-time figure. **This is the sole input to the entire "Manual cost being paid today" calculation** ($535/week, $2,320/month), so that whole computation is unsourced.
 - **Vooma "automates 80% of order entries" — not found.** Vooma publishes *98%* (Zengistics case study) and *90%* (Evans). The dossier understates its own competitor.

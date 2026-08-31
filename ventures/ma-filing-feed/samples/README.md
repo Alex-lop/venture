@@ -1,0 +1,7 @@
+# Massachusetts development-filings sample digest — method record (rows withheld)
+
+**Built:** 2026-08-30 (session 1) · **Track:** B1 municipal signal radar — **killed the same day** (`../../../ideas/b1-kill-checks-2026-08-30.md`; the Commonwealth's EEA data portal ships a free, earlier, more complete feed). Kept as proof of method only.
+
+**What was compiled, by hand, from public agendas (M.G.L. c.30A §20 postings; robots.txt respected; no logins, no paywalls):** 320 agenda items across 41 municipalities (30 with meetings in range) for meetings dated 2026-08-24 → 2026-09-11: 87 conservation-commission items, 74 new business/institutional filings, 57 continued or decided business filings, 154 residential items, 35 municipal projects, 58 firms of record. Each row carried board, meeting date, address, applicant (businesses only), project type, stage, agenda text, firm of record where the packet printed one, and a link to the source document.
+
+**Why the rows are not in this public repository.** Even with homeowners anonymized, a row's street address plus DEP file number joins to a named individual through other free public records, and the agenda-text column reproduced names printed on agendas. CLAUDE.md §2 forbids anything about a private individual in a tracked file, so the full digest was moved to `private/` on 2026-08-30 (session 2, redactor). The method above is the reusable part; the rows were never the product.

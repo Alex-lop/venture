@@ -70,7 +70,7 @@ Buyer is emphatically **not** the individual developer — developers already ha
 > "You will never reliably get acceptable work unless you build deterministic checking, and enforcement of said checking in a way to model can't bypass or ignore."
 > — HN user cadamsdotcom, 2026-05-27. https://news.ycombinator.com/item?id=48301952
 
-**12. Manager-voice frustration with org-wide agent tool sprawl (the buyer, in his own words).**
+**12. Manager-voice frustration with org-wide agent tool sprawl (the buyer, in their own words).**
 > "Can't tell you how much garbage AI tooling is being built within my org. Whole teams spinning their wheels basically rebuilding claude code because execs are obsessed with "dark factory". Individuals building plugins/skills/mcps that are duplicated or just plain *wrong* […] I've yanked MOST tools OUT of my claude code/opencode/codex. […] I'm tired."
 > — HN user kaydub, 2026-07-30. https://news.ycombinator.com/item?id=49112844
 
@@ -237,7 +237,7 @@ Kill immediately if any is true (three already are):
 32. `venkat22022202/black-vault` — 8★
 33. `behrensd/mcpwall` — "iptables for MCP"
 34. `mmornati/leanproxy-mcp` — "Token Firewall for MCP"
-35. `SekaiBuilder/exodus-ia-firewall`, `askalf/redstamp`, `w1boost1889M/mcp-fortress`, `churik5/bulwark-mcp`, `SHUBHAGYTA24/contextduty`, `ashp15205/guardian-runtime`, `Adirdabush1/cerberus`, `Mindburn-Labs/helm-ai-kernel`, `beebeeVB/trajeckt`, `cordum-io/cordum`, `james-transient/transient`, `coproduct-opensource/nucleus`, `log-bell/avakill`, `ccie14019` Runtime Fence, `azt` (repo pre-flight scanner), ContextGuard, Docker MCP Gateway
+35. `SekaiBuilder/exodus-ia-firewall`, `askalf/redstamp`, `w1boost1889M/mcp-fortress`, `churik5/bulwark-mcp`, `SHUBHAGYTA24/contextduty`, `ashp15205/guardian-runtime`, `Adirdabush1/cerberus`, `Mindburn-Labs/helm-ai-kernel`, `beebeeVB/trajeckt`, `cordum-io/cordum`, `james-transient/transient`, `coproduct-opensource/nucleus`, `log-bell/avakill`, a single-account "Runtime Fence" project, `azt` (repo pre-flight scanner), ContextGuard, Docker MCP Gateway
 36. `systempromptio/awesome-ai-agent-governance` — 32★, a curated *list* of this category, which is itself the clearest signal of saturation
 
 Raw counts from GitHub search: `claude code hooks security guardrails` → 54 repos; `MCP proxy security firewall` → 30 repos; `agent policy enforcement coding agent` → 156 repos.

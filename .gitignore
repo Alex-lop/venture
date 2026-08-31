@@ -3,3 +3,13 @@ ventures/*/node_modules/
 ventures/*/.venv/
 .DS_Store
 private/
+ventures/c-measurement/corpus/raw/
+# session 2: raw API dumps carry commit-author emails; pilot logs are large
+ventures/c-measurement/pilot/logs/
+ventures/*/dist/
+ventures/*/.pytest_cache/
+ventures/*/.ruff_cache/
+__pycache__/
+# session 2: study raw API dumps carry PR-author logins; study logs are large
+ventures/c-measurement/study/logs/
+ventures/c-measurement/study/raw/

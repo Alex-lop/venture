@@ -25,7 +25,7 @@ Index a repo into a symbol/import/ownership/decision graph and expose it to Clau
 ## Pain evidence (verbatim, >= 5)
 
 1. > "Hi HN I'm Tirth. I built code-review-graph because I got tired of watching Claude Code re-read my entire codebase on every single task."
-   — Hacker News, https://news.ycombinator.com/item?id=47314091 , posted 2026-03-09. Written by an indie developer shipping his own OSS fix for the problem.
+   — Hacker News, https://news.ycombinator.com/item?id=47314091 , posted 2026-03-09. Written by an indie developer shipping their own OSS fix for the problem.
 
 2. > "I kept hitting Claude Code's rate limits. The usual workaround is feeding file contents into the conversation to help the agent find what it needs — but you hit the ceiling faster, and the repo starts accumulating context files that exist purely to compensate for bad search."
    — Hacker News, https://news.ycombinator.com/item?id=47664736 , posted 2026-04-06. Author of "An experiment – replacing Claude Code's context-stuffing with semantic grep"; a working developer hitting paid-plan quota ceilings.
@@ -34,16 +34,16 @@ Index a repo into a symbol/import/ownership/decision graph and expose it to Clau
    — Hacker News, https://news.ycombinator.com/item?id=46195303 , posted 2025-12-08, in the Launch HN thread for Nia (YC S25). Written by a practitioner running multi-agent builds — i.e. exactly the "agent breaks what it didn't know about" failure.
 
 4. > "This looks neat, we certainly need more ideas and solutions on this space, I work with large codebases daily and the limits on agentic contexts are constantly evident."
-   — Hacker News, https://news.ycombinator.com/item?id=46195319 , posted 2025-12-08. Self-described daily large-codebase engineer; in the same thread he asks specifically how the index survives a large local refactor.
+   — Hacker News, https://news.ycombinator.com/item?id=46195319 , posted 2025-12-08. Self-described daily large-codebase engineer; in the same thread they ask specifically how the index survives a large local refactor.
 
 5. > "Coding agents kept reworking decisions we'd already settled - reviving an approach we ruled out in an ADR, redoing something a requirement already pinned. The context was in the repo; the agent had no current view of it."
    — Hacker News, https://news.ycombinator.com/item?id=48715032 , posted 2026-06-29. Author of "Lore", a team-decisions layer for coding agents; describes a team ("decisions we'd made"), not a solo dev.
 
 6. > "My project is being developed in a monorepo environment exclusively for the frontend. When I open the workspace in Cursor, codebase indexing runs indefinitely, and the moment it finishes, it immediately starts again. Are you currently working on a solution to address this problem?"
-   — Cursor Community Forum, user *takubii*, https://forum.cursor.com/t/when-using-cursor-in-a-monorepo-codebase-indexing-goes-into-an-infinite-loop/71739 , posted 2025-03-28. Frontend monorepo developer; thread auto-closed 2025-04-27 with **no fix from Cursor**.
+   — Cursor Community Forum, a user, https://forum.cursor.com/t/when-using-cursor-in-a-monorepo-codebase-indexing-goes-into-an-infinite-loop/71739 , posted 2025-03-28. Frontend monorepo developer; thread auto-closed 2025-04-27 with **no fix from Cursor**.
 
 7. > "In large codebase, the best code is the one that matches the codebase own voice and conventions, because that's the mental model of the team. Ingesting a full codebase explicit/implict patterns in an agent windows to make them match the codebase doesnt work: too much context, hallucinations, ..."
-   — Hacker News, https://news.ycombinator.com/item?id=49154714 , posted 2026-08-03, "Show HN: Argot, a Rust AI guardrail based on your codebase AST patterns". Author shipped his fix as free open source.
+   — Hacker News, https://news.ycombinator.com/item?id=49154714 , posted 2026-08-03, "Show HN: Argot, a Rust AI guardrail based on your codebase AST patterns". The author shipped that fix as free open source.
 
 8. > "biggest limitation is that it doesn't have workspaces where you can get context from several repos for building your application."
    — Hacker News, https://news.ycombinator.com/item?id=44945939 , posted 2025-08-18. Enterprise-tool user (Warp.dev) describing the multi-repo context gap directly.
@@ -56,10 +56,10 @@ Index a repo into a symbol/import/ownership/decision graph and expose it to Clau
 
 ### Two quotes that specifically damage the *MCP* framing in the brief
 11. > ⚠️ VERIFIER: misattributed - "Same is true for any other cli tools, claude never actually uses them as it's trained to use grep. but for graft as we set the directive to use graft at the start of the session and before the turn, claude just knows graft exists"
-    — Graft author *shrishdwi*, Hacker News, https://news.ycombinator.com/item?id=49301695 , posted 2026-08-14. He shipped a whole Show HN titled "Claude Code kept ignoring our MCP tools, so we used hooks instead" (2026-08-12, https://news.ycombinator.com/item?id=49275395).
+    — the Graft author, Hacker News, https://news.ycombinator.com/item?id=49301695 , posted 2026-08-14. The same author shipped a whole Show HN titled "Claude Code kept ignoring our MCP tools, so we used hooks instead" (2026-08-12, https://news.ycombinator.com/item?id=49275395).
 
 12. > "We do this because MCP is inherently unreliable -- you are at the whim of the calling agent to recognize the connection between the tool call description and the user's query. Hooks let you reliably run side effects as part of the lifecycle."
-    — Hyper (YC P26) cofounder *kanyesrthaker*, Hacker News, https://news.ycombinator.com/item?id=48403931 , posted 2026-06-04.
+    — a Hyper (YC P26) cofounder, Hacker News, https://news.ycombinator.com/item?id=48403931 , posted 2026-06-04.
 
 **Verdict on pain: overwhelming and daily.** This is one of the most validated pains on the whole idea list. That is precisely the problem — see below.
 
@@ -121,7 +121,7 @@ The build is not the risk. Nothing here is hard. Being the 25th entrant is the r
 - **Incumbent response (already happened).** ⚠️ VERIFIER: not_found - Augment Code — $252M raised — unbundled its context engine as a free MCP server, GA 2026-02-06. Sourcegraph, Unblocked, Greptile, Potpie, Nia (YC S25, $6M raised), Hyper (YC P26), p0 all sell adjacent versions.
 - **Platform dependency (high).** The product only works via Claude Code hooks / Cursor internals. Anthropic and Cursor can absorb this in a release. A commenter on the Nia launch put the risk exactly: > "I am not sure how you get traction without being 10x better than what Cursor can produce *tomorrow*. If you are successful the coding agents will copy your idea and then people being lazy and using what works have no inventive to switch." — https://news.ycombinator.com/item?id=46197185 , 2025-12-08.
 - **Technical premise may be wrong.** A February 2026 Amazon Science paper is reported to find that "keyword search via agentic tool use achieves over 90% of RAG-level performance without a vector database, and for code specifically, exact-match search outperforms semantic retrieval on stable, well-named codebases" (via https://vadim.blog/claude-code-no-indexing/ , seen 2026-08-30 — secondary source, not the paper itself). If true, the ceiling on the value-add is thin.
-- **Accuracy liability / staleness.** The single most-repeated buyer objection (evidence #9; also sid_ships on the Hyper thread, 2026-06-25: "context that's right on Monday is quietly wrong by Friday, and nobody notices until a decision gets made on it"). A wrong "safe change set" is worse than no answer.
+- **Accuracy liability / staleness.** The single most-repeated buyer objection (evidence #9; also another commenter on the Hyper thread, 2026-06-25: "context that's right on Monday is quietly wrong by Friday, and nobody notices until a decision gets made on it"). A wrong "safe change set" is worse than no answer.
 - **Distribution/trust risk specific to hooks.** Hyper installed hooks and was publicly called out: > "turns out that when you run the app it installs a hook to run every time you start a session, submit a prompt, or agent ends a turn on all your coding agents / platforms. Zero notice was given, pretty shady." — https://news.ycombinator.com/item?id=48390705 , 2026-06-03. The reliable surface is also the surface that burns trust if mishandled.
 - **Legal:** Low. Reading a customer's own repo under their instruction; MIT-licensed tree-sitter grammars; no scraping. The real legal surface is a hosted index holding customer source — SOC2 pressure arrives at the first 50-person buyer (see the Terretta exchange on the Hyper thread, https://news.ycombinator.com/item?id=48398113 ).
 
@@ -198,7 +198,7 @@ The pain is real, enormous, and daily — and that is exactly why this is a bad 
 - The Amazon Science "keyword search ≥90% of RAG" claim comes from a secondary blog summary, not the paper; flagged as such in Risks.
 
 ## Verification (2026-08-30, adversarial pass)
-- **Quotes: 26 checked, 24 verified, 0 unfetchable, 2 not found/altered.** All 12 "Pain evidence" quotes reproduce **exactly** on the cited HN item IDs and the Cursor forum thread (checked via `hn.algolia.com/api/v1/items/` and `forum.cursor.com/t/...71739.json`), including authors and dates. The three Risks quotes also verify (46197185, 48390705, 48398113), as does the un-URL'd `sid_ships` "right on Monday ... wrong by Friday" line (it is HN id **48669080**, 2026-06-25 — URL should be added). The two failures are both pricing/competitor cells, flagged in place: Sourcegraph's "$19 / $59 per user per month" and Augment's "Context Engine unbundled as a free MCP server, GA 2026-02-06".
+- **Quotes: 26 checked, 24 verified, 0 unfetchable, 2 not found/altered.** All 12 "Pain evidence" quotes reproduce **exactly** on the cited HN item IDs and the Cursor forum thread (checked via `hn.algolia.com/api/v1/items/` and `forum.cursor.com/t/...71739.json`), including authors and dates. The three Risks quotes also verify (46197185, 48390705, 48398113), as does the un-URL'd one commenter "right on Monday ... wrong by Friday" line (it is HN id **48669080**, 2026-06-25 — URL should be added). The two failures are both pricing/competitor cells, flagged in place: Sourcegraph's "$19 / $59 per user per month" and Augment's "Context Engine unbundled as a free MCP server, GA 2026-02-06".
 - Claims:
   - **Star counts (all 21 repos) — CONFIRMED.** `gh api` re-run 2026-08-30: codegraph 68,634 (MIT, created 2026-01-18); codebase-memory-mcp 41,176 (MIT); serena 28,634; claude-context 12,455; potpie 5,703; Graft 5,116; code-graph-rag 4,848; gortex 1,505; roam-code 510; sdl-mcp 467; brain0 340; mcp-server-tree-sitter 310; aider 48,594; continue 35,696; graphiti 30,408. Descriptions quoted in the dossier are verbatim.
   - **"Graft went 0→5,115 stars in ~4 weeks" / "5,115★ in ~1 month" — REFUTED.** `NanoNets/Graft` was created **2026-07-03** (`gh api repos/NanoNets/Graft`), so 5,116 stars took **~8 weeks**, not 4. The 6-week / 500-star kill criterion is calibrated against a benchmark that is 2× too fast.

@@ -14,7 +14,7 @@ Actual, after research: **there is no buyer left.** Every one of those parties i
 
 All quotes copy-pasted from pages fetched 2026-08-30. **Read the framing note after the quotes — it is the decisive finding.**
 
-1. Amy Dain, "The Surprising Lack of Good Permitting Data and What to Do about It," Boston Indicators, **October 31, 2025** — https://www.bostonindicators.org/upzone_update/bad-permit-data
+1. Boston Indicators, "The Surprising Lack of Good Permitting Data and What to Do about It," Boston Indicators, **October 31, 2025** — https://www.bostonindicators.org/upzone_update/bad-permit-data
    > "Homes in the construction pipeline should be readily countable, unlike, for example, grains of sand in Salisbury Beach. But go try and figure out how many homes, exactly, Massachusetts municipalities permitted last year, and last decade. The numbers slip through your fingers like sand."
 
 2. Same source, same date:
@@ -29,19 +29,19 @@ All quotes copy-pasted from pages fetched 2026-08-30. **Read the framing note af
 5. Same source, same date — on MAPC's existing free MassBuilds map:
    > "The map's data for the inner-core communities are in the best shape; entries get patchier further out from Boston."
 
-6. Will Rhatigan, MBTA Communities engagement manager, CHAPA, quoted in "'It was too effing complicated': A pro-housing reckoning over MBTA Communities law," CommonWealth Beacon, **September 18, 2025** — https://commonwealthbeacon.org/government/state-government/it-was-too-effing-complicated-a-pro-housing-reckoning-over-mbta-communities-law/
+6. An MBTA Communities engagement manager at CHAPA, quoted in "'It was too effing complicated': A pro-housing reckoning over MBTA Communities law," CommonWealth Beacon, **September 18, 2025** — https://commonwealthbeacon.org/government/state-government/it-was-too-effing-complicated-a-pro-housing-reckoning-over-mbta-communities-law/
    > "And many of them did, but it took so much effort, so much time, that I don't think we could realistically do it again for any other zoning reform. We've eaten up that political capital."
 
-7. Jesse Kanson-Benanav, executive director, Abundant Housing Massachusetts, same article, same date:
+7. The executive director of Abundant Housing Massachusetts, same article, same date:
    > "We crafted this law in a way that we thought was responding to the unique aspect of local control, local decision making, Town Meeting form of government we have in Massachusetts, but that made it incredibly difficult"
 
    and, on the 177 municipalities having to vote in compliant zoning, that it "opens up a whole bunch of headaches".
 
-8. Katharine Lacy, program manager, MBTA Communities technical assistance program, Massachusetts Housing Partnership, same article, same date:
+8. A program manager for the MBTA Communities technical assistance program at the Massachusetts Housing Partnership, same article, same date:
    > "But the MBTA Communities model isn't ideal, she said, because of how much work it took to tailor each municipality's plan, even as organizations streamlined the process"
 
-9. Robert Galvin, attorney for the Town of Marshfield, at SJC oral argument, reported in "Were MBTA Communities costs unfair, or a self-imposed expense?", CommonWealth Beacon, **March 4, 2026** — https://commonwealthbeacon.org/housing/were-mbta-communities-costs-unfair-or-a-self-imposed-expense/
-   > "Marshfield was forced to employ a person to develop zoning modeling, Galvin told the court, and the town 'incurred expense associated with' navigating the 22 pages of compliance regulations."
+9. Outside counsel for the Town of Marshfield, at SJC oral argument, reported in "Were MBTA Communities costs unfair, or a self-imposed expense?", CommonWealth Beacon, **March 4, 2026** — https://commonwealthbeacon.org/housing/were-mbta-communities-costs-unfair-or-a-self-imposed-expense/
+   > "Marshfield was forced to employ a person to develop zoning modeling, [counsel name redacted] told the court, and the town 'incurred expense associated with' navigating the 22 pages of compliance regulations."
 
 **Framing note — why these quotes do not support the product.** Every complaint above is about the *work of complying* with §3A (writing zoning, running town meetings, hiring modelers) or about the *quality of statewide permit data*. **Not one person, anywhere I could reach, complains that they cannot find out which towns are compliant, where the 3A districts are, or when the votes are.** That is the thing this product sells, and the silence around it is total: zero Hacker News discussion of MBTA Communities zoning data (HN Algolia returns only 2014 transit-visualization comments), and GitHub search returns exactly **one** repository (`busebusee27/mbta_communities_zoning`, **0 stars**, last pushed 2025-05-30) across `MBTA communities zoning`, `mbta communities 3A`, and `massachusetts zoning tracker`. Reddit was unreachable (403 to every method, per prior runs today), so that channel is unverified — but a demand signal this absent everywhere else would be surprising to find only there.
 
@@ -74,7 +74,7 @@ This is the one genuinely strong column, and it is why the idea is worth killing
 - Every institution named in this dossier is physically in Boston, mostly within a few T stops of Northeastern: CHAPA (One Beacon Street, 5th Floor), Abundant Housing MA (50 Milk Street, 16th Floor), MAPC, Boston Indicators (at The Boston Foundation), EOHLC.
 - AHMA runs open public events (e.g. "2026 North Shore YIMBY Summer Social," posted 2026-08-03) and a "Housing Abundance Symposium"; CHAPA runs events and a job board; both list staff pages and staff emails publicly.
 - EOHLC publishes a direct contact channel for this exact program: EOHLC3A@mass.gov.
-- The EOHLC District Atlas XLSX itself contains a `Letter_Recipient` column of **municipal contact emails** for all compliant towns (e.g. `manager@actonma.gov`, `jfeeney@town.arlington.ma.us`) — 150+ named public officials, one download away. (Ethically: that is a legitimate public business contact list, but it is a cold-outreach list, and unsolicited product email to it would be spam under the principal's own rules. Use events and warm intros instead.)
+- The EOHLC District Atlas XLSX itself contains a `Letter_Recipient` column of **municipal contact emails** for all compliant towns (a mix of role mailboxes such as `manager@actonma.gov` and name-derived personal mailboxes for individual staff, which are not reproduced here) — 150+ municipal contacts, one download away. (Ethically: that is a legitimate public business contact list, but it is a cold-outreach list, and unsolicited product email to it would be spam under the principal's own rules. Use events and warm intros instead.)
 - Town meetings, planning board hearings and Select Board meetings are open, posted, and free to attend.
 
 Verdict on reachability: **50 qualified conversations in 30 days for $0 is genuinely achievable.** The problem is not reaching them; it is that they do not want this.
@@ -88,7 +88,7 @@ The intended wedge — "be the free public tracker, then charge for alerts" — 
 - **Compliance status CSV**, updated monthly: `https://www.mass.gov/files/csv/2026-08/Compliance Status Sheet as of 8-11-26.csv`
 - **3A Development Tracker CSV** — the state already runs the development tracker: `https://www.mass.gov/files/csv/2026-07/3A Development Tracker as of 7-30-26.csv`
 - Shapefiles / spatial data via MassGIS, plus District Approval Letters, Pre-Adoption Feedback Letters, submitted Action Plans, the compliance model, and the 760 CMR 72 regulations, all as downloadable documents.
-- EOHLC has staffed up for this permanently: it "hired Tim Reardon, housing data guru formerly at MAPC, to run a housing data team for the state agency" (Dain, Boston Indicators, 2025-10-31).
+- EOHLC has staffed up for this permanently: Boston Indicators reports (2025-10-31) that it hired a former MAPC housing-data lead to run a housing data team for the state agency. *(Paraphrase — the source sentence names the individual, so it is not quoted here.)*
 
 The only residual friction worth naming: those CSVs have **hand-dated filenames with no stable URL, no API, and no changelog**, so nobody can diff month over month. That is a real gap. It is also a ~$0 gap — the answer is a cron job and a git repo, not a $99/month subscription.
 
@@ -112,8 +112,8 @@ Reusable assets: X-Scraper snapshot-diff for dataset change detection.
 ## Risks
 1. **Timing risk — realized, not speculative.** All statutory deadlines have passed (rapid transit 12/31/2023; commuter rail and adjacent 12/31/2024; adjacent small town 12/31/2025; the catch-up deadline 7/14/2025). CHAPA's technical assistance program closed in January 2026. The subject of the tracker is finishing.
 2. **Incumbent risk — the incumbent is the state.** EOHLC publishes the map, the parcel data, the status CSV, the development tracker, and the determination letters, and has a dedicated housing data team. You cannot out-authority the agency that issues the determinations.
-3. **Free-content risk.** The analysis lane is occupied by Boston Indicators' *Upzone Update* newsletter, written by Amy Dain — the most credentialed zoning researcher in the state — and funded by The Boston Foundation. It is syndicated onward to StreetsblogMASS. Competing with free, expert, philanthropically funded content as a solo junior is not a fight worth taking.
-4. **Thin underlying deal flow.** Coverage from January 2026 reports researchers finding the law's benefits "modest," with figures around 5,200–7,000 homes built or in development statewide. Dain's own February 2026 brief on Newton's MRT districts counts "eight MRT adaptive-reuse projects... a potential total of 49 homes—34 of them net new," and concedes "the impact remains limited." Alert feeds need deals to justify their price.
+3. **Free-content risk.** The analysis lane is occupied by Boston Indicators' *Upzone Update* newsletter — expert-authored and funded by The Boston Foundation. It is syndicated onward to StreetsblogMASS. Competing with free, expert, philanthropically funded content as a solo junior is not a fight worth taking.
+4. **Thin underlying deal flow.** Coverage from January 2026 reports researchers finding the law's benefits "modest," with figures around 5,200–7,000 homes built or in development statewide. That newsletter's own February 2026 brief on Newton's MRT districts counts "eight MRT adaptive-reuse projects... a potential total of 49 homes—34 of them net new," and concedes "the impact remains limited." Alert feeds need deals to justify their price.
 5. **Data-access risk.** mass.gov 403s all automated fetching; the pipeline depends on MassGIS S3 or manual download, and on mass.gov's terms permitting it.
 6. **Ethics — clean, and worth noting.** All data is published, downloadable, and license-free; no scraping behind logins, no paywalls, no personal information beyond municipal officials' public business contacts. This idea fails on market, not on ethics.
 
@@ -130,7 +130,7 @@ Stated as thresholds; all four were tripped during research, which is why the ve
 |---|---|---|
 | **EOHLC / MassGIS (the Commonwealth)** | District Atlas (153 munis, 475 districts, 29,599 parcels), ArcGIS webmap, 7.4 MB parcel-level XLSX, monthly Compliance Status CSV, 3A Development Tracker CSV, shapefiles, approval letters, compliance model | **Free** |
 | **MAPC — MassBuilds** (massbuilds.com/map) | Statewide building/pipeline map: addresses, height, parking, status, year completed, dwelling units, affordable units | **Free** |
-| **Boston Indicators — *Upzone Update*** (Amy Dain / Luc Schuster, The Boston Foundation) | Ongoing newsletter and briefs analyzing MBTA-C compliance efforts; syndicated to StreetsblogMASS | **Free** |
+| **Boston Indicators — *Upzone Update*** (The Boston Foundation) | Ongoing newsletter and briefs analyzing MBTA-C compliance efforts; syndicated to StreetsblogMASS | **Free** |
 | **CHAPA — MBTA Zoning TA** | Direct technical assistance to municipalities; helped 90 communities, 97% approval rate | **Free; program ended Jan 2026** |
 | **Abundant Housing MA — MBTA Communities Toolkit** | One-pagers, FAQ, glossary, messaging guides, testimony guides, training videos | **Free** |
 | **BLDUP** | Boston-founded construction/property intelligence: "Intent, design phase, and pre-approval data," 10 markets, "65,000+ Subcontractors" — occupies the adjacent pre-application-feed idea | Demo-gated |
@@ -179,7 +179,7 @@ Web search budget for the session was exhausted before this dossier began (200/2
 - `duckduckgo.com` (html and lite endpoints) — HTTP 202 challenge page. `searx.be` — antibot captcha. `mojeek.com` — empty result set.
 - `indeed.com` — HTTP 403 (contradicting the brief's note that Indeed works; the `/jobs?q=...&l=...` endpoint was refused).
 - `reddit.com` — not attempted, per the standing note that it 403s every method today. This is the one channel left unchecked.
-- `massbuilds.com/map` — connection timed out; assessed indirectly through Dain's description of it.
+- `massbuilds.com/map` — connection timed out; assessed indirectly through that newsletter's description of it.
 - `planetizen.com` and `bostonindicators.org` — one 404 (guessed URL) and one 504 respectively; both recovered on retry or via the correct path.
 
 **Worked:** Wayback Machine, MassGIS S3, Google News RSS (`news.google.com/rss/search`, 100 items on the core query), HN Algolia API, GitHub search API, `commonwealthbeacon.org`, `mass.streetsblog.org`, `bostonindicators.org`, `abundanthousingma.org`, `chapa.org`, `mapc.org`, `zoneomics.com`, `gridics.com`, `bldup.com`, `bankerandtradesman.com`.
@@ -208,8 +208,8 @@ Web search budget for the session was exhausted before this dossier began (200/2
 - *CHAPA TA program ended Jan 2026.* **Confirmed verbatim** at https://chapa.org/mbta-zoning-ta — "From January 2023 until January 2026 ... 97% ... helped 90 communities."
 - *mass.gov 403s every automated fetch.* **Confirmed** — 403 to WebFetch and to curl with a browser UA, on both `/info-details/` pages and `/files/csv/` downloads, re-tested 2026-08-30.
 - *"GitHub search returns exactly one repository ... 0 stars."* **Refuted as stated.** True only for the three narrow queries used. The obvious query `MBTA Communities` returns **6** repos, including `fdhidalgo/mbta-communities-data-pipeline` (1★, R + DuckDB, "processes 12GB+ of spatial data across 177 Massachusetts municipalities ... to support web visualization") and `duncanburns2013-dot/MBTA-Communities-Act` (created 2026-02-08, live HTML dashboard, "$4.4 billion in unfunded costs"). Direction of the finding survives; the number does not.
-- *MassBuilds is a live free incumbent.* **Unverifiable / likely down.** `massbuilds.com` 301s to `www.massbuilds.com`, which resolves (184.72.253.82) but times out; no Wayback capture since 2026-05-20. Never independently verified in the dossier either (it was assessed "indirectly through Dain's description").
-- *Zoneomics $92 / $279, $65 and $55 briefs, resale bar; B&T $32/$365/$625 and $42/$420/$730 and $9.99 intro; BLDUP "Intent, design phase, and pre-approval data" / "Verified decision-makers" / "Trusted by 65,000+"; Gridics demo-gated; CHAPA Catalyst "$250,000 to $1 million"; AHMA 50 Milk St + 2026-08-03 North Shore YIMBY Summer Social; Dain's Newton MRT "49 homes—34 of them net new" / "the impact remains limited."* **All confirmed verbatim** against the live pages.
+- *MassBuilds is a live free incumbent.* **Unverifiable / likely down.** `massbuilds.com` 301s to `www.massbuilds.com`, which resolves (184.72.253.82) but times out; no Wayback capture since 2026-05-20. Never independently verified in the dossier either (it was assessed "indirectly through [that newsletter's] description").
+- *Zoneomics $92 / $279, $65 and $55 briefs, resale bar; B&T $32/$365/$625 and $42/$420/$730 and $9.99 intro; BLDUP "Intent, design phase, and pre-approval data" / "Verified decision-makers" / "Trusted by 65,000+"; Gridics demo-gated; CHAPA Catalyst "$250,000 to $1 million"; AHMA 50 Milk St + 2026-08-03 North Shore YIMBY Summer Social; the newsletter's Newton MRT brief "49 homes—34 of them net new" / "the impact remains limited."* **All confirmed verbatim** against the live pages.
 
 **Score challenges**
 - **Compounding 2 → 3.** Massachusetts zoning is in an *active* statewide reform cycle, not a closing one (see Missing). A pipeline built on MA zoning-compliance data has a live successor event 65 days out. Still one state, so 3 not 4.

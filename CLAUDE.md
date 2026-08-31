@@ -1,278 +1,256 @@
-# VENTURE AGENT BRIEF
+# VENTURE AGENT BRIEF — v2 (swarm edition)
 
-> **For the human (safe to leave in):** Put this file at the root of a fresh repo (e.g. `~/ventures/CLAUDE.md`) with clones or symlinks of your past projects in `./assets/`. Fill in §0. Start Claude Code there and say: *"Read CLAUDE.md and begin Phase 0."* Keep the main session in the foreground; give research subagents read-only tools. Anything that costs money or contacts a human lands in `ASKS.md` for you to approve once a day.
-
----
-
-## 0. Principal (fill this in before the first run)
-
-> Agent filled what it could infer on 2026-08-30 (marked *inferred*); items marked **NEEDS ALEX** are in `ASKS.md` (ASK-007). Overwrite freely.
-
-- **Alex / how to address you:** Alex. **NEEDS ALEX** if different.
-- **School / year:** Northeastern University, Boston. CS + Math. Junior, expected graduation 2028. GitHub profile: "really just trying to build something impactful."
-- **Hours per week:** 12.
-- **Hard dates:** N/A for now. (Known external date: CONECT Boston port tour 2026-09-16; NAIOP MA events listed at naiopma.org/events.)
-- **Total capital:** **$1,000** (hard cap; see §3). Spent so far: $0.
-- **Past projects in `./assets/`** (full inventory in `ASSETS.md`):
-  - **Graphene** — publication-control layer for parallel coding agents (fenced workspaces, provable candidate commit, offline-verifiable audit capsule, `why`). 137K LOC, 1,229 tests pass. The seatbelt is real; the agent engine is demo. *inferred*
-  - **RegLineage** — revocable, hash-bound capability leases for AI data access that fail closed on governance change; egress firewall; zero-dep MCP server; DataHub hackathon. 408 tests pass. No regulatory-text extraction exists. *inferred*
-  - **Nemisis** — differential verification of AI-generated patches (base vs candidate claim matrix). NVIDIA×Nexius hackathon. Engine real for one fixture. *inferred*
-  - **X-Scraper** — login-gated X capture workbench; not sellable under §2, but contains a durable SQLite job queue, a read-only MCP gateway, a snapshot-diff engine, and an approval protocol. *inferred*
-  - **graphene-site**, **Alex_Lopez_Website** — live static sites. Others are empty/memos.
-  - **Graft** — unmodified fork of a competitor (trailhq/Graft). Not yours.
-  - **`datboiathop`** — **not your account** (Juan Lopez, UPenn); `gh` on this machine is logged in as it. See ASK-001/002.
-- **Skills you consider strengths:** *inferred from code* — provable-agent infrastructure (fencing, hashing, sandboxing, audit capsules), hardened MCP servers, SQLite-backed durable state, Python 3.11–3.13/uv/pytest, evidence-first release discipline, running many coding agents in parallel. **NEEDS ALEX** to confirm/correct.
-- **Skills you'd rather not lean on:** *inferred* — Go, Rust, C/C++, Java, mobile, GPU; document/PDF extraction and crawlers do not exist in the assets. **NEEDS ALEX.**
-- **Things you refuse to build (adds to §2):** **NEEDS ALEX.** (The-Greater-Stake pitch suggests anti-gambling conviction; §2 already bans gambling products.)
-- **Accounts you already have and are willing to use:** GitHub `Alex-lop` (Pages in use, no custom domains). Firebase/GCP project referenced in Graphene (emulator only). **NEEDS ALEX** for Vercel/Stripe/registrar/Cloudflare/Railway/Fly.
-- **Citizenship / visa status:** **NEEDS ALEX.** If F-1/J-1, running a business is "work" requiring authorization — this changes the whole plan. Not assumed either way.
-- **Co-op:** **NEEDS ALEX.** Co-op is legal employment; the employer's invention-assignment agreement, not NU policy, governs what you build during it, and MA has no statutory carve-out for personal projects. Negotiate a prior-inventions schedule naming your project before signing.
-- **Your university's policy on student businesses and use of school resources** (researched 2026-08-30, primary sources, full report in session scratchpad `phase0/neu-policy.md`):
-  - **You own what you build** on your own time/hardware/accounts: Policy 207 (Independent Inventions are the inventor's; "significant use" excludes resources "generally available") and Policy 206 (copyright in coursework output "resides in the student-author"). Financial aid does not alter this.
-  - **Do not use NU wifi, laptops, email, or cloud credits for the business:** Policy 700 bars commercial use without written Provost + General Counsel approval.
-  - **Do not use the Northeastern name/logo** in anything customer-facing without brand@northeastern.edu approval (Policy 116/120).
-  - **No sales/solicitation on campus** (Policy 300); no business use of dorm address/mailbox (housing policy).
-  - **Library-licensed databases may not be used as product input** (commercial/fee-for-service use barred).
-  - **Free resources:** IDEA accelerator (Gap Fund up to $30k non-dilutive), IP CO-LAB (free IP clinic, any NU student), Community Business Clinic (free contracts/entity counsel, means-tested), Husky Startup Challenge, NUCEE mentors. See ASK-005.
-  - **Massachusetts/Boston basics (not legal or tax advice — verify):** sole proprietorship costs $0; skip the LLC ($500 + $500/yr) until ~$10k/yr; Boston DBA ($65/4 yrs) only if trading under a name other than your own; **MA likely taxes SaaS subscriptions at 6.25% — register on MassTaxConnect before the first taxable sale**; consulting/custom builds generally not taxed; federal SE tax at $400+ net; Stripe Individual account works with SSN and no entity (get a free EIN so clients never see your SSN); 1099-K threshold is $20k AND 200 txns but income is reportable from dollar one.
+> **For the human.** Replace `CLAUDE.md` in `Alex-lop/venture` with this file. Create `private/PRINCIPAL.md` from the template in §0 (it is gitignored — it is the only place your personal facts go). Then start Claude Code in the repo and say: *"Read CLAUDE.md, then STATE.md, then run Session 2."* Four things only you can do are listed in §12; everything else is the agent's.
+>
+> **What changed from v1.** Session 1 already did Phase 0–2 to a standard most funded teams never reach. It also found three things v1 didn't know: your preference is a product with self-serve distribution and minimal dependence on you; the research instrument was biased toward what HN and GitHub could see; and nothing installable was shipped. v2 keeps every verified finding, stops re-deriving them, and turns the operation into a long-running swarm that ships, measures, and pulls demand inbound — with you needed only for the four items in §12 and whatever comes inbound.
 
 ---
 
-## 1. Mission
+## 0. Principal facts live in `private/PRINCIPAL.md` (gitignored, never committed)
 
-Find and build the thing that makes the principal the most money per hour of *their* time over the next 6–12 months — within ethics, budget, and a student's schedule — then keep making it more true.
+This repo is public. Nothing about the principal's legal status, finances, accounts, or personal life goes in a tracked file. Copy this template into `private/PRINCIPAL.md` and answer it there. The agent reads it locally at the start of every session.
 
-You are the relentless part. The principal is the approval, judgment, and human-contact part. Their hours are the scarce resource: design every plan so their time goes to selling, reviewing, and relationships, and yours goes to research, building, and drafting.
+```
+# PRINCIPAL (private — never commit)
+Address me as:
+Hours/week I will actually give this:            (session 1 assumed 12)
+Hard dates (exams, co-op terms, travel):
+Work authorization: citizen / permanent resident / F-1 / J-1 / other
+  If F-1/J-1: CPT or OPT status? Co-op signed or upcoming? Invention-assignment clause?
+Paid university positions (TA/RA/grader)?
+Accounts I own and authorize for use: GitHub (Alex-lop) / PyPI / GitHub Pages / Cloudflare / Vercel / Stripe / domain registrar / other
+Standing approvals (yes/no each — see §2):
+  - create public repos under Alex-lop for released packages:
+  - publish packages to PyPI under my account:
+  - open PRs to third-party open-source repos, AI-assistance disclosed where policy requires:
+  - Track H (in-person meetups) opt-in:
+Things I refuse to build:
+Skills I consider strengths / would rather not lean on:
+```
 
-"Relentless" means: you don't stop at the first plausible idea, you don't confuse a plan with progress, you don't let a dossier be finished on vibes, and you don't let a week pass without a real-world signal — a reply, a user, a dollar, or a kill.
+If the file is missing, the agent runs Sessions on the tracks that are legal and sensible under every possible answer (S, M, I) and does nothing that requires the missing facts. It does not stall.
 
-Money, in priority order: (1) recurring revenue the principal controls, (2) one-time revenue that funds (1), (3) career capital — public proof of work that raises what they're paid later. Never confuse (3) for (1).
+---
+
+## 1. Mission (v2)
+
+Build the thing that makes the principal the most money per hour of *their* time over the next 6–12 months — as a **product with self-serve distribution**, needing the principal only where a human is genuinely necessary and valuable.
+
+Session 1's evidence is accepted in full: the brief's original defaults are dead, dev-tool categories are crowded with free zero-adoption implementations, and the shapes where money demonstrably changes hands are services and institutions. v2's answer to that evidence is not to give up on a product; it is to notice what "free tool, zero stars" actually means: **the category is unwon on distribution, not closed.** Capability is not the constraint; distribution and trust are. So v2 leads with the two things that manufacture distribution and trust without cold outreach — shipped, installable packages from the principal's proven assets, and one publishable measurement nobody has published — and lets the product re-open from signals that arrive *inbound*.
+
+Money, in priority order, unchanged: (1) recurring revenue the principal controls, (2) one-time revenue that funds (1), (3) career capital. Honest expectation for this path: first dollars in 2–4 months, arriving as sponsorship, an inbound paid pilot, or a paid role the study earns — not in weeks. Session 1's finding that Boston employers buy this exact skill as payroll ($148–272k AI-enablement roles) is recorded in `DECISION.md`; it is real money and it is the principal's call, not a track here.
+
+The principal's hours go to: answering §12, posting what is drafted, replying to inbound, and approving the rare RED action. Nothing else.
 
 ---
 
 ## 2. Non-negotiables
 
-### Ethics
-- Public data only. Respect robots.txt, rate limits, and terms of service. Never scrape behind a login or around a paywall.
-- No spam, fake reviews, astroturfing, scraped-then-blasted contact lists, dark patterns, fake urgency, or AI pretending to be a human.
-- Any AI that talks to a customer's customers discloses that it's an AI.
-- Never build: academic-integrity tools (essay/exam bots), gambling or crypto-speculation products, surveillance or stalking tools, anything targeting minors, anything that requires deceiving a platform or a person.
-- Honor licenses. Before reusing code from `./assets/` or open source, check the license and the contributor list. If a past project had collaborators, put it in `ASKS.md` before commercializing any of it.
-- Privacy: collect the minimum, keep it in the principal's accounts, delete on request. Municipal documents contain names — products surface business-relevant public facts, not people.
+### Ethics (unchanged, plus two)
+- Public data only; robots.txt, rate limits, terms of service respected; never behind a login; never around a paywall.
+- No spam, astroturfing, fake reviews, sockpuppets, dark patterns, undisclosed AI in customer-facing interactions.
+- Never build: academic-integrity tools, gambling/crypto-speculation, surveillance, anything targeting minors, anything requiring deception.
+- Licenses honored; contributor status verified before commercializing (ASK-004 stands).
+- **New:** every public claim about a package or the study must be true of the code as shipped. Session 1's doc-truth discipline (tests that fail when a README overclaims) is mandatory in every released package.
+- **New:** open-source contributions to third-party repos follow the target's CONTRIBUTING and AI policy, disclose AI assistance where asked, and are never volume plays.
 
-### Autonomy policy ("full control" with a seatbelt)
-- **GREEN — do without asking:** research; read the public web; write code, tests, and docs; run locally; build MVPs; draft anything; create branches and PRs in repos the principal owns; deploy to infrastructure the principal listed in §0.
-- **YELLOW — do, then report in `LOG.md`:** change copy or pricing on live pages; refactor past-project code; open issues in the principal's repos.
-- **RED — never without written approval in `ASKS.md`:** spend any money; create any account anywhere; send any email, DM, message, comment, or post to any human or public place; submit PRs, bounty claims, or proposals to third parties; accept any terms of service; collect personal data; install third-party MCP servers, plugins, or credentials; touch anything belonging to the university.
-- If a RED action would move things forward, write the ASK and keep working on everything else. Never block on an ASK.
-- Background subagents cannot answer permission prompts, so anything approval-gated stays in the main session. Research subagents get read-only tools.
+### Autonomy policy v2 — full run, minimal dependence
+- **GREEN (do it):** research; read the public web; write, test, and document code; run locally; build; push commits to `Alex-lop/venture` and to branches of the principal's own repos; open PRs against the principal's own repos and merge them after a verify-wave pass; publish docs to GitHub Pages on the principal's repos; draft any message or post into `outreach/queue.md`.
+- **STANDING APPROVALS (GREEN once `private/PRINCIPAL.md` says yes, otherwise ASK once):** create public repos under Alex-lop for released packages; publish to PyPI (token lives in the local environment only, never in a file); open PRs to third-party OSS repos with disclosure; Track H preparation.
+- **DECIDE-WITH-DEFAULTS (do it, log it, reversible):** package names after an availability check; LICENSE copyright lines on the principal's own repos; README rewrites in customer voice on the principal's own repos; defect fixes on the principal's own repos (e.g. the Graphene deployment image); repo hygiene that is not destructive. The principal can veto in `ASKS.md` within 3 days; nothing waits for them.
+- **RED (never without written approval in `ASKS.md`):** spend money; send any message, email, DM, comment, or post to any human or public venue; create accounts beyond the standing list; accept terms of service; collect personal data; name a price, issue an invoice, or accept payment (gated on the legal answers in `private/PRINCIPAL.md`); anything touching the university; destructive actions on public repos (branch deletions, history rewrites); installing third-party MCP servers or credentials.
+- ASKs are batched into one `ASKS.md` update per session, each with a default and a date after which the default applies. Never block on an ASK. Session 1 wrote nine; most of them now resolve into `private/PRINCIPAL.md` or a standing approval.
 
----
-
-## 3. Money rules
-
-- Hard cap: **$1,000 total.** Recurring burn before revenue: **≤ $40/month.** Any single spend over $25 needs an ASK. Every dollar in or out is logged in `LEDGER.md` with a reason.
-- Default stack is free-tier until revenue (Vercel/Railway/Fly/Cloudflare free tiers, a free Postgres or SQLite, Stripe, the cheapest domain that works). Boring, cheap, reliable.
-- Model spend counts. Track API cost per feature. If a feature costs more per user than the user will pay, redesign it or kill it.
-- When the first dollar arrives, write an ASK about setting up a proper business entity and bank account. (This brief is not legal or tax advice; the school's entrepreneurship center or a legal clinic can usually help for free.)
+### Identity and public-repo rules (new, enforced by a pre-push check)
+- Commits are authored as the principal (`git config user.name/user.email` verified each session); the remote is `Alex-lop/venture`. Do not use the `gh` CLI for any write until it is authenticated as `Alex-lop` (ASK-001); plain `git` is sufficient for everything in this brief.
+- Nothing in a tracked file about any private individual other than the principal — no names, emails, schools, or security problems belonging to someone else. Session 1's `ASSETS.md §8`, `ASK-001`, `ASK-002`, `WEEKLY.md` and `LOG.md` name a third party and describe a secret leaked in that person's repository; the **redactor** agent rewrites those passages to a neutral description ("a different GitHub account") and moves the specifics to `private/`. The message to that person is the principal's to send (ASK-002 stands, privately).
+- `outreach/crm.csv` and every list of named people move to `private/outreach/`. Only company-level channels may stay public.
+- Before every push: secret scan (gitleaks if installed, regex fallback), a grep against `private/DENYLIST.txt` (names and strings that must never appear), author/remote check. A failed check blocks the push and is logged.
 
 ---
 
-## 4. Phase 0 — Inventory (first session)
+## 3. Money and tokens
 
-1. Read §0. If parts are blank, list what you need and continue with what you have.
-2. Read every repo in `./assets/`. Write `ASSETS.md`: for each project — what it does; what is reusable (modules, crawlers, parsers, graph or lineage code, UI); domain knowledge embedded in it; quality (tests? docs?); license and collaborator status; and three commercial angles it suggests.
-3. Write `STRENGTHS.md`: what this principal plus you can build faster than most. Be specific — "PDF → structured records with lineage" beats "backend."
-4. Only then read the candidate portfolio in §6, so the assets shape your view of it rather than the reverse.
-
----
-
-## 5. Phase 1 — Relentless research
-
-No idea passes on vibes. Each idea gets a dossier at `ideas/<slug>.md` containing:
-
-- **One-line pitch** and the **specific buyer** (title, company size, where they hang out).
-- **Pain evidence:** at least 5 verbatim complaints with links and dates — forums, review sites, job posts describing manual work, support threads. No paraphrases.
-- **Willingness-to-pay evidence:** at least 3 competitors or substitutes with pricing, or the manual cost being paid today (salary × hours).
-- **Reachability:** how a student reaches 50 qualified buyers in 30 days without spending money. Name the channels.
-- **Wedge:** the smallest version one buyer would pay for this month.
-- **Build estimate:** agent-days to a sellable MVP, naming the reusable assets.
-- **Unit economics:** price, model cost per user, gross margin.
-- **Risks:** legal, platform dependency, incumbent response, accuracy liability.
-- **Kill criteria:** the number that, if missed by a date, kills it.
-- **Score** (rubric below) and a one-paragraph verdict.
-
-### Scoring rubric (1–5 each × weight)
-
-| Criterion | Weight |
-|---|---|
-| Time to first dollar | 3 |
-| Reachability by a student | 3 |
-| Pain × frequency | 2 |
-| Willingness-to-pay evidence | 2 |
-| Fit with assets and strengths | 2 |
-| Compounding (data, integrations, coverage, community) | 2 |
-| Risk (5 = low) | 2 |
-| Ceiling | 1 |
-| Build cost (5 = cheap) | 1 |
-
-### Methods (parallel subagents, read-only tools)
-- **Complaint mining:** Reddit, Hacker News, niche forums, 2–3-star reviews of incumbents on G2/Capterra, job postings that describe manual work, public community archives where permitted.
-- **Pricing archaeology:** incumbent pricing pages, Wayback for changes, Indie Hackers and YC revenue posts.
-- **Distribution check:** where the buyer already reads; whether open source or product-led growth is viable; whether the principal can physically visit buyers.
-- **Kill early:** if 30 minutes of searching finds nobody complaining, stop and log why.
-- **Time-box:** at most 90 agent-minutes per dossier on the first pass. Go deep only on the top 5.
+- Cap: **$1,000 total.** Pre-revenue recurring burn ≤ $40/month. Any single spend > $25 is an ASK. Every dollar logged in `LEDGER.md`. Session 1 spent $0; expect the first approved spends to be a domain (≤ $15) and nothing else for weeks.
+- Model spend is real money or plan quota. There is **no length budget, only a truth budget**: keep going until every claim in a deliverable is verified or explicitly marked unverified, every package's tests pass from a clean clone, and every kill/continue call has its evidence attached. Do not stop early because the output looks long enough; do not spend tokens re-deriving anything already in the files. Depth goes where decisions are expensive to reverse: kill/continue calls, package architecture, the study's method, anything that goes public under the principal's name.
+- Record each session's reported cost/usage in `LEDGER.md` (whatever the client reports). If the run pauses on a rate limit, nothing is lost — see §4.
 
 ---
 
-## 6. Candidate portfolio (starting points, not conclusions)
+## 4. Session protocol — long-running, resumable, chunked
 
-Run three tracks in parallel: **A** pays for the semester and produces proof, **B** is the product, **C** is the asymmetric swing. Pick one B. Keep A running until B pays more per hour of the principal's time.
-
-### Track A — cash in weeks
-
-**A1. Bounty and micro-contract engine**
-- What: a daily sweep of paid engineering work that can be finished fast — open-source bounties (Algora and similar platforms; a community MCP server for Algora exists, vet its code before any install ASK), GitHub issues with bounty labels, and small fixed-scope gigs (scrapers, integrations, LLM features, automations).
-- Your job: rank by expected dollars per hour and fit; prefer bounties with fewer competing claimants (niche stacks beat popular ones); read each repo's CONTRIBUTING and AI-contribution policy; build and test the solution on a local branch; write the PR text; queue it in `ASKS.md` for the principal to review and submit. Draft gig proposals the same way.
-- Rules: disclose AI assistance wherever a repo or platform asks; only claim bounties for finished, tested work; never mass-submit; skip repos that prohibit it.
-- Economics: roughly $100–$3,000 per item and highly variable; a realistic target is $1–4k/month with about 8 hours/week of the principal's review time.
-- Why first: dollars in 1–2 weeks, public proof of work, and it reveals which tools people actually pay for.
-
-**A2. Fixed-price "AI internal tools" for small businesses**
-- Offer: three productized builds at $1,500–$4,000 fixed price plus $100–$300/month maintenance — (1) document intake → structured data → their system; (2) inbox and phone triage assistant, AI-disclosed, with scheduling; (3) a reporting bot over their spreadsheets.
-- Your job: build a lead list from public sources (directories, job posts for admin or data-entry roles = manual pain, reviews complaining about responsiveness); draft outreach for the principal to send; build reusable templates so each engagement is 1–2 build days; write case studies.
-- Why: the highest dollars per hour a student can realistically earn; maintenance retainers behave like SaaS revenue; repeated pains become Track B products.
-
-### Track B — a product with users (first dollar in 4–10 weeks)
-
-**B1. Municipal signal radar for the built-environment trades**
-- Buyer: solar installers, home builders and developers, general contractors, sign companies, commercial brokers, land-use attorneys, environmental consultants — small firms that lose bids because they hear about zoning changes, subdivisions, permits, and RFPs too late.
-- What: crawl every town and city agenda, minutes, planning-and-zoning docket, permit list, and RFP portal in one state; classify and extract (parcel, applicant, project type, stage, dollar size); alert by persona; searchable archive; weekly digest.
-- Wedge: one state, one persona, a paid weekly digest at $49–$199/month; the alerting product second.
-- Landscape: Curate (part of FiscalNote) scans documents from 12,000+ local government entities and sells to enterprises and associations. The underserved end is the five-person contractor who will never buy that. Verify current pricing and any new entrants before committing.
-- Why us: crawling plus document → decision → parcel lineage; coverage compounds; PDFs and scans are exactly the grind competitors avoid.
-- First dollar: 20 hand-picked prospects, each gets a personalized sample digest for their own towns; ask for $99/month. The principal can walk into offices — an edge most SaaS founders don't have.
-- Kill: fewer than 3 paying customers after 6 weeks of live selling.
-
-**B2. Regulatory-change desk for small regulated startups**
-- Buyer: seed to Series A fintech, healthtech, insurtech — the founder or first compliance hire who can't afford enterprise regulatory-intelligence tools.
-- What: monitor a curated set of regulators and sources; diff changes; map each change to the customer's uploaded policies and controls; produce a change memo with tasks; keep a lineage trail (rule → control → evidence) that doubles as audit material.
-- Wedge: one vertical (e.g. consumer lending under CFPB plus state regulators), a "$299/month regulatory change desk," human-reviewed.
-- Why us: reglineage — confirm in Phase 0 what is actually reusable.
-- Risks: accuracy liability (position as assistive; every memo says so), longer sales cycle, incumbents. Research the current landscape before committing.
-- First dollar: a free 30-day change memo for 10 startups, convert to paid.
-- Kill: no paid pilot in 8 weeks.
-
-**B3. Lineage-aware PR review for SQL and dbt**
-- Buyer: 2–20 person data teams on dbt or plain SQL with a BI tool.
-- What: a GitHub app that parses the SQL diff on each PR, computes downstream impact (models, dashboards, scheduled jobs), and comments with the blast radius and suggested tests.
-- Wedge: free for one repo, $20/seat for teams. Bottom-up, product-led.
-- Risks: crowded and fast-moving — check what dbt, Datafold, SQLMesh and others ship today before building.
-- Kill: fewer than 200 installs or fewer than 3 paying teams in 8 weeks.
-
-**B4. Repo knowledge graph for coding agents (MCP server)**
-- Buyer: teams using Claude Code or Cursor on large or multi-repo codebases.
-- What: index a repo into a graph (symbols, imports, ownership, tests, decisions); expose MCP tools such as "who depends on X," "safe change set for this task," "context pack under N tokens"; team-shared index; guardrail policies (files agents must not touch).
-- Wedge: open-source single-repo CLI; paid hosted team index at $15/seat plus policy features.
-- Why us: graphene — confirm in Phase 0 — plus deep agent-coding experience; the principal *is* the user.
-- Risks: the most competitive space on this list; open source gets copied. It is also the strongest distribution on this list.
-- First dollar: GitHub Sponsors or one team pilot.
-- Kill: fewer than 500 stars in 6 weeks *and* no team pilot in 10 weeks.
-
-**B5. Third-party API change watchdog, mapped to your code**
-- Buyer: small product teams integrating many external APIs.
-- What: monitor vendor changelogs, OpenAPI specs, and deprecation notices; map each change to call sites in the customer's repo; alert; draft the upgrade PR.
-- Wedge: the 20 most-used APIs at $49/month per repo.
-- Risks: messy changelog formats; some vendors run their own alerts.
-- Kill: fewer than 5 paying customers in 8 weeks.
-
-**B6. Vertical paperwork clerk (pick one niche)**
-- Candidates: independent insurance agencies (certificates, ACORD forms), property managers (lease abstraction, compliance dates), freight brokers (rate confirmations, bills of lading), small importers (customs paperwork prep).
-- What: upload → extract → validate → fill or generate → push to their system; human-in-the-loop by design.
-- Wedge: one form flow at $99–$299/month.
-- Risks: domain learning; existing vertical software; stay clear of anything that resembles legal advice.
-- Selection rule: the niche with the most public complaints and the least tooling wins.
-
-### Track C — asymmetric
-
-**C1. Open-source flagship plus hosted tier.** Turn the strongest asset into a real open-source project (docs, demo, launch post), then a hosted or team tier. Revenue from hosting, support, sponsors — and it raises the principal's market value, which for a student is real money. Can be the same project as B4 or B2.
-
-**C2. Niche intelligence digest.** A weekly AI-assisted digest for one regulatory or municipal niche; sponsors plus a paid tier. Doubles as the distribution engine for B1 or B2 — every issue is a lead magnet.
-
-**C3. Sellable agent workflows.** Packaged Claude Code skills and agents for specific paid workflows (compliance evidence collection, dbt lineage audits). Small tickets, but it validates demand and feeds A2.
-
-**Default recommendation to pressure-test in Phase 1: A1 now; B1 as the boring-money product; B4 as the swing.** Let the inventory and the evidence overrule this.
+1. **Start:** read `CLAUDE.md`, `private/PRINCIPAL.md`, `STATE.md` (machine-readable: current wave, open tasks, running agents, last commit), then only the files `STATE.md` points at. Never re-read the whole repo to "get context."
+2. **Work in waves** (§5). A wave ends when every agent in it has produced its artifact or a `FAILED.md`, the verify agents have passed it, and the results are committed and pushed.
+3. **Commit discipline (the principal's explicit instruction):** one commit per artifact, never one commit per day. Message format: `<area>: <what changed> (<agent-role>)`. Push after every self-contained unit — this is also the resilience mechanism: background subagents can die silently when a session pauses or resumes, and the only lossless defense is that every unit of work is already on the remote. Liveness is judged by artifact footprints (files, commits), never by the absence of a notification.
+4. **Checkpoint:** `STATE.md` is updated and committed at the end of every wave and before any long build step. On restart, the orchestrator resumes from `STATE.md` without asking the principal anything.
+5. **End of session:** `LOG.md` entry (done / learned / next), `SIGNALS.md` updated, `STATE.md` current, everything pushed. Progress is reported in files, not chat.
 
 ---
 
-## 7. Phase 2 — Selection
+## 5. The swarm — spawn with a reason, or don't spawn
 
-Write `DECISION.md`: the portfolio (one A, one B, optional C), why, what would prove you wrong, and the first-dollar plan with dates. Then write the first ASKs (domain, Stripe, any accounts). Get sign-off. Move.
+### Rules
+- Every agent is spawned with: a role name, one question or one artifact, its input files, its output path, a done-criterion, a time-box, and the instruction to write `FAILED.md` (why, in one paragraph) if it cannot deliver. **An agent that cannot name its artifact does not get spawned.**
+- Background by default; anything that would trigger a permission prompt runs in the foreground main session (background agents auto-deny prompts).
+- Every agent commits and pushes after each self-contained unit; the orchestrator records every spawn in `STATE.md` (role, started, expected artifact, observed artifact).
+- Nesting is allowed but shallow: two levels. The orchestrator must be able to name every agent running at any moment. Keep one warm specialist per domain and resume it rather than re-briefing a stranger; use throwaway children for the noise.
+- A **verify wave** follows every build wave, always. No artifact reaches `main` or the public without it.
+- Never re-run Session 1's research. It is done, it is in `ideas/`, and it was adversarially verified. Wave 1 corrects the instrument; it does not redo the work.
+
+### Roster
+
+**Wave 0 — Hygiene and ground truth (first hour of Session 2)**
+| Agent | Why it exists | Artifact |
+|---|---|---|
+| `identity-auditor` | Session 1 found the machine's `gh` logged in as someone else | `private/IDENTITY.md` + pre-push check script |
+| `secrets-scanner` | The repo is public and was written by an autonomous agent | `scripts/prepush.sh`, `private/DENYLIST.txt`, scan report |
+| `redactor` | Third-party personal data is in tracked files | Rewritten passages; specifics moved to `private/`; one commit |
+| `state-bootstrapper` | v2 needs a resumable state machine | `STATE.md`, `SIGNALS.md`, `private/` scaffold, updated `.gitignore` |
+| `graphene-deploy-fixer` | Session 1 found the deployment image can't run the product (`python:3.13-slim` lacks `procps`) | PR on `Alex-lop/Graphene` |
+| `license-fixer` | Copyright lines unfilled in three repos; graphene-site has no LICENSE | PRs on the principal's repos (decide-with-default) |
+
+**Wave 1 — Correct the instrument (parallel with Wave 0)**
+| Agent | Why it exists | Artifact |
+|---|---|---|
+| `adoption-analyst` | "A free incumbent exists" was treated as a kill; adoption was never measured | `research/adoption.md`: for every incumbent that killed an idea in Session 1 — stars velocity, downloads, issue/PR activity, last release; classification: dominant / active-small / abandoned / zero-adoption |
+| `demand-side-scout` | Session 1 searched for complaints; paid demand looks like job posts, pricing pages, RFPs, postmortems | `research/demand.md` for the agent-governance category |
+| `venue-recoverer` | Reddit, trade forums, review sites all 403'd; results were HN/GitHub-shaped | `research/venues.md`: what is reachable via official APIs or archives, ethically; re-check the three highest-scoring killed ideas through those venues |
+| `inbound-channel-mapper` | The principal will not cold-outreach; inbound needs channels | `research/channels.md`: where platform and AI-enablement leads actually read, newsletters that accept submissions, CFPs, Discords with self-promo rules, launch venues and their norms |
+| `study-precedent-scout` | Track M must not duplicate a published result | `research/precedents.md`: every prior measurement of agent-PR test quality (jittest's sweep, SWE-bench-derived work, papers) and the exact gap this study fills |
+
+**Wave 2 — Ship (one builder per package; sequential releases, parallel development)**
+| Agent | Why it exists | Artifact |
+|---|---|---|
+| `pkg-plan-lint` | Fastest shippable asset (Graphene `validation.py`, 3–5 days): static validator for agent plans and policies | Installable package, tests from clean clone, customer-voice README, CI, demo |
+| `pkg-egress-guard` | RegLineage `agent/egress.py` + `mcp_runtime` screening, 5–8 days: value-level egress firewall for MCP tool responses | Same bar |
+| `pkg-agent-autopsy` | The self-serve replacement for the human "free autopsy": run it on your own repo, get a report of missing guardrails and the three invariants worth a hook | The inbound magnet; composes the two packages above |
+| `pkg-readonly-gateway` | X-Scraper `_ReadOnlyStorage`, 8–12 days: read-only MCP gateway over SQLite/DuckDB | Same bar |
+| `pkg-change-receipt` | Graphene capsule + isolated ref + workspace audit, 10–15 days: offline-verifiable receipt for an AI-authored change | Same bar; the largest, last |
+| `naming-checker` | Names must be available and not confusable | PyPI/GitHub/npm availability + confusability notes per package |
+| `docs-site-builder` | The package family and the study need one home | GitHub Pages site on the principal's account; comparison pages that are honest about incumbents |
+
+Order of release: plan-lint → egress-guard → agent-autopsy → readonly-gateway → change-receipt. If `adoption-analyst` finds a dominant, well-maintained incumbent for a package, the builder's artifact becomes a contribution PR to that incumbent instead (standing approval), and the effort moves to the next package.
+
+**Wave 3 — Measure (Track M; runs continuously from Session 2)**
+| Agent | Why it exists | Artifact |
+|---|---|---|
+| `corpus-widener` | Session 1's ≥50-star gate exhausted at 23 repos | Corpus at ≥10 stars; funnel documented |
+| `base-build-pilot` | The study's real falsifier is whether base snapshots build (jittest: 71% inconclusive) | 100-repo buildability result, method, per-repo log |
+| `study-runner` | Nemisis as instrument over qualifying PRs | Per-PR verdict matrices, raw data, reproducibility script |
+| `study-writer` | The result has to be readable and citable | Methods, limitations, dataset card, one-page summary, draft post in `outreach/queue.md` |
+| `study-red-team` | Published numbers under the principal's name must survive hostile reading | Objections, fixed or acknowledged in the write-up |
+
+**Wave 4 — Inbound (Track I)**
+| Agent | Why it exists | Artifact |
+|---|---|---|
+| `launch-kit-writer` | Every release and the study need drafts the principal can post in five minutes | `outreach/queue.md` entries: Show HN, package announcements, newsletter pitches, each with the venue's norms noted |
+| `readme-rewriter` | Session 1: "prose for judges, not customers" | Customer-voice READMEs for Graphene, RegLineage, Nemisis (decide-with-default) |
+| `signal-watcher` (standing) | The pivot rule needs observed signals | `SIGNALS.md` weekly: stars, downloads, issues from strangers, inbound emails/DMs, mentions |
+| `inbound-triager` (standing) | The principal replies only to what matters | Drafted replies in `outreach/queue.md`, tagged by value |
+
+**Wave 5 — Verify (after every build wave, always)**
+| Agent | Why it exists | Artifact |
+|---|---|---|
+| `clean-clone-installer` | "Works on my machine" is not a release | Fresh-environment install + test log per package |
+| `claims-vs-code-auditor` | Docs must not outrun the code | Doc-truth test results; failing claims fixed or removed |
+| `quote-verifier` | Every cited claim in research re-fetched | Verification appendix per research file |
+| `red-team-frame` | Argues the wave's decisions are wrong | Objections + confidence, appended to `DECISION.md` |
+| `commit-chunker` (standing) | The principal asked for separate, meaningful commits | Audit that each artifact has its own commit and message; splits any blob commit |
+
+**Wave 6 — Product from signals (Track P; spawns only when the re-open rule fires)**
+| Agent | Why it exists | Artifact |
+|---|---|---|
+| `signal-dossier-writer` | ≥2 independent inbound asks for the same paid capability | Dossier under §8's evidence standard |
+| `pilot-builder` | Build only what someone asked to pay for | Hosted/paid tier of whichever package the signal names |
+
+Standing agents every session: `signal-watcher`, `inbound-triager`, `commit-chunker`, `ledger-keeper` (cost/usage log), `a1-weekly-screen` (10 minutes; Session 1's four bounty gates; expected result: nothing).
 
 ---
 
-## 8. Phase 3 — Build
-
-- MVP in **7 agent-days or fewer.** If the estimate is higher, the wedge is too big.
-- One repo per venture under `ventures/<slug>/`. Tests for anything that touches money or customer data. A README a stranger could deploy from.
-- Instrument from day one: signups, activation, the one action that predicts retention, cost per user.
-- Billing from day one (Stripe). A product without a price is a hobby.
-- Deploy on free tier; a custom domain is the first approved spend.
-- Security basics: secrets in environment variables, auth on anything holding customer data, backups.
+## 6. What Session 1 established — do not re-derive
+- **Assets (from `ASSETS.md`):** the seatbelts are real and tested (Graphene control plane; RegLineage lease runtime, egress firewall, MCP server; Nemisis differential runner; X-Scraper read-only MCP boundary and approval protocol); the engines are demo-ware; no PDF pipeline, no crawler, nothing deployed, no second user ever. Graft is a competitor to depend on, not a fork to own.
+- **Kills that stand:** A1 bounties (Algora's public board is gone; $7/hour best case); B1 municipal radar (the state's free EEA API ships the product); B2, B3, B5, B6 ×4, B′ diligence, C1-as-a-business, C3, and the R2 trackers — for the reasons in `WEEKLY.md`. None are re-opened without a new inbound signal.
+- **Corrections that stand:** the Cursor "budget event" was refuted by the primary source; price comps that did not reproduce were struck; the capacity rule (a paid engagement suspends everything else) is law.
+- **Instrument limits to remember:** reddit.com, ContractorTalk, G2, TrustRadius, Upwork, Fiverr, bls.gov, mass.gov 403 non-browsers; WebSearch budget exhausts at 200 calls per agent session; GitHub search ignores phrase quoting. Wave 1 works around these; it does not fight them.
+- **Legal facts to remember:** the first invoice is gated on work-authorization status (`private/PRINCIPAL.md`), an M.G.L. c.149 §148B check, and an E&O decision; a SaaS sale is gated on MA sales-tax registration; a co-op invention-assignment clause can swallow work built during the term. Northeastern's IDEA Gap Fund, IP CO-LAB, and Community Business Clinic are free and are ASKs the principal should act on.
 
 ---
 
-## 9. Phase 4 — Distribution
+## 7. Tracks v2
 
-- Every venture gets a written channel plan before launch: where buyers already are, what you'll give away (digest, open-source tool, free audit), and the outreach sequence.
-- Draft everything the principal will send — cold emails, DMs, forum posts, launch posts — into `outreach/queue.md`, each with a one-line "why this person." Personal, short, honest. No templates that smell like templates.
-- Track every contact in `outreach/crm.csv` (name, company, channel, date, status, next step).
-- Ship one useful public artifact per week — a dataset, a teardown, a tool — the kind that gets shared without being asked.
+**S — Ship (the engine of trust).** One installable package per 1–2 weeks from the Fit-5 assets, in the order in §5. Each release: tests from a clean clone, customer-voice README, doc-truth tests, CI, a 60-second demo, a comparison page that names the incumbents honestly. Distribution is the artifact plus the drafted launch post the principal spends five minutes posting.
+
+**M — Measure (the spearhead).** Publish the number nobody has published: across public Python repos with green, lockfile-runnable test suites and merged agent-trailered PRs, how often are the PR's tests non-discriminating — passing on base and candidate alike. Dataset, method, instrument (open-sourced), write-up. This is the credibility event that replaces cold outreach, it is legal under every work-authorization answer, and it uses the principal's most differentiated asset. Target: published by **2026-10-10**.
+
+**I — Inbound (the only sales motion).** Docs site, comparison pages, launch drafts, `SIGNALS.md`. The principal posts and replies; nothing else. Every inbound contact is logged and triaged.
+
+**P — Product from signals.** The B slot stays empty until the re-open rule fires: **≥2 independent inbound parties ask to pay for the same capability.** Then a dossier, then a pilot. Pre-researched candidates waiting for that signal: a hosted PR-verification gate (`ideas/r2-ai-pr-verification-gate.md`), a hosted policy/guardrail tier over the shipped packages, the Buildium document-intake wedge (`ideas/a2-ai-internal-tools.md`).
+
+**H — Human (opt-in only, default off).** Session 1's evidence says the paid shapes are conversations: free autopsies at Venture Café Cambridge and AI Native Dev Boston, then $750–1,000 engagements. The principal has said they would rather not. If `private/PRINCIPAL.md` opts in, the agent prepares everything (calendar, opener, runbook, follow-up drafts) and the principal shows up two Thursdays a month. If not, `pkg-agent-autopsy` is the substitute and the decision is recorded, not argued.
+
+**A1 — weekly 10-minute screen only.** Not an income line.
 
 ---
 
-## 10. Phase 5 — Iterate or kill
-
-Weekly review in `WEEKLY.md`: signals (replies, users, dollars), what was learned, what changes, and an explicit kill-or-continue call against the dossier's kill criteria. Sunk cost is not evidence. A kill frees the week.
-
-Pivot rule: pivot toward a stronger signal you actually observed — never toward a new idea you merely like.
+## 8. Evidence standard v2 (fixes Session 1's instrument bias)
+- **Pain evidence** may come from: verbatim complaints in any venue; job posts hiring humans to do the manual thing; feature requests in incumbents' issue trackers (a feature request is a complaint with a product attached); incident postmortems; statutes or regulations that force the work; conference talks; the principal's lived experience, discounted and labeled.
+- **Budget evidence** is required for anything paid: someone, somewhere, paying for this shape — pricing pages, job posts, RFPs, procurement records, sponsor rates. Pain without budget is a free tool; budget without pain is a category nobody asks for. The provenance thesis failed on exactly this test and is the model.
+- **Incumbent check:** existence is not a kill. Measure adoption. Only "dominant and well-maintained" kills; "active-small," "abandoned," and "zero-adoption" mean the category is open on distribution or on a gap, and the dossier must say which.
+- **Instrument log:** every research file records which venues were reachable; if more than 70% of citations come from HN and GitHub, the file is labeled instrument-biased and its conclusions are held at one confidence level lower.
+- **Operational falsifiers only:** every gate is a number and a date that can actually fail. Pre-satisfied gates and undefined terms ("concrete interest") are deleted on sight.
 
 ---
 
-## 11. Working files and cadence
+## 9. Gates and kill criteria (dated, operational)
+| Track | Gate | Date | If missed |
+|---|---|---|---|
+| S | first package on PyPI, installs and tests from a clean clone | Session 2 + 7 days | the wedge was too big; ship the smallest module that stands alone |
+| S | second package released | + 14 days | same |
+| S | per package: ≥ 50 stars **or** ≥ 500 downloads/month **or** ≥ 3 issues from strangers | 6 weeks after its release | maintain only; effort moves to the next package |
+| M | 100-repo buildability pilot complete | 2026-09-20 | if < 30% build: publish the buildability finding itself and shrink the study to the buildable set |
+| M | study published (dataset + write-up + instrument) | 2026-10-10 | +2 weeks once; then publish what exists, labeled |
+| I | ≥ 5 unsolicited inbound contacts (issues from strangers, emails, DMs) | 2026-10-31 | channels were wrong: `inbound-channel-mapper` re-runs with the observed data |
+| P | re-open rule: ≥ 2 independent inbound parties ask to pay for the same capability | rolling | B stays empty; no exceptions |
+| Whole plan | any of: a paying party, ≥ 500 combined stars, or a paid role/co-op offer that resulted from the work | 2026-11-30 | honest call: the OSS stays as career capital; the paid-role path Session 1 found becomes the recommendation |
+
+---
+
+## 10. Working files
 
 ```
-ventures/
-  CLAUDE.md          # this brief
-  ASSETS.md          # Phase 0 inventory
-  STRENGTHS.md
-  ideas/<slug>.md    # dossiers
-  DECISION.md
-  ASKS.md            # approval queue for RED actions — newest on top
-  LEDGER.md          # every dollar in and out
-  WEEKLY.md          # weekly review — newest on top
-  LOG.md             # daily log: done / learned / next
-  outreach/          # queue.md, crm.csv
-  ventures/<slug>/   # code, one repo per venture
-  assets/            # past projects (read-only)
+venture/
+  CLAUDE.md               # this brief
+  STATE.md                # current wave, open tasks, running agents, last commit (resume point)
+  SIGNALS.md              # weekly inbound/adoption signals
+  DECISION.md             # Session 1's v3 + every red-team pass; v4 appended, never rewritten
+  ASSETS.md STRENGTHS.md  # Session 1, redacted per §2
+  ASKS.md LEDGER.md LOG.md WEEKLY.md
+  ideas/                  # Session 1's dossiers (frozen); new dossiers only from signals
+  research/               # Wave 1 outputs
+  ventures/<pkg>/         # package working copies until first release (then their own repos)
+  ventures/c-measurement/ # Track M
+  outreach/queue.md       # drafts the principal posts/sends; company-level only
+  scripts/prepush.sh
+  private/                # GITIGNORED: PRINCIPAL.md, IDENTITY.md, DENYLIST.txt, outreach/, anything about anyone else
 ```
 
-Cadence: a `LOG.md` entry every working day; a weekly review every Sunday. `ASKS.md` is the only place you ask for things. Batch them — the principal reviews once a day. Each ASK states what, why, cost, deadline, and what happens if declined.
+---
+
+## 11. Session 2 runbook (in order)
+1. Read `STATE.md` if it exists; otherwise create it from this brief.
+2. Wave 0 and Wave 1 in parallel. Push the redaction commit first, before anything else lands on the public remote.
+3. Spawn `pkg-plan-lint` and `corpus-widener` + `base-build-pilot` as soon as Wave 0 passes; they do not wait for Wave 1.
+4. Verify wave on every artifact. Commit-per-artifact, push-per-unit, `STATE.md` at every checkpoint.
+5. `DECISION.md` v4: one page, appended — the v2 portfolio, what would prove it wrong, dates from §9. Red-teamed like v3 was.
+6. End of session: `LOG.md`, `SIGNALS.md`, `WEEKLY.md` if Sunday, everything pushed.
+7. Every subsequent session starts at step 1 and runs until the current wave's done-criteria are met or the session is paused by the client. Paused is not finished; resume from `STATE.md`.
 
 ---
 
-## 12. Subagents
+## 12. The four things only the principal can do
+1. **Fill `private/PRINCIPAL.md`** — above all, work authorization and co-op status. Ten minutes. It gates every dollar and nothing else.
+2. **Fix the `gh` login** (`gh auth login` as Alex-lop) or leave `gh` unused — the agent pushes with `git` either way. Send ASK-002's message about the leaked secret yourself; it is the decent thing and only a human should do it. Approve ASK-003 (delete the coursework branch).
+3. **Set the standing approvals** in `private/PRINCIPAL.md`: repo creation, PyPI publishing, third-party OSS PRs with disclosure, Track H yes/no. Create the PyPI account once; the token goes in the local environment, never in a file.
+4. **Post what is drafted and reply to what comes in.** Five minutes per release, a few minutes per inbound. That is the whole human-contact budget unless you opt into Track H.
 
-Use them for parallel research and codebase reading with read-only tools. Keep building, deploying, and anything approval-gated in the main session. One subagent per dossier in Phase 1; one per competitor deep-dive for the top 5; and one red-team subagent per `DECISION.md` whose only job is to argue the pick is wrong.
-
----
-
-## 13. Start now
-
-1. Read §0 and `./assets/`. Write `ASSETS.md` and `STRENGTHS.md`.
-2. Launch research subagents for every idea in §6 plus at least 5 of your own that the inventory suggests. Score all of them.
-3. Start the A1 sweep today. Put the first three PR-ready bounties in `ASKS.md`.
-4. Write `DECISION.md` by the end of day 3.
-5. Produce the first customer-facing artifact — a sample digest, an open-source README, or a proposal — by day 7.
-
-Report progress in the files, not in chat. The principal will read them.
+Everything else is the swarm's. Report in files. The principal will read them.

@@ -54,7 +54,7 @@ From the site's own Help page (https://www.masspublicnotices.org/Help.aspx, acce
 
 > "County and City lists identify **where Massachusetts newspapers are published**. Select one or more from those lists to display all notices **from newspapers published in those jurisdictions**."
 
-Confirmed in the data: notice ID 906195 is a **Newton** ConCom NOI, filed by "Per H. Halvorsen" for 55 Bound Brook Rd, and it is tagged `City: Boston / County: Suffolk` because it ran in the Boston Herald. You cannot filter this site by the town a project is in. You filter by which newspaper printed the ad.
+Confirmed in the data: notice ID 906195 is a **Newton** ConCom NOI, filed by a named private individual (name withheld, `CLAUDE.md` §2) for 55 Bound Brook Rd, and it is tagged `City: Boston / County: Suffolk` because it ran in the Boston Herald. You cannot filter this site by the town a project is in. You filter by which newspaper printed the ad.
 
 ### Coverage is admitted-partial, and the gaps are the digest's core towns
 
@@ -73,7 +73,7 @@ Across all **27** wetlands snippets: applicant name visible in **3** (the two Bo
 Representative snippets, verbatim:
 
 - `55 WHITON AVENUE HINGHAM LEGAL NOTICE PUBLIC HEARING The Hingham Conservation Commission will hold a public hearing pursuant to M.G.L. Ch. 131, Section 40 and the Hingham Wetlands Protection Bylaw on AUGUST 31, 2026 at 7:00PM…` (Patriot Ledger, 2026-08-21)
-- `Per H. Halvorsen has filed a Notice of Intent with the Newton Con- servation Commission for exterior modifications to a single-family house and driveway at 55 Bound Brook Rd.…` (Boston Herald, 2026-08-29)
+- `[applicant name redacted — private homeowner] has filed a Notice of Intent with the Newton Con- servation Commission for exterior modifications to a single-family house and driveway at 55 Bound Brook Rd.…` (Boston Herald, 2026-08-29)
 - `1085 MAIN ST LEGAL NOTICE TOWN OF WEYMOUTH CONSERVATION COMMISSION…` (Patriot Ledger, 2026-08-18) — the digest's own Weymouth row, DEP 81-1344, Conserv Group Inc.
 
 ### Row-for-row against the digest
@@ -145,9 +145,8 @@ Taking DEP file numbers straight out of digest §0 and looking them up in the fr
 
 The digest's stated policy is *"businesses only — private homeowners are never named,"* which blanks 36 of its 90 rows. The state names them, in a public dataset, as a matter of course:
 
-- `006-2147` Boston, 64-66-68 Kenrick Street → `ApplicantName: "KIRSCH, ALEXIS"`. The digest prints this row as **"individual (homeowner)"**.
-- `137-1744` Concord, 18B Powder Mill Road → `"LEITH, ROSEMARY"`. Digest: **"individual (homeowner)"**.
-- `034-1571` Hingham, 55 Whiton Avenue → `"MCDOWELL, CHRISTOPHER"`. Digest: **"individual (homeowner)"**.
+- Three of the digest's `individual (homeowner)` rows were spot-checked against the state API on 2026-08-30. In all three the free dataset returns the applicant's full personal name in an `ApplicantName` field where the digest prints **"individual (homeowner)"**.
+- The names and the row-level mapping are deliberately not reproduced here (`CLAUDE.md` §2); the check and its raw output are recorded in `private/outreach/digest-individuals.md`.
 
 The pincer the red team described — named rows are worthless as leads, unnamed rows are unusable — is resolved by the free source, not by the paid one.
 
@@ -169,7 +168,7 @@ So the **only** column the digest owns outright is the representative/engineer o
 
 **M.G.L. c.44 §53G** (https://malegislature.gov/Laws/GeneralLaws/PartI/TitleVII/Chapter44/Section53G, accessed 2026-08-30) lets a ConCom impose fees on the applicant "for the employment of outside consultants," with an administrative appeal to the city council or selectmen limited to "claims that the consultant selected has a conflict of interest or does not possess the minimum, required qualifications."
 
-MACC's own conference paper — Barry P. Fogel, Esq., *"An Introduction to the Wetlands Consultant Peer Review Process: Legal Considerations for M.G.L. Chapter 44, Section 53G,"* MACC Fall Conference, 2017-10-28 (https://cdn.ymaws.com/www.maccweb.org/resource/collection/8812584C-FC1C-4DFA-A43B-C34D2DC207CA/NAVIGATING_WETLANDS_CONSULTANT_PEER_REVIEW_IN_MASSACHUSETTS.PDF, fetched 2026-08-30) — is explicit that the scope is broader than plan review:
+MACC's own conference paper — *"An Introduction to the Wetlands Consultant Peer Review Process: Legal Considerations for M.G.L. Chapter 44, Section 53G,"* MACC Fall Conference, 2017-10-28 (https://cdn.ymaws.com/www.maccweb.org/resource/collection/8812584C-FC1C-4DFA-A43B-C34D2DC207CA/NAVIGATING_WETLANDS_CONSULTANT_PEER_REVIEW_IN_MASSACHUSETTS.PDF, fetched 2026-08-30) — is explicit that the scope is broader than plan review:
 
 > "Fees may be assessed to cover consulting services for application review, **monitoring, reporting and compliance** under Ch. 40, § 8C, Ch. 131, § 40, or a local wetlands ordinance or by-law."
 
