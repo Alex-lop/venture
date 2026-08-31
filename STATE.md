@@ -4,7 +4,7 @@ session: 2
 started: 2026-08-30
 brief: CLAUDE.md v2 (installed this session; v1 kept at private/CLAUDE-v1.md)
 principal_file: private/PRINCIPAL.md (merged; US resident; standing approvals: repos=yes pypi=yes oss-prs=yes track-h=yes)
-current_wave: 2 (ship) + 3 (measure: study-runner) — waves 0, 1, DECISION v4, Track H prep complete
+current_wave: 2 (ship: final verification round) + 4 (docs site) — waves 0, 1, 3 (study complete and written), DECISION v4, Track H prep, README rewrites complete
 push_rule: the redaction commit lands on origin before any other session-2 commit (done in this checkpoint)
 
 ## Waves
@@ -13,8 +13,8 @@ push_rule: the redaction commit lands on origin before any other session-2 commi
 | 0 hygiene | DONE | redaction: 5 passes + 5 adversarial verifications, 325-entry denylist, prepush.sh (whole-word denylist, secret regexes, identity, paths) installed as .git/hooks/pre-push; private/IDENTITY.md; LICENSE PRs Graphene #12, RegLineage #9, Nemisis #1, graphene-site #1 (CI green; merge = ASK-012); Graphene deploy PR #13 (images build + procps; verified twice) |
 | 1 instrument | DONE | research/{adoption,demand,venues,channels,precedents,naming,contributions,a1-weekly-screen}.md — each quote-verified (re-fetched) and fixed; adoption.md is INSTRUMENT-BIASED (88.6% GitHub) and carries a corrections section |
 | 2 ship | RUNNING | ventures/plan-lint and ventures/egress-guard built to the release bar; clean-clone + claims-vs-code + red-team rounds with fix passes in flight (workflow wf_f3e2111a-317). Release names per research/naming.md: agent-plan-lint, egresswall (ASK-014 veto window to 2026-09-02). Release = orchestrator: rename → own repo under Alex-lop → PyPI (token in keychain) |
-| 3 measure | pilot DONE; study-runner RUNNING | pilot n=60: install 80% / collect 57% / run 48% / buildable 25/60 = 42% / green-at-base 11/60 = 18% (ventures/c-measurement/pilot/results.csv). study-runner (per-PR base-vs-candidate with the PR's own tests) building + method review + background run (workflow wf_d52eb08e-743) → ventures/c-measurement/study/ |
-| 4 inbound | PARTIAL | outreach/track-h/ (runbook, opener, follow-ups; verified 3 rounds); SIGNALS.md week-0 baseline. Pending: launch-kit-writer (after release), readme-rewriter ×3 (after release, so links are true), docs-site-builder (guardposts; after ≥1 release) |
+| 3 measure | DONE | pilot n=60: install 80% / collect 57% / run 48% / buildable 25/60 = 42% / green-at-base 11/60 = 18% (ventures/c-measurement/pilot/results.csv). study complete: 107 PRs over 25 repos — 0/99 resolved PRs without a FAIL_TO_PASS test (Wilson [0%, 3.7%]); 78% of PR-touched tests PASS_TO_PASS; 74% of F2P via import/collection error; 14/99 have no assertion-level F2P. WRITEUP.md, SUMMARY.md, DATASET-CARD.md, analysis.py — red-teamed (3 lenses, 25 objections) and number-verified (242/246 + fixes). Launch drafts in outreach/queue.md await a public URL ({STUDY_URL}) |
+| 4 inbound | RUNNING | outreach/track-h/ done; SIGNALS.md baseline; README PRs open: Graphene #14, RegLineage #10, Nemisis #2 (each audited; RELEASE-LINK placeholder to fill at release); Track M launch drafts in queue.md; docs-site-builder (guardposts) running → ventures/guardposts-site/ then repo Alex-lop/guardposts + Pages. Pending: package launch drafts (after release) |
 | 5 verify | CONTINUOUS | every artifact above carries its verification appendix or verdict |
 | DECISION v4 | DONE | appended + 3-lens red team + revision + 2 verification passes; orchestrator applied the last 4 fixes (n=60 pilot numbers; instrument gate replaces the pre-satisfied buildability gate; preamble disclosure; P read date) |
 
@@ -27,8 +27,8 @@ push_rule: the redaction commit lands on origin before any other session-2 commi
 
 ## Open tasks (ordered)
 1. Wave 2 workflow returns → rename plan-lint → agent-plan-lint, egress-guard → egresswall (pyproject name, console script, import name, README) → re-run scripts/check.sh → create public repos under Alex-lop → push → tag v0.1.0 → `uv build` + `uv publish` (UV_PUBLISH_TOKEN from keychain) → verify `pip install` from PyPI in a fresh venv → add `mcp-name:` README token first if the package ships an MCP surface (research/channels.md:175).
-2. study-runner returns → read ventures/c-measurement/study/results-prs.csv progress; commit the instrument + METHOD.md; the background run continues across sessions (resume command in study/README.md).
-3. pkg-guardrail-checkup (third package) builder — composes agent-plan-lint + egresswall; report shape = outreach/track-h/runbook.md §3 (six sections).
+2. docs-site-builder returns → create repo Alex-lop/guardposts (public), push, enable Pages (gh api; if the permission layer declines, ASK the principal to enable Pages in Settings) → replace {STUDY_URL} in outreach/queue.md with https://alex-lop.github.io/guardposts/study → commit.
+3. After release: fill the RELEASE-LINK placeholders in the three README PR branches (one-line commits); package launch drafts (launch-kit-writer). Then pkg-guardrail-checkup (third package) builder — composes agent-plan-lint + egresswall; report shape = outreach/track-h/runbook.md §3 (six sections).
 4. Wave 4: launch-kit-writer (Show HN needs a runnable artifact — research/channels.md:87; MCP registry; PyCoder's), readme-rewriter ×3 (PRs on Graphene/RegLineage/Nemisis), docs-site-builder (guardposts on GitHub Pages).
 5. Contribution PR to motherduckdb/mcp-server-motherduck (hardened read-only `--secure` mode; research/contributions.md) — gated 2026-09-15 in DECISION v4.
 6. End of session: LOG.md entry, WEEKLY.md (Sunday), LEDGER.md usage line, this file; push.
@@ -58,3 +58,5 @@ wave0 wf_5cca3c1f-7fd · wave0-round2 wf_83fa9bf7-75d · wave1 wf_ea0d9c52-0e1 �
 
 ## Resume instructions
 On restart: read CLAUDE.md, private/PRINCIPAL.md, this file. `git status` and `git log --oneline -30` show which artifacts landed (liveness = files + commits, never notifications). Continue from the first open task whose artifact is missing. Never `gh auth switch`. Never delete a branch on a public repo.
+
+- wave2-round3 wf_8f68ca8f-88a · wave2-round5 wf_8f35ead4-fdd · readme wf_de43755e-5b6 + wf_cca0787f-f2b + wf_66ec413f-2db · study-writeup wf_3b47bb2d-80f · docs-site (running)
