@@ -1,5 +1,21 @@
 # WEEKLY — review every Sunday (newest on top)
 
+## Week 0 → session-2 addendum — Sun 2026-08-30 → Mon 2026-08-31
+
+**Signals (replies / users / dollars):** 0 / 0 / $0 — by construction: nothing has been posted yet (drafts await URLs), nothing sent, nothing spent. Baseline recorded in `SIGNALS.md` (3 stars total, all RegLineage; 0 stranger issues; Graphene 598 clones/14 days is unexplained automated traffic).
+
+**What changed this week (v2 of the brief, `DECISION.md` v4):** the plan is a product with self-serve distribution — two installable packages from the seatbelts, one published measurement, inbound channels — with payroll run in parallel as ASK-010 because it is the only shape with observed dollar transactions. Track H is opted in; the runbook exists.
+
+**Kill-or-continue calls made this session**
+| Item | Call | Why |
+|---|---|---|
+| readonly-gateway as a contribution to `modelcontextprotocol/servers` | **RETARGET** → `motherduckdb/mcp-server-motherduck` `--secure` PR, gated 2026-09-15 | the sqlite server is archived; the "dominant" row was legacy download traffic to a dead package |
+| change-receipt (package or PR) | **HOLD** | in-toto's predicate queue: 13 outside PRs, no maintainer response; SLSA/Sigstore dominant; gittuf is the only warm target |
+| Track M study thesis ("agent PRs ship non-discriminating tests") | **REFUTED at the per-PR level** in this corpus (0/99); the per-test and mechanism findings are the publishable result | measured, verified, red-teamed |
+| Track S first release | **PENDING round 7** — two packages at the release bar minus the last red-team findings | seven verification rounds; each found real defects |
+
+**Next week's real-world signal target:** ≥1 package on PyPI and the study at a public URL by 2026-09-06 (the §9 S gate); Alex at Venture Café Thu 2026-09-03 with the runbook; the eight PRs merged.
+
 ## Week 0 — Sunday 2026-08-30 (session 1: Phase 0 → Phase 2 in one day)
 
 **Signals (replies / users / dollars):** 0 / 0 / $0. Nothing has been sent to anyone; nothing has been spent. Every action this week was research, reading, and drafting — by design (RED actions are queued in `ASKS.md`).
