@@ -6,6 +6,222 @@ Nothing here is sent by the agent. Every item is a draft for Alex to send (RED a
 
 ---
 
+## Track M study — launch drafts (2026-08-31, **revised after the red-team pass**)
+
+**Status:** DRAFTED. Nothing sent. The principal posts every item below; the agent posts
+nothing (`CLAUDE.md` §2 RED). **No price and no pitch appears anywhere in this section** —
+Changelog News rejects commercial products outright ("🚫 Commercial products/services.
+Sponsorship is your path.", `research/channels.md` §1), and the study is not a product.
+
+**What is being launched:** the Track M study — `ventures/c-measurement/study/WRITEUP.md`,
+`SUMMARY.md`, `DATASET-CARD.md`, the two result CSVs and the instrument (`runner.py`,
+`analysis.py`). **Blocked on one thing:** a public URL. Every `{STUDY_URL}` below is a
+placeholder; nothing here can be posted until the study is live somewhere linkable.
+
+**Revised 2026-08-31.** Three red teams reviewed the write-up; `WRITEUP.md` §Red-team pass
+lists every objection and its disposition. Four things changed in these drafts and **must not
+be reverted**: (1) the headline is now the **pre-registered** quantity — the PR's own
+*newly-added* tests, 1 of 99 — with the all-touched-tests number as context; (2) the
+"well-maintained tail / the selection biases toward 0" line is **withdrawn** (the built repos
+have *fewer* stars than the unbuilt ones); (3) the 74.0% is no longer described as "the PR
+added the module too" (that is 15.4%; 58.6% is collateral breakage of pre-existing tests);
+(4) nothing claims a property is **specific to agents** — there is no human-PR control arm.
+
+**The four numbers every draft must keep together** (from `python3 analysis.py`): **1 of 99**
+resolved PRs added tests that all already pass on base (Wilson 95% [0.2%, 5.5%]; 0 of 41 on
+`fix` PRs); **0 of 99** ship an entirely non-discriminating test file set, which is **0 of 25
+repositories, [0.0%, 13.3%]** once clustering is respected; **10.5%** of the tests these PRs
+*add* are `PASS_TO_PASS` against **78.0%** of all tests in the files they touch; and **58.6%**
+of the `FAIL_TO_PASS` evidence is a pre-existing test collaterally broken by the patch, not a
+new module. A draft that quotes one without the others is dishonest in one direction or the
+other and must not be posted.
+
+**Sequencing.** SRE Weekly and Changelog News both prefer published-first, no embargo
+(`research/channels.md` §1). Post to HN, then submit to the newsletters the same day; arXiv
+is on its own clock (see the endorsement gate below).
+
+### 1. Hacker News — **regular submission, not a Show HN**
+
+Show HN excludes reading material — "Off topic: blog posts, sign-up pages, newsletters,
+lists, and other reading material. Those can't be tried out, so can't be Show HNs. Make a
+regular submission instead." (`research/channels.md:87`). So: normal submit form, no "Show
+HN:" prefix. `news.ycombinator.com/robots.txt` sets `Crawl-delay: 30`; the principal is
+posting by hand, so it does not apply, but nothing automated touches HN either way.
+
+**Title (79 characters, HN's cap is 80):**
+
+> We ran 107 merged AI-agent PRs' own tests against the commit they branched from
+
+*Alternate (72 chars), if a number reads better:* `1 of 99 merged AI-agent PRs added only
+tests that already passed on base`
+
+*(The pre-revision title — "0 of 99 merged AI-agent PRs had every test pass on base; 78% of
+tests did" — is withdrawn: it led with the non-pre-registered bar and paired it with a
+number computed on a different denominator.)*
+
+**First comment (post immediately after submitting, then stay for the comment window —
+`DECISION.md` §4 budgets +4 h for a launch's comments):**
+
+> Author here. The question was narrow: when a coding agent opens a PR and the PR gets
+> merged, do the tests it added actually distinguish the code before the change from the code
+> after it? SWE-bench answers that during dataset construction and throws the answer away, so
+> I ran it as the measurement instead. It is BSG-VA's replay (arXiv:2607.28871) applied to
+> merged real-world PRs rather than benchmark rollouts.
+>
+> Method: take each merged PR's own test files, apply only those files to the PR's base
+> commit, install from the repo's lockfile, run them twice on base and twice on the merge
+> commit in a container with the network off, and classify every test id as FAIL_TO_PASS /
+> PASS_TO_PASS / UNRESOLVED. 107 PRs, 25 Python repos, 99 reached a verdict.
+>
+> The number I pre-registered was about the tests each PR *adds*. 1 of the 99 added only
+> tests that already passed at its base commit — Wilson 95% [0.2%, 5.5%], and 0 of 41 on
+> fix-titled PRs. Under a looser bar (zero discriminating tests anywhere in the files the PR
+> touched, new or pre-existing) it is 0 of 99 — but those 99 PRs sit in 25 repos, and with
+> the repo as the unit that is 0 of 25, [0.0%, 13.3%]. Quote the wider one.
+>
+> The interesting part is what the tests are made of. 78.0% of all the test ids in the files
+> these PRs touch pass on base and candidate alike — but 90.9% of those ids are pre-existing
+> tests being re-run. Restricted to the tests the PRs actually added, only 10.5% pass on both
+> sides. And of the evidence that does discriminate, only 15.4% is "the PR added the module,
+> so the test could not import at base"; 58.6% is a pre-existing *passing* test that the PR's
+> own test patch broke by adding an import. I had that backwards in an earlier draft; the
+> crosstab that catches it is in the write-up and in the published CSVs.
+>
+> What it is not: a population estimate. The 25 repos are the ones whose base commit installs
+> from a lockfile and runs its suite offline — 25 of 60. I originally called that "the
+> well-maintained tail" and claimed the selection biased the result toward zero. That claim
+> is withdrawn: the repos that built have a median 64 stars against 351 for the ones that
+> did not, identical agent-PR volume, and a near-identical lock-kind mix. The filter selects
+> small single-lockfile projects, and I cannot tell you which way the residual bias runs.
+>
+> It is also **not** a claim about agents specifically — there is no human-PR control arm
+> here. The nearest published one (arXiv:2601.21194) finds human and human-agent PRs include
+> tests at comparable rates, 40.0% vs 42.9%. And 92 of 107 PRs carry one trailer family, so
+> it is not a per-agent comparison either. A trailer proves an agent was involved, not that
+> the agent wrote the tests that landed.
+>
+> It does not contradict "All Smoke, No Alarm" (arXiv:2606.18168), which found 80.2% of agent
+> test patches have weak or no explicit oracle signals *statically*. Different axis, and
+> different denominator — the number to put beside 80.2% is my 10.5%, not my 78.0%.
+>
+> Instrument, both CSVs, the method with every known limit, and a script that reprints every
+> number are in the repo, including a section that lists all 25 red-team objections against
+> this write-up with what I fixed, what I acknowledged, and the one I rejected. The dataset
+> carries no author, login, email, PR title or PR body — only repo, PR number, SHAs, test ids
+> and outcomes.
+>
+> Disclosure: built and written with heavy AI assistance; I designed the method, reviewed the
+> instrument, and I am accountable for every number. I also keep two commercial concepts in
+> the same repo that a *positive* finding would have helped; the finding went the other way.
+> Happy to be told what is wrong with it.
+
+### 2. Bluesky thread (6 posts, each ≤300 characters)
+
+Post 1/6 carries the link; the rest are replies in order. Measured lengths with a 36-character
+URL substituted for `{STUDY_URL}`: 268, 246, 254, 251, 243, 264. Bluesky counts a link as its
+full text, so a URL longer than ~70 characters breaks post 1 — shorten it or move it to 6/6.
+
+> **1/6** I ran the tests from 107 merged AI-agent pull requests against the commit each PR
+> branched from, to ask whether they could have caught anything. 25 Python repos, 99 reached a
+> verdict. Not a comparison to human PRs — no control arm. {STUDY_URL}
+
+> **2/6** The pre-registered number is about the tests each PR *adds*: 1 of 99 added only
+> tests that already passed at its base commit. Wilson 95% [0.2%, 5.5%]. On fix-titled PRs,
+> 0 of 41. The strong form of "agents write tests that can't fail" fails here.
+
+> **3/6** Looser bar — zero discriminating tests anywhere in the files the PR touched — is
+> 0 of 99. But those PRs sit in 25 repos, and two PRs of one repo supply 50.5% of the discriminating rows.
+> With the repo as the unit it's 0 of 25, [0.0%, 13.3%]. Use that one.
+
+> **4/6** The other direction: 78.0% of all test ids in the touched files pass on both sides
+> — but 90.9% of those ids are pre-existing tests being re-run. Restricted to the tests these
+> PRs actually *added*, only 10.5% pass on both. That's the honest comparison.
+
+> **5/6** And I had the mechanism backwards in a draft. Only 15.4% of the discriminating
+> evidence is "the PR added the module so the test couldn't import at base." 58.6% is a
+> pre-existing *passing* test broken by an import the PR's own test patch added.
+
+> **6/6** Caveats: 25 repos, chosen because their base installs from a lockfile and runs
+> offline. I called that the well-maintained tail; withdrawn — they have *fewer* stars than
+> the ones that failed to build. Method, CSVs, red-team log: {STUDY_URL}
+
+### 3. PyCoder's Weekly and Changelog News — submission blurb
+
+Both take the same text. PyCoder's: https://pycoders.com/submissions → "Submit Your Link »"
+($0, "we want to hear from you about projects you are working on … and articles you want to
+share"). Changelog News: https://changelog.com/news/submit ($0, free account; "Submitting
+your own work is also encouraged"; no how-tos, no commercial products). Both are weekly and
+notify only on publication. **Title:** *Do merged AI-agent PRs ship tests that could have
+caught anything?* **URL:** `{STUDY_URL}`
+
+> A differential-execution study of 107 merged, agent-trailered pull requests across 25 public
+> Python repositories: each PR's own test files are applied to the PR's base commit, run twice
+> there and twice on the merge commit in an offline container, and classified in SWE-bench's
+> FAIL_TO_PASS / PASS_TO_PASS vocabulary. Of the 99 PRs that reached a verdict, exactly one
+> added tests that all already passed at its base commit (Wilson 95% [0.2%, 5.5%]); under the
+> looser bar of "no discriminating test anywhere in the touched files" it is 0 of 99, or 0 of
+> 25 repositories once clustering is respected. But only 10.5% of the tests these PRs *add*
+> pass on both sides, against 78.0% of every test in the files they touch — and 58.6% of the
+> discriminating evidence turns out to be a pre-existing passing test broken by an import the
+> PR's own test patch added, not a newly-arrived module. Open dataset, open instrument, every
+> published number reproducible by one script, and a section listing all 25 objections three
+> red teams raised against the write-up with each one's disposition. Written with AI
+> assistance, disclosed in the post.
+
+### 4. arXiv cs.SE — abstract, and the gate in front of it
+
+**The gate, verbatim from `research/channels.md:135`:** "arXiv requires that users be
+endorsed before submitting their first paper to arXiv or a new category." Endorsement needs
+either a claimed co-authored paper *plus* an institutional address, or a personal endorsement
+from an established arXiv author — and "**A .edu address alone does not clear the gate for a
+first-time author with no claimed paper.**" arXiv also warns that "it is inappropriate to
+email large numbers of potential endorsers at once."
+
+**Consequences already recorded, not re-argued here:** `DECISION.md` §3 dates the endorsement
+request at **2026-09-19** and declares the arXiv path dead if no endorser has replied in
+writing by **2026-09-26**; §1.7 puts the endorser **outside Northeastern**, because
+university contact is RED (`CLAUDE.md` §2). **Nothing in this section asks the agent to
+contact anyone.** If the gate does not clear, the study still ships as an open dataset
+release and the HN, Bluesky and newsletter drafts above are unaffected.
+
+**Abstract (one paragraph, 262 words, 1,681 characters — under arXiv's 1,920 limit):**
+
+> Coding agents now open a large share of pull requests on public repositories, and roughly
+> half of those that touch code under test also change tests (49.6%, arXiv:2607.18057;
+> 42.9% include tests at all, arXiv:2601.21194). Whether those tests could have caught
+> anything has been measured statically, or dynamically on benchmark rollouts, or discarded
+> as a by-product of benchmark construction. We apply BSG-VA's base/candidate replay to
+> merged real-world pull requests. For 107 merged PRs carrying a verbatim coding-agent
+> trailer, across 25 public Python repositories whose base commit installs from its lockfile
+> and runs its suite offline, we apply each PR's own test files to the PR's base commit and
+> execute them twice on base and twice on the merge commit, classifying every PR-touched test
+> id as FAIL_TO_PASS, PASS_TO_PASS, or UNRESOLVED. Ninety-nine PRs reach a verdict. One added
+> only tests that already pass at its base commit (1/99, Wilson 95% CI [0.2%, 5.5%]; 0/41 on
+> fix-titled PRs); under the looser criterion of no discriminating test anywhere in the
+> touched files, 0/99, which is 0 of 25 repositories, [0.0%, 13.3%], with the repository as
+> the unit. The tests these PRs add are mostly discriminating (10.5% PASS_TO_PASS) while the
+> files they touch are mostly not (78.0%), and 58.6% of FAIL_TO_PASS evidence is a
+> pre-existing passing test collaterally broken by the patch. We release the instrument, both
+> datasets, and the funnel, and we report the selection's covariates rather than assuming its
+> direction. To our knowledge no prior work reports this rate with its denominator on merged
+> agent PRs; our absence search is arXiv-metadata-dominant and we state its limits.
+
+### Not in this section (deliberately)
+
+- **No Show HN.** `research/channels.md:87` excludes reading material; a study is reading
+  material even though the instrument is runnable.
+- **No Reddit or Lobsters draft.** Both are robots-excluded, so their rules could not be read
+  today and are UNVERIFIED (`research/channels.md` §0). Drafting for rules we could not fetch
+  is how a submission gets removed.
+- **No price, no service, no hosted anything.** Changelog News bars it and the study is not
+  for sale.
+- **No individual named anywhere**, including no endorser candidate — the arXiv item names a
+  gate and a date, not a person.
+- **No claim that any of this is specific to agents.** There is no human-PR control arm in
+  the study, so no draft may say or imply one.
+
+---
+
 ## A — free "agent autopsy" (unpriced experiment; gate: 5 accepted by 2026-09-30)
 
 ### In the room (Venture Café Cambridge, Thursdays 4:30–8 pm) — the 20-second version
