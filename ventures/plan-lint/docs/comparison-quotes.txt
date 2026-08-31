@@ -1,0 +1,40 @@
+# Every quotation docs/comparison.md prints, with the page it was found on.
+# Written by scripts/refresh-comparison.sh from the pages it fetched; do not
+# edit by hand. tests/test_comparison_truth.py fails when the page prints a
+# quotation that is not recorded here, which is how a fabricated quotation
+# fails CI offline rather than only at the next release.
+#
+# fetched: 2026-08-31 UTC
+#
+# https://www.openpolicyagent.org/docs/policy-language
+quote: OPA is purpose built for policy evaluation and uses its declarative language Rego to reason about structured data like API requests, infrastructure-as-code files, and configuration data.
+#
+# https://docs.cedarpolicy.com/
+quote: who (the principal) is allowed to perform which actions, on which resources, and in what context
+#
+# https://kyverno.io/docs/introduction/
+quote: is a cloud native policy engine
+#
+# https://kyverno.io/docs/introduction/
+quote: validate, mutate, generate, or cleanup (remove) any Kubernetes resource
+#
+# https://kyverno.io/docs/introduction/
+quote: any JSON payload including Terraform resources, cloud resources, and service authorization
+#
+# https://docs.langchain.com/oss/python/langgraph/graph-api
+quote: complex, looping workflows that evolve the state over time
+#
+# https://docs.langchain.com/oss/python/langgraph/graph-api
+quote: provides a few basic checks on the structure of your graph (no orphaned nodes, etc)
+#
+# https://docs.crewai.com/en/concepts/planning
+quote: before each Crew iteration, all Crew information is sent to an AgentPlanner that will plan the tasks step by step, and this plan will be added to each task description.
+#
+# https://code.claude.com/docs/en/hooks
+quote: Before a tool call executes. Can block it
+#
+# https://cursor.com/docs/context/rules
+quote: rule contents are included at the start of the model context
+#
+# https://github.com/cirbuk/plan-lint
+quote: Static analysis toolkit for LLM agent plans

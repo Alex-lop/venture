@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "policy_id": "checkout-service",
+  "revision": 1,
+  "repo_id": "checkout-service",
+  "base_ref": "main",
+  "base_sha": "4d1c2f0e9a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d",
+  "allowed_read_globs": ["app/**", "out/**", "tests/**"],
+  "allowed_write_globs": ["app/**", "out/**", "tests/**"],
+  "exclusions": ["app/secrets/**"],
+  "command_templates": [
+    {"template_id": "edit", "argv": ["python", "-m", "agent.edit"], "timeout_seconds": 300},
+    {"template_id": "pytest", "argv": ["pytest", "-q"], "timeout_seconds": 600}
+  ],
+  "network": {"mode": "deny"},
+  "agent_roles": ["assembler", "verifier", "worker"],
+  "max_concurrency": 4,
+  "retry_limit": 1,
+  "resource_budget": {
+    "max_worker_seconds": 1800,
+    "max_attempts": 12,
+    "max_artifact_bytes": 1000000
+  },
+  "risk_gates": []
+}

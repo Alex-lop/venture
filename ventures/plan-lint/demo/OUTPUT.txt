@@ -1,0 +1,12 @@
+$ agent-plan-lint check plan-bad.json --policy policy.json
+invalid: 4 issues in plan-bad.json
+  criterion_model_assertion [criterion-checkout-works]: a model assertion cannot verify a success criterion
+  cycle: task dependency graph contains a cycle
+  parallel_write_conflict: tasks work-api, work-models overlap write scope: app/api.py
+  write_path_not_allowed [work-tests]: write path is forbidden: docs/guide.md
+exit status: 1
+
+$ agent-plan-lint check plan-good.json --policy policy.json
+ok: plan-good.json is within policy.json
+order: work-api -> work-models -> work-tests -> assemble -> verify
+exit status: 0

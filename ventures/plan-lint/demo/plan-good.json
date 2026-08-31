@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "mission_id": "checkout-idempotency",
+  "revision": 1,
+  "criteria": [
+    {
+      "criterion_id": "criterion-checkout-works",
+      "description": "Checkout stays correct under a retried request.",
+      "producer_task_ids": ["work-api", "work-models", "work-tests"],
+      "verification_kind": "deterministic_check",
+      "verifier_task_id": "verify",
+      "verifier_id": "pytest"
+    }
+  ],
+  "max_concurrency": 2,
+  "tasks": [
+    {
+      "task_id": "assemble",
+      "title": "Assemble the candidate patch",
+      "contract": "Merge every work output into one candidate patch.",
+      "kind": "assembly",
+      "dependencies": ["work-api", "work-models", "work-tests"],
+      "assigned_role": "assembler",
+      "read_paths": ["app/api.py", "app/models.py", "tests/test_checkout.py"],
+      "write_paths": ["out/candidate.patch"],
+      "allowed_commands": ["edit"],
+      "inputs": [
+        {"producer_task_id": "work-api", "name": "patch-api", "kind": "patch"},
+        {"producer_task_id": "work-models", "name": "patch-models", "kind": "patch"},
+        {"producer_task_id": "work-tests", "name": "patch-tests", "kind": "patch"}
+      ],
+      "expected_outputs": [
+        {"name": "candidate", "kind": "patch", "paths": ["out/candidate.patch"]}
+      ],
+      "acceptance_checks": ["pytest"],
+      "priority": 10,
+      "attempt_limit": 2
+    },
+    {
+      "task_id": "verify",
+      "title": "Run the suite against the candidate",
+      "contract": "Run pytest against the assembled candidate and publish the receipt.",
+      "kind": "verification",
+      "dependencies": ["assemble"],
+      "assigned_role": "verifier",
+      "read_paths": ["app/api.py", "out/candidate.patch"],
+      "write_paths": ["out/verification.json"],
+      "allowed_commands": ["pytest"],
+      "inputs": [
+        {"producer_task_id": "assemble", "name": "candidate", "kind": "patch"}
+      ],
+      "expected_outputs": [
+        {"name": "verification", "kind": "test-receipt", "paths": ["out/verification.json"]}
+      ],
+      "acceptance_checks": ["pytest"],
+      "priority": 20,
+      "attempt_limit": 2
+    },
+    {
+      "task_id": "work-api",
+      "title": "Make the checkout endpoint idempotent",
+      "contract": "Add an idempotency key to the checkout endpoint.",
+      "kind": "work",
+      "dependencies": [],
+      "assigned_role": "worker",
+      "read_paths": ["app/api.py", "app/models.py"],
+      "write_paths": ["app/api.py"],
+      "allowed_commands": ["edit"],
+      "inputs": [],
+      "expected_outputs": [
+        {"name": "patch-api", "kind": "patch", "paths": ["app/api.py"]}
+      ],
+      "acceptance_checks": ["pytest"],
+      "priority": 1,
+      "attempt_limit": 2
+    },
+    {
+      "task_id": "work-models",
+      "title": "Store the idempotency key",
+      "contract": "Persist the idempotency key next to the order record.",
+      "kind": "work",
+      "dependencies": [],
+      "assigned_role": "worker",
+      "read_paths": ["app/models.py"],
+      "write_paths": ["app/models.py"],
+      "allowed_commands": ["edit"],
+      "inputs": [],
+      "expected_outputs": [
+        {"name": "patch-models", "kind": "patch", "paths": ["app/models.py"]}
+      ],
+      "acceptance_checks": ["pytest"],
+      "priority": 1,
+      "attempt_limit": 2
+    },
+    {
+      "task_id": "work-tests",
+      "title": "Write the retry test",
+      "contract": "Add a test that replays the same checkout request twice.",
+      "kind": "work",
+      "dependencies": [],
+      "assigned_role": "worker",
+      "read_paths": ["app/api.py", "tests/test_checkout.py"],
+      "write_paths": ["tests/test_checkout.py"],
+      "allowed_commands": ["edit"],
+      "inputs": [],
+      "expected_outputs": [
+        {"name": "patch-tests", "kind": "patch", "paths": ["tests/test_checkout.py"]}
+      ],
+      "acceptance_checks": ["pytest"],
+      "priority": 1,
+      "attempt_limit": 2
+    }
+  ]
+}

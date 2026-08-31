@@ -1,0 +1,45 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: ${{ matrix.os }} · python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv lock --check
+      - run: uv run --python ${{ matrix.python }} ruff check .
+      - run: uv run --python ${{ matrix.python }} ruff format --check .
+      - run: uv run --python ${{ matrix.python }} pytest -q
+      - run: uv build
+      - name: install the built wheel into a fresh environment and run it
+        run: |
+          uv venv --python ${{ matrix.python }} "${RUNNER_TEMP}/venv"
+          uv pip install --python "${RUNNER_TEMP}/venv/bin/python" dist/*.whl
+          "${RUNNER_TEMP}/venv/bin/agent-plan-lint" --help
+          PLAN_LINT="${RUNNER_TEMP}/venv/bin/agent-plan-lint" demo/demo.sh | diff - demo/OUTPUT.txt
+
+  docs-truth:
+    name: docs cannot outrun the code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      # demo/OUTPUT.txt is a published transcript, so the job that says the docs
+      # cannot outrun the code runs the test that reproduces it too.
+      - run: uv run pytest -q tests/test_readme_truth.py tests/test_docs.py tests/test_comparison_truth.py
+          tests/test_cli.py::test_demo_script_reproduces_the_captured_output
