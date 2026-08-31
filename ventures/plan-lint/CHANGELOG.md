@@ -26,8 +26,8 @@ The first release.
 - `agent-plan-lint check|codes|schema` command line, exiting 0 within policy, 1 with
   issues, 2 on a document that cannot be loaded or the command line is wrong.
   `--format json` prints JSON on exit 0, on exit 1 and on a load failure's exit 2;
-  a usage error and the internal-error safety net are one line on stderr instead.
-  An unexpected failure inside the tool is that same exit 2 and one line
+  a usage error is argparse's own message on stderr and the safety net below is
+  one line there, and neither is JSON. An unexpected failure inside the tool is that same exit 2 and one line
   on stderr rather than a traceback and exit 1, which would have told a CI gate
   the plan was merely out of policy. `python -m agent_plan_lint` is the same entry
   point as the console script, so both go through that one safety net.
@@ -54,11 +54,13 @@ The first release.
   file name, and the command line escapes the same set on the way out. What the M
   half costs is the decomposed spelling of an accented path name, and a path in a
   script whose vowel signs are separate code points. <!-- claim: test_an_invisible_character_is_refused_in_a_path_though_it_is_legal_in_text, test_a_zero_width_joiner_cannot_walk_past_an_exclusion_or_a_write_lease, test_a_zero_width_joiner_is_orthography_rather_than_a_forged_line -->
-- Every path comparison goes through one case-folded, NFC-normalised key, because
-  macOS and Windows call `app/api.py` and `app/API.py` one file; a policy that only
+- Exclusions, write leases, lease overlaps and published outputs compare through one
+  case-folded, NFC-normalised key, because macOS and Windows call `app/api.py` and `app/API.py` one file; a policy that only
   ever lives on a case-sensitive filesystem sets `case_sensitive_paths: true`. The
   fold is the length-preserving one those filesystems perform, so `app/gruß.py` and
-  `app/gruss.py` stay the two files they are everywhere. <!-- claim: test_two_tasks_writing_one_file_under_different_spellings_conflict, test_a_case_sensitive_policy_opts_out_of_the_folding, test_a_write_lease_is_not_folded_by_a_case_fold_no_filesystem_performs -->
+  `app/gruss.py` stay the two files they are everywhere. The policy's read and write grant
+  globs match the path as the plan spells it, so a grant written `app/**` does not admit
+  `App/api.py` -- the write is refused as `write_path_not_allowed`, not folded into the grant. <!-- claim: test_two_tasks_writing_one_file_under_different_spellings_conflict, test_a_case_sensitive_policy_opts_out_of_the_folding, test_a_write_lease_is_not_folded_by_a_case_fold_no_filesystem_performs -->
 - A policy exclusion binds wildcard read scopes: a scope that could reach an
   excluded path is refused rather than granted with a hole in it, because nothing
   downstream of this gate enforces the hole. `docs/schema.md` says what a task

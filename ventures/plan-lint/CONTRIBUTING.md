@@ -55,6 +55,9 @@ green. Closing any of them is a welcome pull request. <!-- claim: test_the_docum
 
 - A claim built from a verb outside the marker list in step 2 above carries no
   marker and needs no test.
+- A sentence inside a block that already carries a marker can be rewritten into a
+  different claim and keep it: a marker has to be present and to name a real
+  test, but nothing decides whether that test exercises the sentence.
 - An adoption or usage number that happens to equal a constant the package
   produces passes the number sweep, which matches values and not what they count.
 - A number spelled as a hyphenated compound is read as its last word, so it

@@ -99,10 +99,11 @@ UNPRINTABLE = re.compile(
 #:
 #: A conforming renderer draws every one of them as nothing when it has no glyph
 #: for it, which is the property that makes two paths a reviewer reads as one
-#: string two different files. `str.isprintable` is not that property: most of
-#: this set is category Mn -- the combining grapheme joiner, the Khmer inherent
+#: string two different files. `str.isprintable` is not that property: 263 of
+#: these are category Mn -- the combining grapheme joiner, the Khmer inherent
 #: vowels, the Mongolian free variation selectors and the 256 variation
-#: selectors -- and Python calls every one of those printable.
+#: selectors -- and Python calls every one of those printable. The rest are
+#: Cf, Cn or the Hangul fillers, which it does not.
 DEFAULT_IGNORABLE = re.compile(
     r"[\u00ad\u034f\u061c\u115f\u1160\u17b4\u17b5\u180b-\u180f"
     r"\u200b-\u200f\u202a-\u202e\u2060-\u206f\u3164\ufe00-\ufe0f\ufeff"
@@ -150,8 +151,9 @@ def _hidden_code_point(value: str) -> str | None:
     `docs/schema.md` states it.
 
     This replaced `str.isprintable`, which is only the C and Z half of the rule.
-    The M half and `BLANK_BY_GLYPH` are 264 code points it admitted, every one
-    of them invisible: `app/sec<U+034F>rets/key.pem` renders character for
+    What it admitted includes 264 code points that are hidden outright -- the 263
+    combining marks in `DEFAULT_IGNORABLE` and `BLANK_BY_GLYPH` -- and every
+    other mark besides: `app/sec<U+034F>rets/key.pem` renders character for
     character like `app/secrets/key.pem`, so it walked past an exclusion on that
     subtree and leased a second file a reviewer reads as the first.
     """

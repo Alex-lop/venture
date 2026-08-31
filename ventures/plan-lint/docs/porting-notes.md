@@ -77,8 +77,10 @@ it is here because the reasoning is worth keeping and the code carries the tests
   report, so a library consumer that formats findings itself gets the guard too.
   The CLI escapes the same set on the way out for text that never went through a
   model. <!-- claim: test_control_characters_are_refused_in_paths_and_in_public_text, test_a_character_that_hides_text_is_refused_wherever_u200b_is -->
-- **Comparisons.** Every path comparison goes through one normalisation, so a path
-  cannot mean one thing to one check and another to the next. An exclusion covers
+- **Comparisons.** Exclusions, write leases, lease overlaps and published outputs go
+  through one normalisation (`_path_key`); the policy's grant globs match the path as the
+  plan spells it, so a spelling that differs only in case fails the grant check
+  (`write_path_not_allowed`) instead of being folded into it. An exclusion covers
   what is inside it and the path its subtree hangs off. A published output is
   checked against the policy's write globs, not only against the task's own lease.
   Write leases are compared between every pair of tasks, not work tasks only, and
