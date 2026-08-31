@@ -1,5 +1,22 @@
 # LOG — daily: done / learned / next (newest on top)
 
+## 2026-08-31 — session 2a close-out (after the 2b window): two packages released to GitHub, PyPI upload handed to Alex
+
+**Done**
+- **agent-plan-lint 0.1.0** and **egresswall 0.1.0** released as their own public repositories under Alex-lop (tags `v0.1.0`), after nine and ten verification rounds respectively — each round a clean-clone install × claims-vs-code audit × red team, each fix pass with red-before/green-after regression tests. Last defects closed: a Default_Ignorable code-point bypass of both packages' invisible-character guards (the Hangul fillers are category Lo, so `str.isprintable` misses them), egresswall's embedded-document (JSON-in-`content[].text`) walk now fail-closed and un-bypassable by leading/trailing ignorables, the schema exemption narrowed to field names only, three CHANGELOG sentences rewritten to match the shipped mechanism, and two plan-lint doc sentences that overclaimed the normalisation scope.
+- **PyPI upload = ASK-015.** The harness permission layer declined the agent's keychain-token read + `uv publish` (and a release script containing them). Not routed around, not delegated to the peer session (that would launder the denial). One command per package for Alex; `mcp-name: io.github.Alex-lop/egresswall` is already in egresswall's README so the MCP Registry ownership check passes after the upload.
+- Wiring that does not need PyPI is done: Graphene #14 and RegLineage #10 RELEASE-LINKs point at the repos (Graphene #14: all 6 checks green; RegLineage #10 README tests 6/6); the guardposts site says "source released, index upload pending" with the final counts (488 / 675 tests) and `check_site.py` passing; `outreach/queue.md` §A/§B carry the repo URLs and counts, `{PYPI_URL}` stays a placeholder.
+- Two orchestrators shared one checkout for ~80 minutes (session 2b, `money-maker-29`) with an agreed protocol — explicit-path atomic commits, message-before-add on the package trees, hook on every push, no publish/merge from 2b — zero collisions; 2b closed at 05:13 EDT.
+- guardrail-checkup: build + verify/fix rounds still running at close-out; STATE.md carries the run id and the release steps.
+
+**Learned**
+- Ten rounds was not over-verification: rounds 7–10 each found a real, shippable-looking defect in code added by the previous fix (the pattern is that every guard needs its own adversarial pass). The thing that finally converged the loop was requiring the fixer to run a generated-variant self-check before returning.
+- Doc-truth pins are only as good as their reach: word-numbers, inline code spans, second sentences of bullets and comparison rows each needed their own sweep; the residual holes are now listed in each package's CONTRIBUTING under "What the doc-truth suite does not catch" and pinned.
+
+**Next (session 3)**
+- Alex: ASK-015 (two commands), ASK-012 (nine PR merges), Thursday 2026-09-03 with `outreach/track-h/`.
+- Agent: guardrail-checkup release the same way; site RELEASED flags + install lines the moment each PyPI upload lands (one commit, both repos, `check_site.py`); launch drafts re-synced and handed to Alex; the motherduck `--secure` PR (gated 2026-09-15); weekly signal-watcher and A1 screen 2026-09-06.
+
 ## 2026-08-31 — session 2b (04:21–05:40 EDT): a second orchestrator on the same checkout — checkpoints, site truth, the Nemisis README PR repaired
 
 **Done (files, not chat; one commit per artifact)**
