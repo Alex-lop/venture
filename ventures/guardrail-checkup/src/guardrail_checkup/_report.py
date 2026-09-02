@@ -10,6 +10,7 @@ from datetime import UTC, datetime
 
 from ._compose import (
     CANDIDATE_LIMIT,
+    EXCLUSION_GLOBS,
     SIGNATURE_SCAN_BYTES,
     SIGNATURE_SCAN_FILES,
     Composition,
@@ -142,8 +143,8 @@ def _capped(result: Scan) -> str:
 
     The ranking reads the capped listing, so "No path here matched any of the
     categories this tool knows" is a statement about the first N paths and not
-    about the repository. The inventory and the signature scan read the whole
-    listing and need no clause; §3 is the one section that does.
+    about the repository. The inventory's name-based lookups and the signature
+    scan read the whole listing; symlink inspection and §3 stay inside the cap.
     """
 
     if not result.truncated:
@@ -377,6 +378,11 @@ def render_markdown(
         )
         if "starter-policy.json" in composed.drafts:
             add("- A starter policy was drafted instead; see §4. It was **not** written into your repository.")
+            if composed.exclusions_cut:
+                add(
+                    f"- Its exclusions are drawn from the first {EXCLUSION_GLOBS} candidate path globs in sorted order "
+                    f"({composed.exclusions_cut:,} more were cut). Review that cut before using the policy."
+                )
             # The one cap in this package that decides what an emitted file
             # *grants* rather than what a row says. A repository whose repair
             # commits touched a hundred directories was handed a policy denying

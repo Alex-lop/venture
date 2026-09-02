@@ -236,15 +236,15 @@ _AGENT_FILES = (
 )
 
 #: The settings files this tool reads for a hook, both repository-local. Claude
-#: Code reads a hook from five sources, which is what its own `/hooks` menu
-#: labels one with (docs/evidence/claude-code-hooks.txt:388-392):
+#: Code's own `/hooks` menu labels five hook sources
+#: (docs/evidence/claude-code-hooks.txt:388-392):
 #: User Settings : from ~/.claude/settings.json
 #: Project Settings : from .claude/settings.json
 #: Local Settings : from .claude/settings.local.json
 #: Plugin Hooks : from a plugin's hooks/hooks.json
 #: Session Hooks : registered in memory for the current session
-#: Two of those five are these files. The other three are not in the checkout,
-#: and neither is the "Managed policy settings" tier the same page's location
+#: Two of those five are these files. The other three are not in the checkout.
+#: Neither is the "Managed policy settings" tier the same page's location
 #: table adds at line 125 -- which is the enterprise policy §5 of every report
 #: already names. So §5 says the hook sources outside this checkout were not
 #: read, and every consequence below is scoped to this repository's checked-in
@@ -1487,9 +1487,10 @@ def inventory(root: Path, files: list[str], scan_out: Scan) -> list[Finding]:
     )
 
     # 9. Symlinks that leave the repository.
-    # `present`, not the `--max-files` slice: a symlink that sorts past the cap
-    # was silently absent from a finding the README states unqualified.
-    escaping = sorted(item for item in present if _escapes(root, item))
+    # Symlink checks call lstat. Keep that sweep under the caller's listing cap;
+    # a checkout with millions of ordinary files must not buy millions of
+    # syscalls for this one finding.
+    escaping = sorted(item for item in files if _escapes(root, item))
     if escaping:
         found.append(
             Finding(

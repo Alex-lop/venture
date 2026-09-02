@@ -23,10 +23,10 @@ what to enforce.
 ## The one-line difference
 
 `/doctor` diagnoses the *installation* and offers to trim your `CLAUDE.md`. `cc-safety-net`
-blocks a *generic* list of destructive commands before a tool call runs. Neither reads your git
-history or your `CODEOWNERS` to say which of *your* paths is worth a hook, and neither hands
-back what is enforced today, what a generic scorer will get wrong about you specifically, and
-up to three ranked places a hook would pay for itself. That is what this one does, and it
+blocks a *generic* list of destructive commands before a tool call runs. This package instead
+reads your git history and `CODEOWNERS` and hands back what is enforced today, what a generic
+scorer will get wrong about you specifically, and up to three ranked places a hook may pay for
+itself. That is what this one does, and it
 enforces none of it.
 
 That difference is thin. This package is not defended by capability; it is defended by being
@@ -54,6 +54,6 @@ writes.
 ## Where it sits with the sibling packages
 
 `agent-plan-lint` validates a plan against a policy. `egresswall` screens what a tool hands
-back. `guardrail-checkup` is the thing you run before you have either: it finds the policy
-you would have written and the servers you would have screened, drafts both, and applies
-neither.
+back. `guardrail-checkup` is the thing you run before you have either: when their signature
+keys are absent it drafts a starter policy, when an MCP configuration exists it drafts a
+screened copy, and it applies neither.

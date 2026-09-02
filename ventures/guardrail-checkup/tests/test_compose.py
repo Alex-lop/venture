@@ -12,6 +12,7 @@ from conftest import build_repo, git
 from guardrail_checkup import (
     CANDIDATE_LIMIT,
     CHURN_GLOBS,
+    EXCLUSION_GLOBS,
     checkup,
     compose,
     emit,
@@ -241,6 +242,24 @@ def test_the_starter_policy_excludes_exactly_the_candidates_section_three_names(
         for prefix in candidate.prefixes
     }
     assert outside and not (outside & set(policy["exclusions"])), outside
+
+
+def test_the_starter_policy_reports_candidate_exclusions_cut_at_its_cap(tmp_path: Path) -> None:
+    repository = tmp_path / "many-db-paths"
+    for number in range(EXCLUSION_GLOBS + 3):
+        path = repository / f"area{number:03d}" / "db" / "query.py"
+        path.parent.mkdir(parents=True)
+        path.write_text("x = 1\n")
+
+    result = scan(str(repository), 20_000)
+    composed = compose(result, PLACEHOLDER)
+    policy = json.loads(composed.drafts["starter-policy.json"])
+    body = render_markdown(result, composed, "run .", VERSIONS, "drafts", "2026-08-31")
+
+    assert len(policy["exclusions"]) == EXCLUSION_GLOBS
+    assert composed.exclusions_cut == 3
+    assert composed.to_dict()["candidate_exclusions_cut"] == 3
+    assert f"first {EXCLUSION_GLOBS} candidate path globs in sorted order (3 more were cut)" in body
 
 
 def test_the_starter_policy_falls_back_to_every_top_level_directory_with_no_repair_history(tmp_path: Path) -> None:

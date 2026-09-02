@@ -336,8 +336,10 @@ def test_the_mcp_server_rows_are_capped_and_the_row_says_how_many_there_were(tmp
     assert text.count("MCP server") == SERVER_ROWS
 
 
-def test_a_symlink_that_sorts_past_the_listing_cap_is_still_reported(tmp_path: Path) -> None:
-    """Finding 9 read the capped list while every other lookup reads the whole one."""
+def test_symlink_stats_stop_at_the_listing_cap(tmp_path: Path, monkeypatch) -> None:
+    """Finding 9 must not lstat every ordinary file in an unbounded listing."""
+
+    import guardrail_checkup._scan as scan_module
 
     outside = tmp_path / "outside"
     outside.mkdir()
@@ -348,11 +350,20 @@ def test_a_symlink_that_sorts_past_the_listing_cap_is_still_reported(tmp_path: P
         (repository / f"a{number}.txt").write_text("x\n")
     (repository / "zz-escape.txt").symlink_to(outside / "secret.txt")
 
+    checked: list[str] = []
+    real = scan_module._escapes
+
+    def counted(root: Path, relative: str) -> bool:
+        checked.append(relative)
+        return real(root, relative)
+
+    monkeypatch.setattr(scan_module, "_escapes", counted)
     result = scan(str(repository), 3)
 
     assert result.truncated
     assert "zz-escape.txt" not in result.files
-    assert "symlinks out of this repository: 1 — zz-escape.txt" in facts(result)
+    assert checked == result.files
+    assert "symlinks out of this repository" not in facts(result)
 
 
 def test_every_file_this_tool_opens_is_named_in_the_scope_it_prints(tmp_path: Path) -> None:

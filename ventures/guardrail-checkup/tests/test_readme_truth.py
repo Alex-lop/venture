@@ -39,6 +39,7 @@ from guardrail_checkup import (
     CANDIDATE_LIMIT,
     CATEGORIES,
     CODEOWNERS_BONUS,
+    EXCLUSION_GLOBS,
     FIXTURE_SAMPLE,
     HEURISTIC_BASE,
     HISTORY_COMMITS,
@@ -254,6 +255,11 @@ def bindings(repo_root: Path) -> list[tuple[str, str, str]]:
         ),
         ("README.md", rf"up to {FIXTURE_SAMPLE} checked-in JSON fixtures", "FIXTURE_SAMPLE"),
         ("README.md", rf"fans out over the files in it, up to {AGENT_FILE_LIMIT} of them", "AGENT_FILE_LIMIT"),
+        (
+            "README.md",
+            rf"exclusions are drawn from the first {EXCLUSION_GLOBS} §3-candidate path globs",
+            "EXCLUSION_GLOBS",
+        ),
         ("README.md", rf"The first {SERVER_ROWS} servers get a row each", "SERVER_ROWS"),
         ("README.md", rf"A candidate at score {HEURISTIC_BASE} is a bare path match", "HEURISTIC_BASE"),
         (
@@ -377,7 +383,7 @@ PROSE_NUMBERS: dict[str, dict[str, tuple[str, str]]] = {
         "08": (r"2026-08-31", "part of that date"),
         "31": (r"2026-08-31", "part of that date"),
         "60": (r"## 60 seconds", "the demo budget, timed by test_the_sixty_second_demo_runs_in_under_sixty_seconds"),
-        "483": (r"grep -c :: 483", "the collected-test count, run and compared by the first test in this file"),
+        "485": (r"grep -c :: 485", "the collected-test count, run and compared by the first test in this file"),
         "3.12": (r"CPython 3\.11, 3\.12 and 3\.13", "an interpreter the CI matrix runs"),
         "3.13": (r"CPython 3\.11, 3\.12 and 3\.13", "an interpreter the CI matrix runs"),
     },
@@ -430,14 +436,14 @@ PROSE_NUMBERS: dict[str, dict[str, tuple[str, str]]] = {
 DECLARED_ABSOLUTES: dict[str, dict[str, str]] = {}
 DECLARED_ABSOLUTES["README.md"] = {
     "every draft goes to a directory you name": "test_writing_inside_the_repository_under_inspection_is_refused",
-    "every row that cites a file carries its `file:line`, and one line of": (
+    "every row that cites a file carries its `file:line`, and one line explaining": (
         "test_every_finding_carries_a_place_and_a_consequence"
     ),
     "an omitted matcher and `*` match every tool": (
         "test_the_catch_all_matcher_means_what_the_fetched_page_says_it_means"
     ),
     "The first 64 servers get a row each": "test_the_mcp_server_rows_are_capped_and_the_row_says_how_many_there_were",
-    "Every row is a fact plus one sentence naming what an agent can do because of it.": (
+    "Every row is a fact plus one sentence explaining why it matters or what remains unknown.": (
         "test_every_finding_carries_a_place_and_a_consequence"
     ),
     "Every row that cites a file carries its `file:line`; a row that states an absence carries `-`": (
@@ -470,7 +476,7 @@ DECLARED_ABSOLUTES["CHANGELOG.md"] = {
     "Every row that cites a file carries its `file:line`, a row stating an absence carries `-`": (
         "test_every_finding_carries_a_place_and_a_consequence"
     ),
-    "every row carries one line naming what an agent can do because of it": (
+    "every row carries one line explaining why it matters or what remains unknown": (
         "test_every_finding_carries_a_place_and_a_consequence"
     ),
     "it names, in those words, every candidate whose only evidence": (
@@ -577,7 +583,7 @@ CLOSED_ITEMS: dict[tuple[str, str], list[str]] = {
         "1. **Scope** — the path, HEAD, size, language mix by file extension, and exactly what was and was not read.",
         (
             "2. **Tool results — and what they got wrong** — the guardrail inventory (every row that cites a "
-            "file carries its `file:line`, and one line of *what an agent can do because of this*), what "
+            "file carries its `file:line`, and one line explaining why it matters or what remains unknown), what "
             "`agent-plan-lint` and "
             "`egresswall` found, and the falsifier list for the generic scorers."
         ),
@@ -624,10 +630,12 @@ CLOSED_ITEMS: dict[tuple[str, str], list[str]] = {
         (
             "- **`agent-plan-lint`** — if any checked-in `.json` file carries both `policy_id` and "
             "`allowed_write_globs`, or both `mission_id` and `tasks`, it is loaded and validated and the issues go in "
-            "§2. If none does, a **starter policy** is drafted instead: a valid `agent-plan-lint` policy whose write "
+            "§2. If no checked-in JSON file carries either pair of signature keys, a **starter policy** is drafted "
+            "instead: a valid `agent-plan-lint` policy whose write "
             "globs are the most-churned directories repair commits touched, capped at 64 with §2 naming the count "
             "and the cut — or every top-level directory, when the history holds no repair commit to read — and "
-            "whose exclusions are the §3 candidates. A test loads every "
+            f"whose exclusions are drawn from the first {EXCLUSION_GLOBS} §3-candidate path globs in sorted order, "
+            "with §2 naming any cut or path the sibling refuses. A test loads every "
             'policy this tool emits with `agent_plan_lint.load_policy`, so "valid" is checked, not claimed.'
         ),
         (
@@ -656,7 +664,7 @@ CLOSED_ITEMS: dict[tuple[str, str], list[str]] = {
             "servers, `.pre-commit-config.yaml`, installed `.git/hooks`, `CODEOWNERS`, `.github/workflows/`, "
             "secret-scanning configuration, lockfiles and test layout. Every row that cites a file carries its "
             "`file:line`, a row stating an absence carries `-` because the listing is what establishes it, and "
-            "every row carries one line naming what an agent can do because of it."
+            "every row carries one line explaining why it matters or what remains unknown."
         ),
         (
             "- Up to three ranked invariant candidates from path heuristics, from repair commits in `git log`, and "
@@ -667,7 +675,8 @@ CLOSED_ITEMS: dict[tuple[str, str], list[str]] = {
         ),
         (
             "- Composition with the sibling packages: `agent-plan-lint` validates any checked-in policy or plan "
-            "document and drafts a starter policy when there is none; `egresswall` screens a sample of checked-in "
+            "document and drafts a starter policy when no JSON file carries the policy signature keys; `egresswall` "
+            "screens a sample of checked-in "
             "JSON fixtures and the MCP configuration is rewritten with `egresswall proxy` in front of each server "
             "that runs a command line, as a suggestion. A server that names a URL instead is reached over the "
             "network, cannot be wrapped by a proxy in front of a command, and is reported as unchanged with both "
@@ -677,8 +686,8 @@ CLOSED_ITEMS: dict[tuple[str, str], list[str]] = {
             "- `--emit-dir` for the drafted policy, hooks and MCP suggestion; `--format json` for the same facts as a "
             "document — the scope, the inventory, the siblings' results, the falsifiers, the candidates and the "
             "Monday list, without §3's per-candidate snippet, script and test line; `--max-files` for the listing "
-            "cap, which bounds the ranking and the language mix and neither the inventory's lookups nor the "
-            "agent-plan-lint signature scan, and which §3 names in the report when it bit."
+            "cap, which bounds the ranking, language mix and symlink inspection but not the inventory's name-based "
+            "lookups or the agent-plan-lint signature scan, and which §3 names in the report when it bit."
         ),
     ],
     ("CHANGELOG.md", "Pre-release scaffolding"): [
@@ -1181,7 +1190,7 @@ SENTENCES = [
     # figures are the slice too, and the README said otherwise.
     (
         "README.md",
-        "§3's ranking is the one section whose conclusions read the capped listing, and it says so in the "
+        "§3's ranking reads the capped listing, and it says so in the "
         "report when the cap bit; §1's file count, byte total and language mix are the capped slice too, and "
         "§1 names both totals.",
         "test_section_one_reports_the_capped_slice_and_names_both_totals",
@@ -1296,8 +1305,8 @@ DOES_NOT_DO: list[tuple[str, str]] = [
     ),
     (
         (
-            "- It does not follow a symlink out of the repository. One is reported as a finding, and the file it "
-            "points at is not read."
+            "- It does not follow a symlink out of the repository. One in the `--max-files` slice is reported as a "
+            "finding, and any file it points at is not read."
         ),
         "test_a_symlink_out_of_the_repository_is_listed_and_never_read",
     ),
@@ -1332,7 +1341,7 @@ BOLD_LEADS = {
         "Section 2 does not run the tools it names.",
         "A commit is one point, however many files it touched.",
         "The repository under inspection is untrusted input.",
-        "A symlink out of the repository is listed and not read.",
+        "A symlink out of the repository is not read.",
         "A hook matcher of `*`, or none at all, matches every tool.",
         "Only a `CODEOWNERS` pattern that names an owner requires a reviewer.",
         "The history walk is bounded twice.",
@@ -1344,7 +1353,7 @@ BOLD_LEADS = {
         "A filename cannot write markdown into the report.",
         "A symlink loop no longer kills the run.",
         "A directory symlink out of the repository is listed.",
-        "The inventory reads the whole listing.",
+        "The inventory's name-based lookups read the whole listing.",
         "Installed git hooks are found where git looks for them.",
         "An MCP server is screened when the command it runs is a screen",
         "A comment is not a configuration.",
@@ -2077,9 +2086,9 @@ INJECTIONS = [
     (
         "J03 a reversed CHANGELOG Added bullet",
         "CHANGELOG.md",
-        "which bounds the ranking and the language mix and neither the inventory's\n  lookups nor the "
-        "agent-plan-lint signature scan",
-        "which bounds the ranking, the language mix, the inventory's lookups and the signature scan",
+        "which bounds the ranking, language mix and symlink inspection but not the\n  inventory's name-based "
+        "lookups or the agent-plan-lint signature scan",
+        "which bounds the ranking, language mix, symlink inspection and every inventory lookup",
     ),
     (
         "J11 a reversed pre-release note",
@@ -2190,8 +2199,8 @@ INJECTIONS = [
     (
         "K01 the section the listing cap decides",
         "README.md",
-        "§3's ranking is the one section whose conclusions read the capped listing",
-        "§3's ranking is the one section that reads the capped listing",
+        "§3's ranking reads the capped listing",
+        "§3's ranking reads the whole listing",
     ),
     (
         "K02 where the given path is printed",
@@ -2336,7 +2345,7 @@ def test_the_doc_truth_suite_fails_on_each_injected_falsehood(
             "test_json_format_is_a_document_with_the_same_facts",
         ),
         (
-            "the §2 inventory and\nthe signature scan still ask the whole listing",
+            "§2's name-based\ninventory lookups and the signature scan still ask the whole listing",
             "test_an_artifact_that_sorts_past_the_listing_cap_is_still_found",
         ),
         (

@@ -109,11 +109,6 @@ CLAIMS = {
         "kenryu42__cc-safety-net.txt",
         "It blocks destructive Git and file system commands",
     ),
-    "Neither reads your git history or your CODEOWNERS to say which of your paths is worth a hook": (
-        "claude-code-commands.txt",
-        "Checks installation health, including duplicate or leftover installs, PATH problems, and "
-        "unparseable settings files",
-    ),
     "Diagnoses the installation. It does not read your db/ directory or your git history": (
         "claude-code-commands.txt",
         "prints read-only installation diagnostics without starting a session",
@@ -140,8 +135,7 @@ CLAIMS = {
 #: installation" and "block a generic command list" for free.
 README_CLAIMS = {
     "/doctor diagnoses the installation and cc-safety-net blocks a generic list of destructive commands "
-    "before a tool call runs; neither reads your repository's own history to say which of your paths is "
-    "worth a hook.": (
+    "before a tool call runs.": (
         "kenryu42__cc-safety-net.txt",
         "before a tool call runs",
     ),
@@ -189,9 +183,11 @@ PAGE_SENTENCES = (
     # this package and the two it is built on, and an audit reversed two of them
     # -- "rewrites your plan to fit the policy", "applies them for you" --
     # inside prose no closed list held.
+    "This package instead reads your git history and `CODEOWNERS` and hands back what is enforced today, what a "
+    "generic scorer will get wrong about you specifically, and up to three ranked places a hook may pay for itself.",
     "`agent-plan-lint` validates a plan against a policy. `egresswall` screens what a tool hands back. "
-    "`guardrail-checkup` is the thing you run before you have either: it finds the policy you would have "
-    "written and the servers you would have screened, drafts both, and applies neither.",
+    "`guardrail-checkup` is the thing you run before you have either: when their signature keys are absent it "
+    "drafts a starter policy, when an MCP configuration exists it drafts a screened copy, and it applies neither.",
     # The three sentences an audit reversed in prose no closed list held: the
     # page's own no-enforcement promise, twice, and a capability invented for a
     # shipped script.
@@ -596,8 +592,8 @@ INJECTIONS = [
     ),
     (
         "A25 a comparative claim the evidence contradicts",
-        "Neither reads your git\nhistory or your `CODEOWNERS` to say which of *your* paths is worth a hook",
-        "Neither of them opens a single file in the repository you are standing in",
+        "This package instead\nreads your git history and `CODEOWNERS`",
+        "This package instead\nguesses from filenames and ignores git history and `CODEOWNERS`",
     ),
     (
         "A30 the unqualified determinism claim",
@@ -642,8 +638,8 @@ INJECTIONS = [
     ),
     (
         "J18 this package given a capability it denies",
-        "drafts both, and applies\nneither.",
-        "drafts both, and applies them for you.",
+        "drafts a\nscreened copy, and it applies neither.",
+        "drafts a screened copy, and applies it for you.",
     ),
     (
         "N07 the page's own no-enforcement promise reversed",

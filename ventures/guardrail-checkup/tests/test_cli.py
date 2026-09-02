@@ -155,6 +155,25 @@ def test_the_report_is_written_and_the_status_is_zero_with_stdout_closed(
     assert out.read_text(encoding="utf-8").startswith("# Agent guardrail checkup")
 
 
+def test_a_usage_error_is_still_exit_two_when_stderr_has_no_reader(tmp_path: Path, shell_env: dict[str, str]) -> None:
+    """A closed diagnostic pipe must not turn the documented exit 2 into 120."""
+
+    read_fd, write_fd = os.pipe()
+    os.close(read_fd)
+    try:
+        done = subprocess.run(
+            [sys.executable, "-m", "guardrail_checkup"],
+            cwd=tmp_path,
+            env=shell_env,
+            stdout=subprocess.DEVNULL,
+            stderr=write_fd,
+            check=False,
+        )
+    finally:
+        os.close(write_fd)
+    assert done.returncode == 2, done.returncode
+
+
 def test_json_format_is_a_document_with_the_same_facts(fixture_repo: Path, tmp_path: Path) -> None:
     out = tmp_path / "checkup.json"
     assert main(["run", str(fixture_repo), "--out", str(out), "--format", "json"]) == 0

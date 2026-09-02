@@ -41,7 +41,7 @@ package stands in for:
 1. **Scope** — the path, HEAD, size, language mix by file extension, and exactly what was and
    was not read.
 2. **Tool results — and what they got wrong** — the guardrail inventory (every row that cites
-   a file carries its `file:line`, and one line of *what an agent can do because of this*), what
+   a file carries its `file:line`, and one line explaining why it matters or what remains unknown), what
    `agent-plan-lint` and `egresswall` found, and the falsifier list for the generic scorers.
 3. **Invariant candidates** — up to three ranked candidates, each with the paths it governs,
    the evidence, a `PreToolUse` hook that blocks writes there, and a one-line test.
@@ -66,7 +66,7 @@ package stands in for:
 | lockfiles, test layout | which lockfiles are committed; how many files sit in a test path |
 | any of the above that is present and cannot be read | one row saying *present, not read* and why — over 1 MiB, a NUL byte in the first 8 KiB, or the file would not open. No row then states what that file does or does not configure |
 
-Every row is a fact plus one sentence naming what an agent can do because of it. Every row
+Every row is a fact plus one sentence explaining why it matters or what remains unknown. Every row
 that cites a file carries its `file:line`; a row that states an absence carries `-`, because
 what establishes an absence is the listing and not a line of a file.
 
@@ -129,10 +129,10 @@ non-write tool, so it is a script that has run before it reaches anyone's screen
 
 - **`agent-plan-lint`** — if any checked-in `.json` file carries both `policy_id` and
   `allowed_write_globs`, or both `mission_id` and `tasks`, it is loaded and validated and the
-  issues go in §2. If none does, a **starter policy** is drafted instead: a valid
+  issues go in §2. If no checked-in JSON file carries either pair of signature keys, a **starter policy** is drafted instead: a valid
   `agent-plan-lint` policy whose write globs are the most-churned directories repair commits
   touched, capped at 64 with §2 naming the count and the cut — or every top-level directory,
-  when the history holds no repair commit to read — and whose exclusions are the §3 candidates. A test loads every policy this tool
+  when the history holds no repair commit to read — and whose exclusions are drawn from the first 64 §3-candidate path globs in sorted order, with §2 naming any cut or path the sibling refuses. A test loads every policy this tool
   emits with `agent_plan_lint.load_policy`, so "valid" is checked, not claimed.
 - **`egresswall`** — up to 5 checked-in JSON fixtures are screened with egresswall's default
   policy, and the report names the reason code and the path, never the value. If an MCP
@@ -211,8 +211,8 @@ before you are in the room:
 - It does not check what a hook that exists actually does. A `PreToolUse` entry that only
   appends to a log reads exactly like one that blocks: presence is checked, behaviour is not,
   and §5 of every report says it.
-- It does not follow a symlink out of the repository. One is reported as a finding, and the
-  file it points at is not read.
+- It does not follow a symlink out of the repository. One in the `--max-files` slice is
+  reported as a finding, and any file it points at is not read.
 - It does not run on a repository's terms. Its own `.git/config` is overridden on every git
   command line, because `core.fsmonitor` there would otherwise run a program from the
   checkout. `core.hooksPath` is overridden too, on every call but the two `rev-parse` queries that ask
@@ -234,9 +234,9 @@ path, a `--out` inside the repository, an unwritable directory. It is never `1`:
 reports, it does not gate. In a git repository the file list is `git ls-files` (tracked files
 plus untracked files `.gitignore` does not exclude); anywhere else it is a directory walk that
 skips 13 well-known directories and says in §1 that `.gitignore` was not applied. Past
-`--max-files` (default 20000) the listing is truncated and §1 names the cap; the §2 inventory and
-the signature scan still ask the whole listing, so a lockfile or a policy past the cap is never
-reported as absent. §3's ranking is the one section whose conclusions read the capped listing, and
+`--max-files` (default 20000) the listing is truncated and §1 names the cap; §2's name-based
+inventory lookups and the signature scan still ask the whole listing, so a lockfile or a policy
+past the cap is never reported as absent, while the symlink finding stays inside the cap. §3's ranking reads the capped listing, and
 it says so in the report when the cap bit; §1's file count, byte total and language mix are the
 capped slice too, and §1 names both totals.
 The path is printed exactly as you type it — in the header line under the title, in §1 and in §6
@@ -262,7 +262,7 @@ print(result.head, [item.slug for item in result.candidates])
 <!-- runnable -->
 ```console
 $ python -m pytest --collect-only -q -o addopts='' | grep -c ::
-483
+485
 ```
 
 Those tests run on CPython 3.11, 3.12 and 3.13, on Ubuntu and macOS, in the matrix in
@@ -299,8 +299,8 @@ catch.
 `docs/comparison.md` puts this next to Claude Code's `/doctor`, `kenryu42/cc-safety-net` and
 `microsoft/agentrc`, with dated evidence for every figure, each figure checked against the row
 it sits in. The short version: `/doctor` diagnoses the installation and `cc-safety-net` blocks a
-generic list of destructive commands before a tool call runs; neither reads your repository's
-own history to say which of *your* paths is worth a hook. `microsoft/agentrc` is not
+generic list of destructive commands before a tool call runs. This package instead reads your
+repository's history and `CODEOWNERS` to rank paths worth considering for a hook. `microsoft/agentrc` is not
 characterised, here or there: the only source checked in for it is its repository metadata, and
 that says what it is for rather than what it emits. Install the first two anyway.
 

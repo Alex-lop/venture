@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from ._compose import (
     CANDIDATE_LIMIT,
+    EXCLUSION_GLOBS,
     FIXTURE_SAMPLE,
     SIGNATURE_SCAN_BYTES,
     SIGNATURE_SCAN_FILES,
@@ -77,6 +78,7 @@ __all__ = [
     "CATEGORIES",
     "CHURN_GLOBS",
     "CODEOWNERS_BONUS",
+    "EXCLUSION_GLOBS",
     "FIXTURE_SAMPLE",
     "HEURISTIC_BASE",
     "HISTORY_COMMITS",

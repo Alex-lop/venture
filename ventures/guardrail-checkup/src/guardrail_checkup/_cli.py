@@ -26,6 +26,27 @@ DEFAULT_MAX_FILES = 20_000
 POLICY_PLACEHOLDER = "/etc/egresswall/policy.json"
 
 
+def _discard(stream: object) -> None:
+    """Keep Python's shutdown flush from reviving a handled broken pipe."""
+
+    with contextlib.suppress(Exception):
+        descriptor = os.open(os.devnull, os.O_WRONLY)
+        try:
+            os.dup2(descriptor, stream.fileno())  # type: ignore[attr-defined]
+        finally:
+            os.close(descriptor)
+
+
+def _error(message: str) -> int:
+    """Write one diagnostic when stderr has a reader; always return usage failure."""
+
+    try:
+        print(message, file=sys.stderr, flush=True)
+    except Exception:
+        _discard(sys.stderr)
+    return 2
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog=NAME,
@@ -95,12 +116,26 @@ def _versions() -> dict[str, str]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    arguments = build_parser().parse_args(argv)
+    try:
+        arguments = build_parser().parse_args(argv)
+    except SystemExit as error:
+        # argparse buffers its help/usage output, so the broken pipe may not
+        # surface until interpreter shutdown unless it is flushed here.
+        stream = sys.stdout if error.code == 0 else sys.stderr
+        try:
+            stream.flush()
+        except Exception:
+            _discard(stream)
+        return int(error.code or 0)
+    except (BrokenPipeError, OSError, AttributeError):
+        # argparse owns usage diagnostics, but a closed stderr must not turn
+        # its documented exit 2 into CPython's shutdown-flush exit 120.
+        _discard(sys.stderr)
+        return 2
     given = arguments.path
     repository = Path(given).resolve()
     if not repository.is_dir():
-        print(f"{NAME}: {given} is not a directory", file=sys.stderr)
-        return 2
+        return _error(f"{NAME}: {given} is not a directory")
 
     out = Path(arguments.out).resolve()
     emit_dir = Path(arguments.emit_dir).resolve() if arguments.emit_dir else None
@@ -108,12 +143,10 @@ def main(argv: list[str] | None = None) -> int:
     for target, label in checked:
         problem = _refuse(target, repository, label)
         if problem is not None:
-            print(problem, file=sys.stderr)
-            return 2
+            return _error(problem)
 
     if arguments.max_files < 1:
-        print(f"{NAME}: --max-files must be at least 1", file=sys.stderr)
-        return 2
+        return _error(f"{NAME}: --max-files must be at least 1")
 
     try:
         result = scan(given, arguments.max_files)
@@ -123,8 +156,7 @@ def main(argv: list[str] | None = None) -> int:
             for name in sorted(composed.drafts):
                 problem = _refuse(emit_dir / name, repository, "--emit-dir target")
                 if problem is not None:
-                    print(problem, file=sys.stderr)
-                    return 2
+                    return _error(problem)
             emit(composed.drafts, emit_dir)
         command = " ".join([NAME, *(shlex.quote(item) for item in (argv if argv is not None else sys.argv[1:]))])
         render = render_json if arguments.format == "json" else render_markdown
@@ -137,14 +169,12 @@ def main(argv: list[str] | None = None) -> int:
         # A partial environment: one of the two siblings is not installed. One
         # line, and exit 2 like every other error -- never the 1 this tool
         # promises not to return.
-        print(f"{NAME}: {error}", file=sys.stderr)
-        return 2
+        return _error(f"{NAME}: {error}")
     except Exception as error:
         # The belt behind every guard in _scan: a repository is untrusted input,
         # and no shape it can take may produce a traceback or exit 1. This tool
         # reports; a reader who gets exit 1 from it would think it gated.
-        print(f"{NAME}: {type(error).__name__}: {error}", file=sys.stderr)
-        return 2
+        return _error(f"{NAME}: {type(error).__name__}: {error}")
 
     drafted = f", {len(composed.drafts)} draft(s) in {arguments.emit_dir}" if emit_dir is not None else ""
     summary = (
@@ -167,6 +197,5 @@ def main(argv: list[str] | None = None) -> int:
         # failed a run whose report is on disk -- and a line about it on stderr
         # would be noise in exactly the pipelines that cause it. The devnull
         # descriptor keeps the interpreter's own flush at exit quiet too.
-        with contextlib.suppress(Exception):
-            os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
+        _discard(sys.stdout)
     return 0

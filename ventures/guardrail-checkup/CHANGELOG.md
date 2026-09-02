@@ -25,7 +25,7 @@ review.
   `CODEOWNERS`, `.github/workflows/`, secret-scanning configuration, lockfiles
   and test layout. Every row that cites a file carries its `file:line`, a row
   stating an absence carries `-` because the listing is what establishes it, and
-  every row carries one line naming what an agent can do because of it.
+  every row carries one line explaining why it matters or what remains unknown.
 - Up to three ranked invariant candidates from path heuristics, from repair
   commits in `git log`, and from `CODEOWNERS`, each with a `PreToolUse` hook
   that blocks writes to the path and a one-line test. The report labels them
@@ -33,8 +33,8 @@ review.
   than inventing a third; and it names, in those words, every candidate whose
   only evidence is a bare path match.
 - Composition with the sibling packages: `agent-plan-lint` validates any
-  checked-in policy or plan document and drafts a starter policy when there is
-  none; `egresswall` screens a sample of checked-in JSON fixtures and the MCP
+  checked-in policy or plan document and drafts a starter policy when no JSON
+  file carries the policy signature keys; `egresswall` screens a sample of checked-in JSON fixtures and the MCP
   configuration is rewritten with `egresswall proxy` in front of each server
   that runs a command line, as a suggestion. A server that names a URL instead
   is reached over the network, cannot be wrapped by a proxy in front of a
@@ -43,8 +43,8 @@ review.
   for the same facts as a document — the scope, the inventory, the siblings'
   results, the falsifiers, the candidates and the Monday list, without §3's
   per-candidate snippet, script and test line; `--max-files` for the listing cap,
-  which bounds the ranking and the language mix and neither the inventory's
-  lookups nor the agent-plan-lint signature scan, and which §3 names in the
+  which bounds the ranking, language mix and symlink inspection but not the
+  inventory's name-based lookups or the agent-plan-lint signature scan, and which §3 names in the
   report when it bit.
 
 ### Decided during the build
@@ -100,9 +100,10 @@ review.
   `re.escape` makes a filename safe for `grep` and not for `sh`. A configuration
   file that parses but is not the expected shape is a finding, not a traceback,
   and one `except` in `main` keeps any future shape from producing exit 1.
-- **A symlink out of the repository is listed and not read.** `CLAUDE.md ->
-  /etc/passwd` would otherwise put a file from the reader's own machine into a
-  report they hand to someone else.
+- **A symlink out of the repository is not read.** One inside the listing cap is
+  also reported; checking the full listing would make this single finding an
+  uncapped `lstat` sweep. `CLAUDE.md -> /etc/passwd` cannot put a file from the
+  reader's own machine into a report they hand to someone else.
 - **A hook matcher of `*`, or none at all, matches every tool.** The fetched
   hooks page says so, and `tests/test_hooks.py` quotes the sentence next to the
   code that implements it; the first draft read the strictest configuration as
@@ -147,7 +148,7 @@ review.
 - **A directory symlink out of the repository is listed.** `os.walk` hands one
   over in its directory list and never in its file list, so a link to a whole
   tree — the dangerous case — was invisible to the symlink finding.
-- **The inventory reads the whole listing.** `--max-files` truncated the list the
+- **The inventory's name-based lookups read the whole listing.** `--max-files` truncated the list the
   inventory looked names up in, so a repository above the cap was told its
   committed lockfile did not exist. The cap still bounds the ranking, the
   language mix and the byte total.

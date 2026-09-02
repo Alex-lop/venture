@@ -295,7 +295,7 @@ def test_the_settings_comment_counts_the_hook_sources_the_evidence_file_lists() 
     listed = [item.strip() for item in lines[387:392]]
 
     assert len(listed) == 5
-    assert "reads a hook from five sources" in comment.replace("\n#:", "").replace("#:", "")
+    assert "`/hooks` menu labels five hook sources" in comment.replace("\n#:", "").replace("#:", "")
     # The page's apostrophe is U+2019 and the comment's is an ASCII one, which
     # is the only difference a quotation of these five lines is allowed to have.
     curly = "\u2019"

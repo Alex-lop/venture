@@ -38,6 +38,7 @@ def _siblings() -> tuple:
 
 __all__ = [
     "CANDIDATE_LIMIT",
+    "EXCLUSION_GLOBS",
     "FIXTURE_SAMPLE",
     "SIGNATURE_SCAN_BYTES",
     "SIGNATURE_SCAN_FILES",
@@ -56,6 +57,10 @@ __all__ = [
 #: Three is the in-person session's number: a reader acts on three and skims a
 #: longer list. §3 says how many it actually had.
 CANDIDATE_LIMIT = 3
+
+#: How many candidate path globs the starter policy can exclude. The report
+#: names the cut because this cap changes what the emitted policy permits.
+EXCLUSION_GLOBS = 64
 
 #: How many checked-in JSON fixtures are screened. A sample, not a sweep: this
 #: section exists to show what egresswall would say, not to audit a corpus.
@@ -110,6 +115,8 @@ class Composition:
     #: read, because SIGNATURE_SCAN_BYTES or SIGNATURE_SCAN_FILES was spent. §2
     #: says so instead of reporting that no policy document exists.
     signature_skipped: int = 0
+    #: Candidate path globs omitted from the starter policy at EXCLUSION_GLOBS.
+    exclusions_cut: int = 0
     #: What the emitted MCP suggestion names as egresswall's policy file. The
     #: report's §4 quotes it and says it is a placeholder, because running the
     #: emitted configuration before writing that policy fails.
@@ -129,6 +136,7 @@ class Composition:
             },
             "unpoliceable": list(self.unpoliceable),
             "signature_scan_skipped": self.signature_skipped,
+            "candidate_exclusions_cut": self.exclusions_cut,
         }
 
 
@@ -174,8 +182,8 @@ def policy_globs(items: list[str]) -> tuple[list[str], list[str]]:
     return kept, [item for item in items if not policeable(item)]
 
 
-def policy_paths(result: Scan) -> tuple[list[str], list[str], list[str]]:
-    """The starter policy's write globs and exclusions, and what was left out of both.
+def policy_paths(result: Scan) -> tuple[list[str], list[str], list[str], int]:
+    """The starter policy's write globs, capped candidate exclusions, omitted invalid paths, and cut count.
 
     Write globs are the churn: the directories repair commits actually touched.
     Exclusions carve the candidates back out of them. With no history to read,
@@ -185,28 +193,34 @@ def policy_paths(result: Scan) -> tuple[list[str], list[str], list[str]]:
     # `[:CANDIDATE_LIMIT]`, because §3 and §4 both call these "the §3
     # candidates": built from every ranked candidate, a repository matching more
     # than three categories got a policy excluding paths no section named.
-    exclusions = sorted(
+    all_exclusions = sorted(
         {
             f"{prefix.rstrip('/')}/**" if prefix.endswith("/") else prefix
             for candidate in result.candidates[:CANDIDATE_LIMIT]
             for prefix in candidate.prefixes
         }
-    )[:64]
+    )
+    exclusions = all_exclusions[:EXCLUSION_GLOBS]
     tops = sorted({f"{item.split('/', 1)[0]}/**" for item in result.files if "/" in item})
     writes, dropped_writes = policy_globs(list(result.churn) or tops)
     kept_exclusions, dropped_exclusions = policy_globs(exclusions)
-    return writes, kept_exclusions, sorted(set(dropped_writes) | set(dropped_exclusions))
+    return (
+        writes,
+        kept_exclusions,
+        sorted(set(dropped_writes) | set(dropped_exclusions)),
+        len(all_exclusions) - len(exclusions),
+    )
 
 
 def starter_policy(result: Scan) -> dict:
-    """A valid agent-plan-lint policy: write globs are the churn, exclusions the candidates.
+    """A valid policy: write globs are the churn, exclusions up to EXCLUSION_GLOBS candidate paths.
 
     Valid is the claim, and tests/test_compose.py enforces it by loading every
     policy this function emits with ``agent_plan_lint.load_policy``, over
     repositories built from a hostile path alphabet as well as ordinary ones.
     """
 
-    writes, exclusions, _ = policy_paths(result)
+    writes, exclusions, _, _ = policy_paths(result)
     return {
         "schema_version": 1,
         "policy_id": _identifier(result.root.name),
@@ -414,7 +428,8 @@ def compose(result: Scan, policy_path: str) -> Composition:
 
     if not policy_names:
         out.drafts["starter-policy.json"] = json.dumps(starter_policy(result), indent=2) + "\n"
-        out.unpoliceable = tuple(policy_paths(result)[2])
+        _, _, unpoliceable, out.exclusions_cut = policy_paths(result)
+        out.unpoliceable = tuple(unpoliceable)
 
     if result.mcp_config is not None:
         _, config = result.mcp_config
