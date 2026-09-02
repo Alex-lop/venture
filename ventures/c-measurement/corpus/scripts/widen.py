@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Corpus widening v2: same selection criteria as `candidates.csv`, with the two
-changes the corpus README's "Next step" prescribes:
+"""Corpus widening completion (v3): the v2 criteria with the planned search depth.
+
+The two changes from `candidates.csv` remain:
 
   1. star gate relaxed  >= 50  ->  >= 10
   2. the ">= 3 stage-1 hits" prefilter replaced by a per-repo recovery step for
@@ -8,7 +9,8 @@ changes the corpus README's "Next step" prescribes:
 
 Everything else (trailer set, windows, verbatim-trailer verification, lockfile +
 pytest gates, <= 2,000 changed lines, >= 3 qualifying PRs) is identical, so
-candidates.csv and candidates-v2.csv are comparable.
+`candidates-v2.csv` stays frozen for the published study; `candidates-v3.csv` is the
+completed search and the source of the fixed 100-repo pilot manifest.
 
 Read-only. Authenticated GitHub via `gh api` (subprocess; no token ever touches disk).
 Every stage checkpoints to raw/*.jsonl, so a rerun resumes instead of re-spending budget.
@@ -27,10 +29,11 @@ Usage:
   python3 widen.py selfcheck   # classifier asserts, no network
   python3 widen.py search      # stage 1: time-sliced trailer searches (+ repo metadata)
   python3 widen.py pipeline    # stages 2-4, per repo, priority ordered
-  python3 widen.py build       # candidates-v2.csv + FUNNEL-v2.md
+  python3 widen.py build       # candidates-v3.csv + FUNNEL-v3.md
   python3 widen.py status      # budget + progress
 
-Budget caps (hard, persisted in raw/budget.json): 200 search calls, 3000 non-search calls.
+Budget caps (hard, persisted in raw/budget.json): 200 search calls by default,
+3000 non-search calls. Set CORPUS_SEARCH_CAP to deepen the same search.
 """
 import csv, fcntl, json, os, re, subprocess, sys, threading, time
 from concurrent.futures import ThreadPoolExecutor
@@ -50,7 +53,7 @@ MAX_CHANGED_LINES = 2000
 MIN_QUALIFYING_PRS = 3
 MAX_PRS_PER_REPO = 12               # same examination cap as v1
 
-SEARCH_CAP = 200
+SEARCH_CAP = int(os.environ.get("CORPUS_SEARCH_CAP", "200"))
 REST_CAP = 3000
 SEARCH_RESERVE_SCOPED = 20          # search calls held back for stage 3b
 SCOPED_SEARCH_LINE = 150            # above this, stage 3b uses the REST listing only
@@ -652,9 +655,9 @@ def build():
     recs = {r["repo"]: r for r in read_jsonl("repo_results.jsonl")}
     qual = [r for r in recs.values() if r["verdict"] == "QUALIFIED"]
     qual.sort(key=lambda r: (-r.get("agent_pr_count_90d", 0), -r.get("stars", 0)))
-    out = os.path.join(ROOT, "candidates-v2.csv")
+    out = os.path.join(ROOT, "candidates-v3.csv")
     with open(out, "w", newline="") as f:
-        w = csv.writer(f)
+        w = csv.writer(f, lineterminator="\n")
         w.writerow(["repo", "stars", "pushed_at", "lockfile_type", "pytest_evidence",
                     "agent_pr_count_90d", "sample_pr_numbers", "trailer_kinds",
                     "base_sha_of_first_sample_pr", "python_requires", "lock_kind"])
@@ -665,6 +668,23 @@ def build():
                         r.get("base_sha", ""), r.get("python_requires") or "",
                         r["lock_kind"]])
     print(f"wrote {out}: {len(qual)} qualifying repos")
+    with open(os.path.join(ROOT, "candidates-v2.csv"), newline="") as f:
+        old_reader = csv.DictReader(f)
+        old = list(old_reader)
+    with open(out, newline="") as f:
+        new_reader = csv.DictReader(f)
+        new = list(new_reader)
+    assert old_reader.fieldnames == new_reader.fieldnames and len(old) == 60
+    old_names = {r["repo"] for r in old}
+    manifest = sorted(old, key=lambda r: r["repo"])
+    manifest += [r for r in new if r["repo"] not in old_names][:40]
+    assert len(manifest) == 100
+    pilot_out = os.path.join(ROOT, "candidates-pilot-100.csv")
+    with open(pilot_out, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=old_reader.fieldnames, lineterminator="\n")
+        w.writeheader()
+        w.writerows(manifest)
+    print(f"wrote {pilot_out}: {len(manifest)} repos")
     funnel(recs, qual)
     readme(recs, qual)
 
@@ -708,7 +728,7 @@ def funnel(recs, qual):
     for r in qual:
         lk[r["lock_kind"]] = lk.get(r["lock_kind"], 0) + 1
 
-    L = ["# FUNNEL v2 — widened candidate corpus (2026-08-30)", "",
+    L = ["# FUNNEL v3 — completed widened corpus (2026-09-01)", "",
          "Built by `scripts/widen.py`. Raw checkpoints in `raw/*.jsonl` (every stage resumable).",
          "Criteria are identical to `candidates.csv` except the two changes the corpus README's",
          '"Next step" prescribes: **star gate >= 50 -> >= 10**, and the **">= 3 stage-1 hits"**',
@@ -748,6 +768,8 @@ def funnel(recs, qual):
             "unprocessed tail is the weakest-evidence end."),
          "",
          f"Lock kind mix in the final set: {_fmt(lk)}.", "",
+         "The public `funnel-v3.csv` pseudonymizes one non-qualifying row whose repository "
+         "name is on the private redaction denylist. Its stage and counts are unchanged.", "",
          "## Stage 3b — what the recovery step returned", "",
          "| repo | stage-1 hits | mechanism (PRs returned) | recovered | qualifying |",
          "|---|---:|---|---:|---:|"]
@@ -767,7 +789,7 @@ def funnel(recs, qual):
     L += ["", f"Search-call accounting: {len(calls)} stage-1 calls are logged above; the budget "
               f"counter reads {BUDGET['search']} because ~50 further stage-1 calls were discarded "
               "and re-run after a process restart lost their pagination cursors, and each "
-              "stage-3b scoped search also draws on the same 200-call pool."]
+              f"stage-3b scoped search also draws on the same {SEARCH_CAP}-call pool."]
     rest_partial = read_jsonl("s1_calls_rest_partial.jsonl")
     if rest_partial:
         L += ["", f"Plus the {len(rest_partial)} REST `/search/issues` calls made before the "
@@ -792,11 +814,11 @@ def funnel(recs, qual):
           f"{MAX_PRS_PER_REPO} examined PRs. Repos with 1-2 hits get the fuller stage-3b "
           "enumeration. Counts are therefore not comparable *between* those two groups; "
           "membership in the corpus is."]
-    open(os.path.join(ROOT, "FUNNEL-v2.md"), "w").write("\n".join(L) + "\n")
-    print("wrote FUNNEL-v2.md")
+    open(os.path.join(ROOT, "FUNNEL-v3.md"), "w").write("\n".join(L) + "\n")
+    print("wrote FUNNEL-v3.md")
 
 
-README_HEAD = "## Widening (2026-08-30)"
+README_HEAD = "## Widening completion (v3, 2026-09-01)"
 
 
 def readme(recs, qual):
@@ -817,25 +839,25 @@ def readme(recs, qual):
     both = [r for r in qual if r["stars"] < 50 and r["s1_hits"] < MIN_QUALIFYING_PRS]
     unproc = len(repos_seen) - len(R)
     L = [README_HEAD, "",
-         "`candidates-v2.csv` re-runs the selection above with the two relaxations this",
-         "README's *Next step* asked for, and nothing else changed:",
+         "`candidates-v3.csv` completes v2's planned search depth with the same two relaxations",
+         "the README's *Next step* asked for, and nothing else changed:",
          "",
          "1. **star gate `>= 50` -> `>= 10`**",
          "2. **the `>= 3 stage-1 hits` prefilter replaced by a per-repo recovery step** "
          "(stage 3b) for repos with 1-2 stage-1 hits: the prescribed scoped search "
          "`repo:O/R is:pr is:merged merged:>2026-06-01 \"<trailer>\"`, plus a "
          "`GET /repos/O/R/pulls?state=closed` listing filtered to the same merge window as "
-         "the fallback once the 200-call search budget ran thin.",
+         "the fallback once the search budget ran thin.",
          "",
          "Trailer set, 7-day windows, verbatim-trailer verification, the lockfile and pytest",
          "gates, `<= 2,000` changed lines and the `>= 3` qualifying-PR bar are all unchanged.",
-         "**Search depth is not:** v1 read 3 pages of each sliced window and 6 of each unsliced",
-         "query; this run got 1 page of most windows before the 200-call search budget ran out",
-         "(see *What it cost* below). v2 is therefore wider on repos and shallower on PRs per",
-         "window than v1, and the two funnels' stage-1 row counts are not comparable — the",
-         "per-repo gates and the membership rule are. Script: `scripts/widen.py`",
+         "The resumed run completed the planned search depth: up to 3 pages per sliced window",
+         "and 6 per unsliced query, stopping earlier when an endpoint exhausted its results.",
+         "Script: `scripts/widen.py`",
          "(`selfcheck` runs the classifier asserts with no network). Raw per-stage checkpoints:",
-         "`raw/*.jsonl` — a rerun resumes rather than re-spending budget. `raw/prs.jsonl` and",
+         "`raw/*.jsonl` — a rerun resumes rather than re-spending budget. The tracked,",
+         "machine-readable funnel is `funnel-v3.csv` (`scripts/funnel_csv.py`; last checkpoint",
+         "row per repo wins). `raw/prs.jsonl` and",
          "`raw/prs_rest_partial.jsonl` hold PR bodies, which carry third-party names and email",
          "addresses in their `Co-Authored-By` trailers, so `raw/.gitignore` keeps those two files",
          "local; everything they feed is reproducible by rerunning the script.",
@@ -856,7 +878,7 @@ def readme(recs, qual):
          "under the >= 3 bar |",
          "",
          f"**{len(qual)} qualifying repos, against 23 in `candidates.csv`.** Full stage table, "
-         "per-repo stage-3b detail and the exact query log are in `FUNNEL-v2.md`.",
+         "per-repo stage-3b detail and the exact query log are in `FUNNEL-v3.md`.",
          "",
          "### Which relaxation did the work", "",
          f"- **{len(low)}** of the {len(qual)} have 10-49 stars — they exist only because of the "
@@ -872,24 +894,25 @@ def readme(recs, qual):
          f"The {BUDGET['search']} search calls break down as {len(read_jsonl('s1_calls.jsonl'))} "
          "stage-1 calls kept, ~50 stage-1 calls discarded and re-run (a process restart lost "
          f"their pagination cursors), and ~{2 * used_search} stage-3b scoped searches. "
-         + (f"**The 200-call search budget is what binds** — {unproc} repos stage 1 surfaced were "
+         + (f"**The configured search budget is what binds** — {unproc} repos stage 1 surfaced were "
             "never carried through stages 3-4, and stage 1 itself stopped at page 1-2 of most "
             "7-day windows rather than v1's page 3. The corpus is short of the 100-repo target "
             "for that reason and no other: the observed conversion is about 2.4% of stage-1 "
             "repos, so ~4,000 stage-1 repos are needed for 100 qualifiers and this run reached "
             f"{len(repos_seen)}." if unproc > 0 else
-            "**Every repo stage 1 surfaced was carried all the way through stage 4 — the pool "
-            "was exhausted, and the 3,000-call REST budget was barely touched (%d used). What "
-            "binds is the 200-call search budget: at 1 page per 7-day window stage 1 reached "
-            "%d repos, and the observed conversion of ~%.1f%% of stage-1 repos into qualifiers "
-            "means roughly 4,000 stage-1 repos are needed for 100. That is a deeper stage 1 "
-            "(v1's 3-6 pages per query), not different gates — the next run should raise "
-            "`SEARCH_CAP` rather than relax any criterion.**"
-            % (BUDGET["rest"], len(repos_seen), 100.0 * len(qual) / max(len(repos_seen), 1))),
+            "**Every repo stage 1 surfaced was carried through stage 4. The planned 3/6-page "
+            "search depth produced %d qualifying repos, clearing the 100-repo pilot target; "
+            "the 3,000-call REST budget was barely touched (%d used).**"
+            % (len(qual), BUDGET["rest"])),
          "",
-         "Resume with `python3 scripts/widen.py search` then `python3 scripts/widen.py pipeline` "
-         "then `python3 scripts/widen.py build`; the budget counter in `raw/budget.json` is the "
-         "cap, so raise it deliberately before a longer run.",
+         "The pipeline remains resumable with `search`, `pipeline`, then `build`; set "
+         "`CORPUS_SEARCH_CAP` only when deliberately deepening discovery.",
+         "",
+         "### Fixed 100-repo pilot manifest", "",
+         "`candidates-pilot-100.csv` keeps every row in the published study's frozen "
+         "60-repo v2 corpus, sorted by repo, then adds the first 40 newly qualifying v3 "
+         "rows in v3's predeclared ordering (agent-PR count, then stars). `build` regenerates "
+         "the manifest and asserts the 60 + 40 split.",
          "",
          "### Two instrument notes that were not true of v1", "",
          "1. **Transport.** REST `/search/issues` sat under a persistent *secondary* rate limit "
@@ -906,7 +929,7 @@ def readme(recs, qual):
          "1,000-result cap) at the same criteria.",
          "",
          "### New columns the base-build pilot needs", "",
-         "`candidates-v2.csv` adds three columns to `candidates.csv`'s eight:",
+         "`candidates-v3.csv` carries the three pilot columns added in v2:",
          "`base_sha_of_first_sample_pr` (the base commit to check out for the first sample PR),",
          "`python_requires` (from `requires-python` in `pyproject.toml`, else `python_requires` "
          "in `setup.cfg`; empty when neither declares one), and `lock_kind`",

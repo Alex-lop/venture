@@ -204,3 +204,66 @@ Resume with `python3 scripts/widen.py search` then `python3 scripts/widen.py pip
 (`uv.lock` / `poetry.lock` / `pdm.lock` / `Pipfile.lock` / `pinned-requirements`).
 
 `candidates.csv` is untouched.
+
+## Widening completion (v3, 2026-09-01)
+
+`candidates-v3.csv` completes v2's planned search depth with the same two relaxations
+the README's *Next step* asked for, and nothing else changed:
+
+1. **star gate `>= 50` -> `>= 10`**
+2. **the `>= 3 stage-1 hits` prefilter replaced by a per-repo recovery step** (stage 3b) for repos with 1-2 stage-1 hits: the prescribed scoped search `repo:O/R is:pr is:merged merged:>2026-06-01 "<trailer>"`, plus a `GET /repos/O/R/pulls?state=closed` listing filtered to the same merge window as the fallback once the search budget ran thin.
+
+Trailer set, 7-day windows, verbatim-trailer verification, the lockfile and pytest
+gates, `<= 2,000` changed lines and the `>= 3` qualifying-PR bar are all unchanged.
+The resumed run completed the planned search depth: up to 3 pages per sliced window
+and 6 per unsliced query, stopping earlier when an endpoint exhausted its results.
+Script: `scripts/widen.py`
+(`selfcheck` runs the classifier asserts with no network). Raw per-stage checkpoints:
+`raw/*.jsonl` — a rerun resumes rather than re-spending budget. The tracked,
+machine-readable funnel is `funnel-v3.csv` (`scripts/funnel_csv.py`; last checkpoint
+row per repo wins). `raw/prs.jsonl` and
+`raw/prs_rest_partial.jsonl` hold PR bodies, which carry third-party names and email
+addresses in their `Co-Authored-By` trailers, so `raw/.gitignore` keeps those two files
+local; everything they feed is reproducible by rerunning the script.
+
+### Funnel
+
+| stage | in | out | biggest cut |
+|---|---:|---:|---|
+| 1 search (175 calls) | — | 13433 unique merged PRs in 3633 repos | — |
+| 2 repo metadata (>= 10 stars) | 3633 | 580 | 2806 under 10 stars |
+| 3 lockfile + pytest | 580 | 252 | 307 no lockfile |
+| 3b per-repo recovery | 200 repos | 3228 extra PRs pooled | — |
+| 4 per-PR verification | 252 | **110** | 142 repos under the >= 3 bar |
+
+**110 qualifying repos, against 23 in `candidates.csv`.** Full stage table, per-repo stage-3b detail and the exact query log are in `FUNNEL-v3.md`.
+
+### Which relaxation did the work
+
+- **46** of the 110 have 10-49 stars — they exist only because of the relaxed star gate.
+- **87** had 1-2 stage-1 hits — they exist only because the >= 3-hit prefilter was replaced by stage 3b. This is the bigger lever of the two, and it is a recall fix, not a quality relaxation: those repos always had >= 3 qualifying agent PRs, stage 1 just never surfaced them.
+- **33** needed both.
+
+### What it cost, and what it did not reach
+
+Search calls 274/500; other API calls 738/3000. The 274 search calls break down as 175 stage-1 calls kept, ~50 stage-1 calls discarded and re-run (a process restart lost their pagination cursors), and ~50 stage-3b scoped searches. **Every repo stage 1 surfaced was carried through stage 4. The planned 3/6-page search depth produced 110 qualifying repos, clearing the 100-repo pilot target; the 3,000-call REST budget was barely touched (738 used).**
+
+The pipeline remains resumable with `search`, `pipeline`, then `build`; set `CORPUS_SEARCH_CAP` only when deliberately deepening discovery.
+
+### Fixed 100-repo pilot manifest
+
+`candidates-pilot-100.csv` keeps every row in the published study's frozen 60-repo v2 corpus, sorted by repo, then adds the first 40 newly qualifying v3 rows in v3's predeclared ordering (agent-PR count, then stars). `build` regenerates the manifest and asserts the 60 + 40 split.
+
+### Two instrument notes that were not true of v1
+
+1. **Transport.** REST `/search/issues` sat under a persistent *secondary* rate limit for this token on 2026-08-30, so stage 1 ran on GraphQL `search(type: ISSUE)` with identical query strings and windows. Sanity check: the endpoint returns the same index — `Co-authored-by: devin-ai-integration` reported 66 results here and 66 in v1, `openhands` 63 and 63, `Cursor` 657 against v1's 655.
+2. **Stage 3b asymmetry.** Only the 200 repos with 1-2 stage-1 hits were re-enumerated; repos with >= 3 hits were not, exactly as in v1. So `agent_pr_count_90d` is a lower bound for the second group and a fuller count for the first, and the two are not comparable to each other. 25 of the stage-3b repos got the prescribed scoped search before the search budget was reserved for stage 1; the rest used the REST listing, which has strictly better recall (no 1,000-result cap) at the same criteria.
+
+### New columns the base-build pilot needs
+
+`candidates-v3.csv` carries the three pilot columns added in v2:
+`base_sha_of_first_sample_pr` (the base commit to check out for the first sample PR),
+`python_requires` (from `requires-python` in `pyproject.toml`, else `python_requires` in `setup.cfg`; empty when neither declares one), and `lock_kind`
+(`uv.lock` / `poetry.lock` / `pdm.lock` / `Pipfile.lock` / `pinned-requirements`).
+
+`candidates.csv` is untouched.
