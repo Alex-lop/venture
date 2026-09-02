@@ -9,14 +9,14 @@ Week 0 table. Owned by the standing `signal-watcher` agent (CLAUDE.md §5, Wave 
 |---|---|---|
 | Stars / forks / watchers / open issues | `gh api users/Alex-lop/repos` | the §9 whole-plan gate (≥500 combined stars) |
 | 14-day traffic views + clones (count / uniques) | `gh api repos/.../traffic/{views,clones}` | distribution, not just capability — the v2 thesis |
-| Issues and PRs opened by non-owner accounts, last 60 days | `gh api search/issues` | the §9 "≥3 issues from strangers" per-package gate; **bot PRs do not count** |
-| PyPI downloads/month per released package | `pypistats` (nothing released yet) | the §9 "≥500 downloads/month" gate |
-| Unsolicited inbound contacts (email / DM / issue from a stranger) | principal reports them; details live in `private/` | the §9 I gate (≥5 by 2026-10-31) |
+| Issues, PRs and discussions opened by distinct non-owner accounts | GitHub API | the operative v4 per-package gate; **bot accounts do not count** |
+| PyPI downloads/month per released package | `pypistats` | telemetry only; downloads cannot satisfy the operative v4 package gate |
+| Public-artifact inbound contacts (email / DM / issue from a stranger) | principal reports them; details live in `private/` | the operative v4 I gate (≥3 by 2026-10-31); prior 1:1 and Track-H contacts are separate |
 
 ## The gates, in numbers (CLAUDE.md §9)
 
-- **Per released package, within 6 weeks of its release:** ≥ 50 stars **OR** ≥ 500 downloads/month **OR** ≥ 3 issues from strangers. Missed → maintain only; effort moves to the next package.
-- **Inbound:** ≥ 5 unsolicited inbound contacts by **2026-10-31**. Missed → `inbound-channel-mapper` re-runs against observed data.
+- **Per released package, within 6 weeks of its release:** ≥ 3 distinct non-owner accounts open an issue, PR or discussion. Stars and raw downloads are telemetry only and cannot satisfy this gate. Missed → maintain only; effort moves to the next package.
+- **Inbound:** ≥ 3 contacts by **2026-10-31** from parties with no prior in-person or 1:1 contact with the principal, traceable to a public artifact. Track-H-originated contacts are counted separately and never satisfy this gate. Missed → `inbound-channel-mapper` re-runs against observed data.
 - **Re-open rule (Track P):** ≥ 2 **independent** inbound parties ask to pay for the **same** capability. Until then the B slot stays empty. No exceptions.
 - **Whole plan, 2026-11-30:** a paying party, **or** ≥ 500 combined stars, **or** a paid role/co-op offer that resulted from the work.
 
@@ -32,7 +32,7 @@ gh api users/Alex-lop/repos --paginate \
   --jq '.[] | [.name, .stargazers_count, .forks_count, .watchers_count, .open_issues_count, .pushed_at, .fork] | @tsv'
 
 # 14-day traffic (needs push access; the principal's login has it — record 403 if it appears)
-for r in Graphene RegLineage Nemisis X-Scraper graphene-site Alex_Lopez_Website; do
+for r in Graphene RegLineage Nemisis X-Scraper graphene-site Alex_Lopez_Website agent-plan-lint egresswall guardposts; do
   for t in views clones; do
     echo -n "$r $t: "; gh api repos/Alex-lop/$r/traffic/$t --jq '[.count,.uniques]|@tsv'
   done
@@ -41,6 +41,9 @@ done
 # non-owner issues/PRs in the window (count only; never record a stranger's login in a tracked file)
 gh api "search/issues?q=repo:Alex-lop/<repo>+created:>YYYY-MM-DD" \
   --jq '.items[] | select(.user.login != "Alex-lop") | [(.pull_request != null), .user.type] | @tsv'
+
+# discussions (GraphQL; count distinct non-owner human authors with the issues/PR result)
+gh api graphql -f query='query { repository(owner:"Alex-lop", name:"<repo>") { discussions(first:100) { nodes { author { login } } } } }'
 
 # PyPI downloads — no packages published yet; run this from the first release onward
 pypistats recent <package-name> --json     # and: pypistats overall <package-name> --last-months 1
@@ -103,3 +106,29 @@ diff triggers. Week 0 is the baseline; the first weekly entry is due 2026-09-06.
 **Interim 2026-08-31 04:35 EDT (session 2b; not a weekly entry):** non-fork stars 3 (unchanged) ·
 stranger issues/PRs since 08-24 **0** (the one non-owner item, Graphene #6, is imgbot[bot] — bots never count) ·
 packages released **0** · downloads **0** · inbound **0**. Gate distance unchanged. No action triggered.
+
+## Release forecasts — recorded late 2026-09-01
+
+These forecasts were required on release day by `DECISION.md` v4 but were not recorded with the
+2026-08-31 source tags. They are recorded late rather than backdated; the six-week reads remain
+anchored to the source-tag date.
+
+| Package | Six-week read | Forecast stars | Forecast distinct stranger accounts |
+|---|---|---:|---:|
+| agent-plan-lint | 2026-10-12 | 8 | 0 |
+| egresswall | 2026-10-12 | 6 | 0 |
+
+## Close snapshot — 2026-09-01
+
+Two tagged source releases exist (`agent-plan-lint` and `egresswall`). GitHub's Release API reports
+**0 release objects**, and PyPI reports **0 releases**; source tags are not counted as either.
+
+| Repo | Stars | Views 14d (total/uniq) | Clones 14d (total/uniq) | Distinct stranger accounts |
+|---|---:|---:|---:|---:|
+| agent-plan-lint | 0 | 0 / 0 | 38 / 15 | 0 |
+| egresswall | 0 | 0 / 0 | 25 / 15 | 0 |
+| guardposts | 0 | 0 / 0 | 25 / 13 | not measured (no package gate) |
+
+**Close totals:** non-fork stars **3** · tagged source releases **2** · GitHub Release API objects
+**0** · PyPI releases **0** · public-artifact inbound contacts **0** · Track-H-originated contacts
+**0**. No operative v4 package or inbound gate has been satisfied.
