@@ -13,12 +13,13 @@ Newest on top. Each ASK: what, why, cost, deadline, what happens if declined. Re
 - **After the upload:** the agent adds the site's `RELEASED` flag and install line, the `pip install` sentence on Graphene #14, and `{PYPI_URL}` in `outreach/queue.md` §A, and the launch order in queue.md §C can start.
 - **Cost:** $0. **If not done:** the package is installable from source only (`uv pip install git+https://github.com/Alex-lop/agent-plan-lint`) and none of the launch drafts can be posted.
 
-## ASK-014 — Veto window: package and family names (default applies 2026-09-02)
+## ASK-014 — Veto window: package and family names — **DEFAULT APPLIED 2026-09-02**
 - **What:** `agent-plan-lint` (was plan-lint — PyPI name taken by an abandoned 2025 project), `egresswall` (was egress-guard — PyPI name taken 2026-08-29 by an adjacent project), `guardrail-checkup` (was agent-autopsy — "Autopsy" is a registered forensic-tool trademark), `readonly-gateway` and `change-receipt` unchanged, docs-site family `guardposts`. Evidence and runners-up: `research/naming.md` §3.
-- **Cost:** $0. **If vetoed:** the runner-up in naming.md is used; nothing has been published under any name yet.
+- **Cost:** $0. No veto was recorded by the deadline; the listed names remain in force.
 
-## ASK-013 — Veto window: graphene-site LICENSE = Apache-2.0 (default applies 2026-09-02)
+## ASK-013 — Veto window: graphene-site LICENSE = Apache-2.0 — **DEFAULT APPLIED 2026-09-02**
 - **What:** https://github.com/Alex-lop/graphene-site/pull/1 adds Apache-2.0 (matches the product it markets; the site's scripts are code). Alternative: CC BY for the page copy and images. **Cost:** $0.
+- **Outcome:** no veto was recorded by the deadline; Apache-2.0 remains the selected license.
 
 ## ASK-012 — Merge eight verified PRs on your own repos (one click each)
 - **What:** LICENSE copyright lines — Graphene #12, RegLineage #9, Nemisis #1 (CI green), graphene-site #1 (no CI); deployment images build + `procps` — Graphene #13 `fix/deploy-image-procps` (two adversarial verification passes; both images build and run `process_control` in a container); customer-voice READMEs — Graphene #14, RegLineage #10, Nemisis #2 (each audited to zero blockers/majors; a one-line RELEASE-LINK commit follows the package release). (GitHub Pages for `Alex-lop/guardposts` is already enabled and built: https://alex-lop.github.io/guardposts/.) These are GREEN under CLAUDE.md §2, but the harness's permission layer declined the agent's merge action, so the clicks are yours. Do **not** delete the branches (RED).

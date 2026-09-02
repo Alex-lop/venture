@@ -1,5 +1,21 @@
 # LOG — daily: done / learned / next (newest on top)
 
+## 2026-09-01 → 2026-09-02 — session 3 close: pilot repaired, guardrail-checkup verified but held, handoff refreshed
+
+**Done**
+- The two tagged source repositories (`agent-plan-lint` and `egresswall`) already existed. PyPI remains at zero releases: the Keychain token reached PyPI but returned HTTP 403 as invalid or expired.
+- `guardrail-checkup`'s round-9 blockers are fixed: 483 tests pass / 2 skip, and a real deterministic Graphene run produces 16 findings with 3 invariant candidates. It remains unreleased because its sibling PyPI dependencies are absent.
+- The corpus is v3 at 110 repos and the corrected pilot is 100 repos: install 79, collect 56, run 50, strict buildable 43, green 19, with 267,558 tests collected. All 100 sanitized receipts, including hashes, are pushed; raw logs stayed local. The frozen-v2 study remains unchanged at 107 PRs across 25 repos.
+- Launch, signal, decision and principal-handoff artifacts were refreshed. Seven artifact commits are already on the remote: `3952fdc`, `c5876bd`, `98c50f8`, `1d0de98`, `436c53a`, `b070fad`, `033c1de`.
+
+**Learned**
+- The host Docker cache filled the disk and tainted 8 pilot rows. Explicit cache cleanup followed by sequential, exact reruns repaired the rows; parallel reruns would have repeated the failure mode.
+- Raw execution logs cannot be safely pushed: sanitized receipts make each local log/result association tamper-evident, but they do not let a reader inspect the untracked log content.
+
+**Next**
+- Alex: repair PyPI authentication and complete ASK-015; merge the eight verified PRs in ASK-012.
+- Agent: once PyPI releases exist, resume site install-line/`RELEASED` wiring and package-launch handoff.
+
 ## 2026-08-31 — session 2a close-out (after the 2b window): two packages released to GitHub, PyPI upload handed to Alex
 
 **Done**
