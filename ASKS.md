@@ -4,12 +4,20 @@ Newest on top. Each ASK: what, why, cost, deadline, what happens if declined. Re
 
 ---
 
+## Session 4 batch — 2026-09-02
+
+## ASK-016 — Rotate the credential removed from `Final_test`; leave history intact by default — **rotation has no default; history-rewrite default NO on 2026-09-09**
+- **What happened:** the night dogfood run found a nonempty OpenAI credential tracked in your public `Final_test` repository. Commit `3c207b0` removed the file from the current tree and ignored its path without printing or copying the value. The credential remains recoverable from public git history.
+- **What you need to do:** revoke the old credential at OpenAI and create a replacement only if the project still needs one. Store the replacement outside git. Do not paste it into this repository or chat.
+- **History decision:** rewriting public history is destructive and changes every affected commit SHA. Default **NO** on 2026-09-09 unless you explicitly approve a purge after rotating the credential; rotation is the security control that cannot wait.
+- **Cost:** $0; about 3 minutes. **If not done:** the old credential must be treated as usable by anyone who can read repository history.
+
 ## Session 2 batch — 2026-08-30 (each ASK has a default and the date it applies; nothing waits)
 
 ## ASK-015 — Replace invalid PyPI authentication, then publish the verified packages — **no default; the authentication fix is yours**
 - **What happened this session:** the `pypi-token` Keychain item exists and returns a value with the expected `pypi-` prefix and length 128; the token itself was never printed or recorded. An attempted `uv publish` reached PyPI but returned HTTP 403: the token is invalid or expired. PyPI accepted no artifact. The JSON and Simple endpoints for `agent-plan-lint`, `egresswall` and `guardrail-checkup` all still return 404.
-- **What you need to do:** replace the `pypi-token` Keychain item with a valid project/account token, or configure PyPI trusted publishing for these GitHub repositories. Do not rerun the stale publish command against the current invalid credential. Once authentication is repaired, the agent can upload the already verified distributions and immediately verify the exact versions from clean environments.
-- **Packages waiting:** `agent-plan-lint` 0.1.0 ([repo](https://github.com/Alex-lop/agent-plan-lint), tag `v0.1.0`; 488 collected), and `egresswall` 0.1.0 ([repo](https://github.com/Alex-lop/egresswall), tag `v0.1.0`; 675 tests on 3.11/3.12/3.13). `egresswall` already carries `mcp-name: io.github.Alex-lop/egresswall` for the MCP Registry ownership check. `guardrail-checkup` joins the upload only after its repo, tag and release verification exist.
+- **What you need to do:** replace the `pypi-token` Keychain item with a valid project/account token, or configure PyPI trusted publishing for these GitHub repositories. Do not retry the current invalid credential. Once authentication is repaired, the agent will build and verify the package-specific release artifacts before uploading them.
+- **Packages waiting:** `agent-plan-lint` 0.1.0 ([repo](https://github.com/Alex-lop/agent-plan-lint), tag `v0.1.0`; 488 collected) can use its verified tag. **Do not publish the existing `egresswall` `v0.1.0` artifact:** hostile night verification found fail-open total-length and exception-safety defects in that immutable tag. Its fixed, CI-green `main` (`8f99308`) needs a version bump, a new tag (normally `v0.1.1`), and clean release verification after authentication works. `egresswall` already carries `mcp-name: io.github.Alex-lop/egresswall` for the MCP Registry ownership check. `guardrail-checkup` joins only after its repo, tag and release verification exist.
 - **After the upload:** the agent adds the site's `RELEASED` flag and install line, the `pip install` sentence on Graphene #14, and `{PYPI_URL}` in `outreach/queue.md` §A, and the launch order in queue.md §C can start.
 - **Cost:** $0. **If not done:** the package is installable from source only (`uv pip install git+https://github.com/Alex-lop/agent-plan-lint`) and none of the launch drafts can be posted.
 

@@ -1,5 +1,22 @@
 # LOG — daily: done / learned / next (newest on top)
 
+## 2026-09-02 — session 4 (codex/orchestrator): hostile night verification, hardening and full-repo dogfood
+
+**Done**
+- Hostile clean-room verification reproduced both public tags without moving them. Agent-plan-lint's release/install truth was made executable and mutation-hardened; public main `031295e` and GitHub Actions are green.
+- Egresswall's immutable `v0.1.0` failed aggregate-length and hostile-object checks. Shared boundary fixes now fail closed for terminal leaves, mapping keys, string subclasses and shaped/released memoryviews; public main `8f99308`, 675 tests, builds and GitHub Actions are green. The old tag is explicitly barred from PyPI.
+- Supported-Python matrices passed: 1,362 agent-plan-lint tests plus 102 expected skips, 2,025 egresswall tests, reproducible plan wheels. Mutation outcomes and all survivors are recorded in `ventures/night-verification/`.
+- Guardrail-checkup scanned all 20 public Alex-lop repositories into deterministic reports. Dogfood exposed and fixed its `requirements.lock` blind spot; 485 tests plus formatting/build pass. The run filed one reproduced website regression issue and no heuristic noise.
+- A tracked credential was removed from `Final_test` current main at `3c207b0` without printing it. Public history still contains it, so rotation is ASK-016; no history rewrite was attempted. All artifacts and fixes were pushed. Cash spent: $0.
+
+**Learned**
+- The first egress fix was not enough: independent review found multidimensional and released-buffer cases plus adversarial string-subclass behavior. Charging before allocation and enforcing one shared post-charge boundary closed the class rather than each symptom.
+- “File the top finding per repo” is unsafe when most scanner output is heuristic. Reproduction justified exactly one issue; the other 19 reports were inapplicable, intentional fixtures, or locally remediated.
+
+**Next**
+- Alex: rotate ASK-016 first, repair PyPI authentication in ASK-015, then merge ASK-012 without deleting branches.
+- Agent after auth: publish verified agent-plan-lint 0.1.0; cut and verify a new egresswall version from fixed main; then release guardrail-checkup and update launch/install wiring.
+
 ## 2026-09-01 → 2026-09-02 — session 3 close: pilot repaired, guardrail-checkup verified but held, handoff refreshed
 
 **Done**

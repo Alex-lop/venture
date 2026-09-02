@@ -132,3 +132,18 @@ Two tagged source releases exist (`agent-plan-lint` and `egresswall`). GitHub's 
 **Close totals:** non-fork stars **3** · tagged source releases **2** · GitHub Release API objects
 **0** · PyPI releases **0** · public-artifact inbound contacts **0** · Track-H-originated contacts
 **0**. No operative v4 package or inbound gate has been satisfied.
+
+## Hostile-night snapshot — 2026-09-02 00:50 EDT
+
+Both package mains moved beyond their immutable `v0.1.0` tags during hostile verification. The
+new heads are green in GitHub Actions; no tag or release object was moved or created, and both PyPI
+JSON endpoints still return 404.
+
+| Repo | Current main | CI | Stars | Forks | Open issues | Views 14d (total/uniq) | Clones 14d (total/uniq) | Distinct stranger accounts |
+|---|---|---|---:|---:|---:|---:|---:|---:|
+| agent-plan-lint | `031295e` | [green](https://github.com/Alex-lop/agent-plan-lint/actions/runs/33592316007) | 0 | 0 | 0 | 0 / 0 | 38 / 15 | 0 |
+| egresswall | `8f99308` | [green](https://github.com/Alex-lop/egresswall/actions/runs/33592352952) | 0 | 0 | 0 | 0 / 0 | 25 / 15 | 0 |
+
+**Night totals:** non-fork stars **3** · stranger accounts **0** · public-artifact inbound **0** ·
+GitHub Release API objects **0** · PyPI releases **0**. The agent-opened website regression issue
+is self-originated and does not count as adoption or inbound. No gate fired.
