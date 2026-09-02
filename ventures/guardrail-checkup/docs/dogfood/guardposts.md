@@ -1,0 +1,91 @@
+# Agent guardrail checkup — guardposts
+
+Run 2026-08-31 · read-only · `guardposts` · HEAD `ff3ed4c31e73`
+Produced by `guardrail-checkup`, a deterministic offline reader. No model was called for anything below; every judgement in §3 is yours to make.
+
+## 1. Scope
+
+- **Repository:** `guardposts`, as given on the command line
+- **HEAD:** `ff3ed4c31e73d24f7da43a801b500d9a0a815437`
+- **Size:** 11 file(s) considered, 77,142 bytes (apparent size)
+- **File list:** `git ls-files` — tracked files plus untracked files `.gitignore` does not exclude
+- **Language mix** (by file extension):
+  - `.md` — 8
+  - `(no extension)` — 1
+  - `.py` — 1
+  - `.yml` — 1
+- **Read:** the named guardrail artifacts listed in §2, `pyproject.toml`, `setup.cfg`, `package.json` (for the linter falsifier), every checked-in `.json` file the signature scan reached before its 64 MiB and 10,000 file budgets were spent, and up to 0 JSON fixture(s) screened in §2. A file over 1 MiB, or one whose first 8 KiB contains a NUL byte, is listed and not read.
+- **Not read:** everything else. No source file was interpreted, no test was run, no command from this repository was executed, and nothing was sent anywhere.
+
+## 2. Tool results — and what they got wrong
+
+### Guardrail inventory — what exists, and what an agent can do because of it
+
+| Fact | Where | What an agent can do |
+| --- | --- | --- |
+| CLAUDE.md: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
+| AGENTS.md: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
+| .cursorrules: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
+| .cursor/rules: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
+| .github/copilot-instructions.md: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
+| GEMINI.md: absent | `-` | nothing written down here for an agent to follow, so every rule is folklore |
+| .claude/settings.json: absent | `-` | no PreToolUse or PostToolUse hook is configured here; this tool reads the two settings files in the checkout and nothing on the machine outside it |
+| .claude/settings.local.json: absent | `-` | no PreToolUse or PostToolUse hook is configured here; this tool reads the two settings files in the checkout and nothing on the machine outside it |
+| no MCP server configuration found (.mcp.json, claude_desktop_config.json, .claude/mcp.json) | `-` | no tool servers are configured in this repository, so none can be screened here |
+| .pre-commit-config.yaml: absent | `-` | no commit-time check runs on a contributor's machine |
+| .git/hooks: no installed hook (samples only) | `.git/hooks:1` | nothing is checked at commit time |
+| CODEOWNERS: absent | `-` | no path in this repository names a required reviewer; branch protection on the host was not read |
+| .github/workflows: absent | `-` | no GitHub Actions workflow is checked in here; CI configured elsewhere was not read |
+| secret scanning: not configured (no gitleaks, trufflehog or detect-secrets) | `-` | a credential an agent pastes into a file is committed with everything else |
+| lockfiles: none found | `-` | no pinned dependency set, so a hook or a test run is not reproducible |
+| tests: 0 file(s) in a test path | `-` | nothing to run, so no invariant can be enforced by a test |
+
+### agent-plan-lint
+
+- No document in agent-plan-lint's schema was found (no `.json` file carries both `policy_id` and `allowed_write_globs`, or both `mission_id` and `tasks`).
+- A starter policy was drafted instead; see §4. It was **not** written into your repository.
+
+### egresswall
+
+- No checked-in JSON fixture was found to screen.
+
+### What a generic scorer will get wrong here
+
+**guardrail-checkup did not run any of these tools.** It contacts no network and starts no `npx`. This is the falsifier list to have ready when you do run them, built from this repository's own files:
+
+- Nothing here falsifies a generic scorer's usual claims: this repository has no lockfile, no linter configuration and no test path.
+
+## 3. Invariant candidates
+
+**Candidates — a human confirms or replaces them.** They are ranked by evidence, not by judgement: score = repair commits in the history that touched these paths (a commit that also touched a regression test counts twice) + 2 if CODEOWNERS names one of them + 1 if the path heuristic matched at all. This tool does not know your architecture and does not claim to.
+
+No path here matched any of the categories this tool knows, so there is no candidate to rank. Two candidates with evidence beat three with one invented; here there are none.
+
+## 4. Monday list
+
+1. Create `.claude/settings.json` with the hooks block from §3. Neither settings file exists in this repository today, so every candidate in §3 has nowhere to live.
+2. Review `DIR/starter-policy.json` — a valid agent-plan-lint policy whose exclusions are the §3 candidates. Fix the write globs to the paths your agents really own, then run `agent-plan-lint check <plan.json> --policy starter-policy.json`. Re-run with `--emit-dir DIR` to write it; this run wrote no draft.
+3. Add gitleaks or detect-secrets to CI or to `.pre-commit-config.yaml`. §5 explains why this tool cannot do it for you.
+
+## 5. What this did not cover
+
+- **Branch protection and required reviews.** They live on the host, not in the checkout; this tool never asked one.
+- **Production systems.** No credential, no VPN, no CI, no deploy, no live database was touched.
+- **Secrets already in history.** This reads the working tree, not every blob. Run `gitleaks detect`, `trufflehog git`, or `detect-secrets scan` for that.
+- **Runtime behaviour.** Nothing here was executed. A hook that has never run does not go on anyone's screen — run the emitted one before you trust it.
+- **Anything needing a model.** No model was called. §3 is a ranked list of places, not a reading of your architecture, and it named none here.
+- **Hooks configured outside this checkout.** The inventory reads `.claude/settings.json` and `.claude/settings.local.json`. A hook in `~/.claude/settings.json`, in an enterprise policy, or in an installed plugin is on the machine and not in this repository, and was not read.
+- **Whether the rules that exist are followed.** Presence is checked; compliance is not. A hook is reported by its matcher, not by what it does: nothing here was executed, so a `PreToolUse` entry that only writes a log line reads exactly like one that blocks.
+- **What the three tools next to this one do.** None of them ran here, and this replaces none of them. Claude Code's `/doctor` “prints read-only installation diagnostics without starting a session”. `kenryu42/cc-safety-net` “blocks destructive Git and file system commands, plus common attempts to access sensitive files, before a tool call runs”. `microsoft/agentrc` says only “Get your repo ready for AI.” — its own description, and this report characterises it no further. The first two are better at those jobs than anything here; install them. This one reports, and the report is what you read before deciding what to enforce.
+
+## 6. Provenance
+
+- **Tool:** `guardrail-checkup` 0.1.0
+- **Command:** `guardrail-checkup run guardposts --out docs/dogfood/guardposts.md`
+- **Repository commit:** `ff3ed4c31e73d24f7da43a801b500d9a0a815437`
+- **Repair commits examined:** 0, from the last 2000 non-merge commits
+- **What left this machine: nothing.** This tool opens no socket and makes no model call. The git subcommands it runs are `ls-files`, `rev-parse` and `log`, all read-only. It wrote no file inside the repository it read.
+- **Built on:** `agent-plan-lint` 0.1.0 (policy and plan validation), `egresswall` 0.1.0 (fixture screening, MCP proxy suggestion).
+- **Lineage:** the plan gate comes from Graphene's admission validator and the screen from RegLineage's egress firewall, both the author's own prior work, extracted and re-tested as packages.
+- **AI assistance:** this tool was written with AI assistance. **This report was not** — it is deterministic output from the files listed in §1, and re-running the command above on the same commit produces it again byte for byte.
+- **No guarantee** is made about anything not listed in §1. The third-party tools named in §2 and §5 are unaffiliated with this one.

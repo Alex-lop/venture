@@ -89,9 +89,9 @@ include = [
 line-length = 120
 target-version = "py311"
 # ruff formats Python code blocks inside Markdown, which would rewrite the
-# checked-in report and make it differ from what the tool actually printed; and
+# checked-in generated reports and make them differ from what the tool printed; and
 # demo/fixture is a synthetic repository whose bytes the demo output depends on.
-extend-exclude = ["demo/OUTPUT.md", "demo/fixture"]
+extend-exclude = ["demo/OUTPUT.md", "demo/fixture", "docs/dogfood", "docs/evidence"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
