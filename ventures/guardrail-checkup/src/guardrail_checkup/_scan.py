@@ -189,7 +189,7 @@ SKIP_DIRECTORIES = (
 #: Lockfile names, used twice: as an inventory fact and as a path candidate.
 LOCKFILES = (
     "Cargo.lock", "Gemfile.lock", "Pipfile.lock", "composer.lock", "go.sum",
-    "package-lock.json", "pnpm-lock.yaml", "poetry.lock", "uv.lock", "yarn.lock",
+    "package-lock.json", "pnpm-lock.yaml", "poetry.lock", "requirements.lock", "uv.lock", "yarn.lock",
 )  # fmt: skip
 
 #: The places a junior would be stopped, in the runbook's words. Each entry is

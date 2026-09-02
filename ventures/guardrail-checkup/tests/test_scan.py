@@ -924,7 +924,7 @@ def test_an_artifact_that_sorts_past_the_listing_cap_is_still_found(tmp_path: Pa
     (repository / "aaa").mkdir(parents=True)
     for number in range(40):
         (repository / "aaa" / f"{number:03d}.py").write_text("x = 1\n")
-    (repository / "uv.lock").write_text("# lock\n")
+    (repository / "requirements.lock").write_text("package==1.0\n")
     (repository / "CODEOWNERS").write_text("db/ @platform\n")
     git(repository, "init", "-q", "-b", "main")
     git(repository, "add", "-A")
@@ -934,7 +934,7 @@ def test_an_artifact_that_sorts_past_the_listing_cap_is_still_found(tmp_path: Pa
     text = facts(result)
 
     assert result.truncated and len(result.files) == 10
-    assert "lockfiles: uv.lock" in text, text
+    assert "lockfiles: requirements.lock" in text, text
     assert "lockfiles: none found" not in text
     assert "CODEOWNERS: absent" not in text
 
