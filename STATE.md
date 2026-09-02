@@ -1,19 +1,25 @@
 # STATE — resume point
 
-session: 3
-status: CLOSED
-started: 2026-09-01 EDT
-closed: 2026-09-02 EDT
-brief: `day-run-prompt.md` over `CLAUDE.md` v2
+session: 4
+status: RUNNING
+started: 2026-09-02 00:11 EDT
+brief: `codex-night-run-prompt.md` over `CLAUDE.md` v2
 principal_file: `private/PRINCIPAL.md`
 standing_approvals: repos=yes, pypi=yes, oss-prs=yes, track-h=yes
-last_verified_remote_head: `033c1deee635121ef36e378409fba67ff9a45896`
+last_verified_remote_head: `001a0ffc1092e171fe10e66778b6b2d2298bc822`
 remote_at_last_check: `origin/main...HEAD = 0/0`
 next_file: `PRINCIPAL_TODO.md` (13 minutes)
 
-No hourly checkpoint commit was made before the close. Session 3 instead pushed each
-self-contained artifact as it cleared verification; the seven artifact commits through
-`033c1de` are on `origin/main`. No agents are live at close.
+## Night-run claims
+
+| rung | task | owner | status | artifact |
+|---|---|---|---|---|
+| N1 | hostile clean-room and doc-truth verification of both source releases | codex/orchestrator | CLAIMED | `ventures/night-verification/packages.md` |
+| N4 | property and mutation hardening of both shipped package working copies | codex/test-hardener | CLAIMED | tests plus `ventures/night-verification/hardening.md` |
+| N5 | supported-Python compatibility audit and fixes | codex/compatibility | CLAIMED | `ventures/night-verification/compatibility.md` |
+
+N2 is complete at 100/100. N3 is already above its target with 3,633 screened repos;
+both will be mechanically rechecked during the close rather than reclaimed.
 
 ## Day-run ladder
 
