@@ -17,15 +17,18 @@ number becomes the published finding.**
 | `pilot.py` | the whole method: image choice, the three phases, parsing, classification. `--selfcheck` runs the asserts with no docker and no network; `--summary [--md]` prints the funnel |
 | `Dockerfile` | `python:<X.Y>-slim` + `git` + `uv 0.11.29`, one image per Python minor |
 | `results.csv` | one row per repo, appended under an `flock` with an `fsync` |
-| `logs/<owner>__<repo>/` | `install.log`, `collect.log`, `run.log`, each capped at 200 KB |
+| `logs/<owner>__<repo>/` | local untrusted phase output, each file capped at 200 KB and gitignored |
+| `receipts/<owner>/<repo>.json` | one tracked sanitized result plus phase-log byte counts and SHA-256 hashes per repo |
+| `receipts.py` | regenerates or byte-checks all 100 receipts against the manifest, results and local logs |
 | `fill_readme.py` | regenerates the results block below from `results.csv`, so no number here is typed by hand |
 | `METHOD.md` | **the method, exactly** — caps, install ladder, classifier, and every deviation |
 | `run.log` | the driver's own progress log |
 
 ```sh
-./run.sh                        # 3 repos concurrently, ../corpus/candidates-v2.csv
+./run.sh                        # fixed 100-repo manifest, 3 concurrently
 python3 pilot.py --selfcheck    # classifier + parser asserts, offline
 python3 pilot.py --summary      # the funnel, from results.csv
+python3 receipts.py --check     # exact 100-repo receipt set and log hashes
 ```
 
 Untrusted candidate code never runs on the host: every phase is a `docker run` with no
@@ -37,52 +40,60 @@ the details and the caveats — read it before quoting any number from here.
 - `install_ok` — the locked dependency set installed. No unpinned resolution is ever
   attempted; an unpinned requirements file is `no-lock`, not an install.
 - `collect_ok` — `pytest --collect-only -q` exited clean, offline.
-- `run_ok` — pytest reached a verdict. **This is the buildability number.** A suite whose
+- `run_ok` — pytest reached a verdict. A suite whose
   tests fail at base still counts (`failure_class=tests-failed-at-base`); a suite that
   never reaches a summary line does not.
+- **strict buildable** — `install_ok AND collect_ok AND run_ok AND errored=0 AND
+  passed+failed>=1`. This is the pre-registered buildability number; all-skipped runs do
+  not count.
 - `collected_count` is recorded even when collection then errored, so a repo that collects
   6,000 tests and errors on 10 modules is visibly different from one that collects nothing.
 
 <!--SUMMARY-->
 ## Results
 
-**The run is complete:** all **60** repos in `candidates-v2.csv` have a row in `results.csv`.
+**The run is complete:** all **100** repos in `candidates-pilot-100.csv` have a row in `results.csv`.
 Every number below is regenerated from `results.csv` by `fill_readme.py` — none of it is
 typed by hand.
 
 | step | n | share of attempted |
 |---|---:|---:|
-| attempted | 60 | — |
-| `install_ok` | 48 | 80% |
-| `collect_ok` | 34 | 57% |
-| **`run_ok` (reached a verdict)** | **29** | **48%** |
+| attempted | 100 | — |
+| `install_ok` | 79 | 79% |
+| `collect_ok` | 56 | 56% |
+| **`run_ok` (reached a verdict)** | **50** | **50%** |
+| **strict buildable** | **43** | **43%** |
+| fully green with ≥1 executed test | 19 | 19% |
 
-Tests collected in total, including partial collections that then errored: **185077**.
+**Verdict:** strict buildability is **43/100 (43%)**; the 30% falsifier **did not fire**.
+
+Tests collected in total, including partial collections that then errored: **267558**.
 
 | failure_class | n |
 |---|---:|
-| `tests-failed-at-base` | 17 |
-| `clean-pass` | 12 |
-| `collection-error` | 11 |
-| `python-version` | 8 |
-| `no-lock` | 4 |
-| `other` | 3 |
-| `env-var/secret required` | 3 |
+| `tests-failed-at-base` | 30 |
+| `clean-pass` | 20 |
+| `collection-error` | 15 |
+| `python-version` | 15 |
+| `no-lock` | 6 |
+| `env-var/secret required` | 6 |
+| `other` | 4 |
+| `network-at-test-time` | 3 |
 | `timeout` | 1 |
-| `network-at-test-time` | 1 |
 
 | lock_kind | reached a verdict | attempted |
 |---|---:|---:|
-| `pinned-requirements` | 2 | 7 |
-| `poetry.lock` | 1 | 3 |
-| `uv.lock` | 26 | 50 |
+| `Pipfile.lock` | 0 | 1 |
+| `pinned-requirements` | 2 | 9 |
+| `poetry.lock` | 2 | 5 |
+| `uv.lock` | 46 | 85 |
 <!--/SUMMARY-->
 
 ## Status
 
-The run **finished 2026-08-30** at 60 of 60 repos; `results.csv` is complete and the block
-above is regenerated from it. It writes one row at a time under an `flock` with an `fsync`,
-so a kill loses at most the rows in flight — which is why re-running is safe.
+The fixed run **finished 2026-09-01** at 100 of 100 repos; `results.csv` and the 100
+per-repo receipts are complete. The runner writes one row at a time under an `flock` with
+an `fsync`, so a kill loses at most the rows in flight — which is why re-running is safe.
 
 **To re-run, or to finish a partial run on another machine:**
 
@@ -91,11 +102,12 @@ cd ventures/c-measurement/pilot
 nohup ./run.sh > run.log 2>&1 &   # skips every repo already in results.csv
 tail -f run.log
 python3 fill_readme.py            # refresh the block above
+python3 receipts.py               # refresh sanitized per-repo evidence
 ```
 
-**Watch the throughput.** `candidates-v2.csv` is ordered by the corpus funnel, not by size,
-and its first rows are its heaviest repos (`crewAIInc/crewAI`, 57k stars, a monorepo). The
-worst case for one repo is 40 minutes — 10 clone + 10 install + 5 collect + 15 run — and
+**Watch the throughput.** `candidates-pilot-100.csv` contains the frozen v2 study cohort
+followed by the v3 additions. The worst case for one repo is 40 minutes — 10 clone +
+10 install + 5 collect + 15 run — and
 three run at once, so the tail of the corpus lands long after the head. Judge progress by
 `results.csv` rows, not by elapsed time.
 
@@ -109,7 +121,6 @@ disk is the six images plus the two shared caches (`pilot-uvcache`, `pilot-pipca
   `requirements.txt` at the base commit has **41 unpinned lines** (`scipy < 1.12`,
   `pandas`, `scanpy`, …). It is `no-lock` here. **The corpus's `lockfile_type` gate checked
   that a requirements file exists, not that it pins anything** — so the corpus's
-  7 `pinned-requirements` repos are an upper bound on how many are really locked, and the
+  9 `pinned-requirements` repos are an upper bound on how many are really locked, and the
   study should treat that column as a claim the pilot verifies rather than an input it
   trusts.
-

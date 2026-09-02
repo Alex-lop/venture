@@ -311,7 +311,8 @@ set -u
 cd /w/repo
 export UV_CACHE_DIR=/uvcache PIP_CACHE_DIR=/pipcache UV_LINK_MODE=copy
 export UV_PYTHON_DOWNLOADS=never
-export POETRY_VIRTUALENVS_IN_PROJECT=true PATH="/root/.local/bin:$PATH"
+export POETRY_VIRTUALENVS_IN_PROJECT=true PIPENV_VENV_IN_PROJECT=1
+export PIPENV_IGNORE_VIRTUALENVS=1 PIPENV_NOSPIN=1 PATH="/root/.local/bin:$PATH"
 echo "===PHASE=install kind={kind} file={lockfile} python=$(python3 -V)==="
 case "{kind}" in
   uv.lock)
@@ -331,6 +332,11 @@ case "{kind}" in
     uv tool install poetry 2>&1 || exit 32
     timeout 300 poetry install --no-interaction --no-ansi --all-extras 2>&1 || \
       timeout 200 poetry install --no-interaction --no-ansi 2>&1 || exit 30
+    ;;
+  Pipfile.lock)
+    uv tool install pipenv 2>&1 || exit 32
+    timeout 300 pipenv sync --dev 2>&1 || \
+      timeout 200 pipenv sync 2>&1 || exit 30
     ;;
   pinned-requirements)
     if [ ! -f "{lockfile}" ]; then echo "===NOLOCK=== {lockfile} absent at this commit"; exit 42; fi
@@ -490,7 +496,9 @@ def append_result(res: dict) -> None:
         fcntl.flock(lk, fcntl.LOCK_EX)
         new = not RESULTS.exists() or RESULTS.stat().st_size == 0
         with open(RESULTS, "a", newline="") as fh:
-            w = csv.DictWriter(fh, fieldnames=COLUMNS, extrasaction="ignore")
+            w = csv.DictWriter(
+                fh, fieldnames=COLUMNS, extrasaction="ignore", lineterminator="\n"
+            )
             if new:
                 w.writeheader()
             w.writerow(res)
@@ -560,13 +568,31 @@ def summary(md: bool = False) -> int:
     i = sum(int(r["install_ok"]) for r in rows)
     c = sum(int(r["collect_ok"]) for r in rows)
     ru = sum(int(r["run_ok"]) for r in rows)
+    b = sum(
+        int(r["install_ok"])
+        and int(r["collect_ok"])
+        and int(r["run_ok"])
+        and int(r["errored"]) == 0
+        and int(r["passed"]) + int(r["failed"]) >= 1
+        for r in rows
+    )
+    g = sum(
+        int(r["install_ok"])
+        and int(r["collect_ok"])
+        and int(r["run_ok"])
+        and int(r["errored"]) == 0
+        and int(r["failed"]) == 0
+        and int(r["passed"]) >= 1
+        for r in rows
+    )
     cls_counts = collections.Counter(r["failure_class"] or "clean-pass" for r in rows)
     kinds = sorted({r["lock_kind"] for r in rows})
     by = collections.Counter((r["lock_kind"], int(r["run_ok"])) for r in rows)
     tests = sum(int(r["collected_count"] or 0) for r in rows)
     if not md:
         print(f"attempted {n}  install_ok {i} ({i/n:.0%})  collect_ok {c} ({c/n:.0%})  "
-              f"run_ok {ru} ({ru/n:.0%})  tests collected {tests}")
+              f"run_ok {ru} ({ru/n:.0%})  buildable {b} ({b/n:.0%})  "
+              f"green {g} ({g/n:.0%})  tests collected {tests}")
         for cl, k in cls_counts.most_common():
             print(f"  {k:3d}  {cl}")
         for kind in kinds:
@@ -578,6 +604,11 @@ def summary(md: bool = False) -> int:
     print(f"| `install_ok` | {i} | {i/n:.0%} |")
     print(f"| `collect_ok` | {c} | {c/n:.0%} |")
     print(f"| **`run_ok` (reached a verdict)** | **{ru}** | **{ru/n:.0%}** |")
+    print(f"| **strict buildable** | **{b}** | **{b/n:.0%}** |")
+    print(f"| fully green with ≥1 executed test | {g} | {g/n:.0%} |")
+    result = "did not fire" if b / n >= 0.30 else "fired"
+    print(f"\n**Verdict:** strict buildability is **{b}/{n} ({b/n:.0%})**; the 30% "
+          f"falsifier **{result}**.")
     print(f"\nTests collected in total, including partial collections that then "
           f"errored: **{tests}**.\n")
     print("| failure_class | n |\n|---|---:|")
@@ -592,7 +623,9 @@ def summary(md: bool = False) -> int:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--csv", default=str(HERE.parent / "corpus" / "candidates-v2.csv"))
+    ap.add_argument(
+        "--csv", default=str(HERE.parent / "corpus" / "candidates-pilot-100.csv")
+    )
     ap.add_argument("--jobs", type=int, default=3)
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--repo", default="")

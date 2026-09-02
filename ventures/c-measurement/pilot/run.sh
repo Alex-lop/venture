@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Base-snapshot buildability pilot. Resumable: repos already in results.csv are skipped.
 #
-#   ./run.sh                     # every row of ../corpus/candidates-v2.csv, 3 at a time
+#   ./run.sh                     # the fixed 100-repo pilot manifest, 3 at a time
 #   JOBS=2 ./run.sh              # fewer containers at once
 #   CSV=../corpus/candidates.csv ./run.sh
 #
@@ -9,7 +9,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-CSV="${CSV:-../corpus/candidates-v2.csv}"
+CSV="${CSV:-../corpus/candidates-pilot-100.csv}"
 JOBS="${JOBS:-3}"
 
 command -v docker >/dev/null || { echo "docker not found"; exit 1; }

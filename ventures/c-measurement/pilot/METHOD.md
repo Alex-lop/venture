@@ -16,9 +16,11 @@ finding itself is published.**
 
 ## Inputs
 
-`../corpus/candidates-v2.csv` — 60 repos (`corpus/README.md` documents the funnel). Three
+`../corpus/candidates-pilot-100.csv` — the fixed 100-repo pilot manifest selected from the
+110 qualifying rows in `candidates-v2.csv` (`corpus/README.md` documents the funnel). Three
 columns drive the pilot: `base_sha_of_first_sample_pr` (the commit checked out),
-`python_requires`, and `lock_kind` (`uv.lock` 50, `pinned-requirements` 7, `poetry.lock` 3).
+`python_requires`, and `lock_kind` (`uv.lock` 85, `pinned-requirements` 9, `poetry.lock` 5,
+`Pipfile.lock` 1).
 No repo needed a `gh api .../pulls/N --jq .base.sha` lookup: every row already carried a
 base SHA.
 
@@ -97,6 +99,8 @@ resolves its way to a green install.
   (300 s), falling back to the same command without `--all-extras` (200 s). Poetry installs
   from the lock and errors if the lock is stale. Poetry itself is a *tool*, resolved at
   its latest version; that is the harness, not the repo's dependency set.
+- **`Pipfile.lock`** → `uv tool install pipenv`, then `pipenv sync --dev`, falling back to
+  `pipenv sync`. Both sync directly from the lock; Pipenv itself is a harness tool.
 - **`pinned-requirements`** → the requirements file named in the corpus row
   (`lockfile_type: pinned:<file>`) is first checked line by line: every non-comment,
   non-flag line must carry `==` or `@`. If any line is unpinned the repo is recorded
@@ -148,14 +152,20 @@ convenience over the logs, not a substitute for them: `logs/<owner>__<repo>/{ins
 collect,run}.log` holds the evidence, each truncated to 200 KB (first 100 KB + last 100 KB,
 with an explicit truncation marker) because failures are legible at both ends.
 
+Raw logs are gitignored because they contain arbitrary third-party output. The tracked
+evidence layer is one `receipts/<owner>/<repo>.json` per manifest row: result fields plus
+the byte length and SHA-256 of each phase log, with no log excerpts or notes. `receipts.py
+--check` requires an exact 100-repo set and byte-for-byte receipt regeneration.
+
 ## Reproducing
 
 ```sh
 cd ventures/c-measurement/pilot
-./run.sh                       # 3 repos concurrently; JOBS=n to change
+./run.sh                       # fixed 100-repo manifest; JOBS=n to change
 python3 pilot.py --selfcheck   # classifier + parser asserts, no docker, no network
 python3 pilot.py --summary     # the funnel over results.csv (--md for markdown)
 python3 fill_readme.py         # regenerate README.md's results block from results.csv
+python3 receipts.py --check    # exact receipt set, result fields and phase-log hashes
 ```
 
 `run.sh` is resumable: `results.csv` is appended per repo under an `flock` with an `fsync`,
@@ -191,3 +201,9 @@ rather than dropping the repo.
    for a requirements file; the pilot checks whether it is actually pinned. Where it is not,
    the row is `no-lock` — the first such row (`omicverse/omicverse`) has 41 unpinned lines
    in the `requirements.txt` the corpus recorded as `pinned:requirements.txt`.
+7. **Infrastructure recovery.** The first concurrent extension run filled Docker's host
+   cache and tainted eight rows with daemon I/O, DNS or container-start failures. Those rows
+   and their logs were removed, the task-specific caches were cleared, and exactly those
+   eight were rerun sequentially. A ninth row was rerun after the harness gained direct
+   `Pipfile.lock` sync support. The tracked CSV and receipts contain only the replacement
+   outcomes; final logs contain no Docker host-failure signature.

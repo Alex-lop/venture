@@ -9,21 +9,22 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 README = HERE / "README.md"
+MANIFEST = HERE.parent / "corpus" / "candidates-pilot-100.csv"
 START, END = "<!--SUMMARY-->", "<!--/SUMMARY-->"
 
 md = subprocess.run([sys.executable, str(HERE / "pilot.py"), "--summary", "--md"],
                     capture_output=True, text=True, check=True).stdout
 rows = list(csv.DictReader(open(HERE / "results.csv", newline="")))
-total = sum(1 for _ in csv.DictReader(open(HERE.parent / "corpus" / "candidates-v2.csv",
-                                           newline="")))
+manifest = list(csv.DictReader(open(MANIFEST, newline="")))
+total = len(manifest)
 running = subprocess.run(["pgrep", "-f", "pilot.py --csv"], capture_output=True,
                          text=True).stdout.split()
-done = len(rows) >= total
+done = len(rows) == total and {r["repo"] for r in rows} == {r["repo"] for r in manifest}
 head = (f"## Results\n\n**The run is complete:** all **{total}** repos in "
-        f"`candidates-v2.csv` have a row in `results.csv`."
+        f"`candidates-pilot-100.csv` have a row in `results.csv`."
         if done else
         f"## Interim results\n\n**The run is not finished.** Rows in `results.csv`: "
-        f"**{len(rows)} of {total}** repos in `candidates-v2.csv`; the remaining "
+        f"**{len(rows)} of {total}** repos in `candidates-pilot-100.csv`; the remaining "
         f"{total - len(rows)} are queued or in flight "
         f"({'the job is still running, pid ' + running[0] if running else 'the job is not running'}).")
 gate = ("" if done else
