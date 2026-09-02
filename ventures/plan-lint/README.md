@@ -6,14 +6,10 @@ the policy — dependency cycles, writes outside the allowed paths, two parallel
 writing the same file, success criteria the agent would grade itself on, attempt
 budgets that do not add up — and exits non-zero with a typed code per finding.
 
-```
-pip install agent-plan-lint
-```
-
-Or from source:
+PyPI publication is pending. Install the exact `v0.1.0` source tag:
 
 ```
-uv pip install git+https://github.com/Alex-lop/agent-plan-lint
+pip install git+https://github.com/Alex-lop/agent-plan-lint@v0.1.0
 ```
 
 ## 60 seconds
@@ -134,8 +130,8 @@ include:
   prints is in `docs/comparison-quotes.txt`, the archive
   `scripts/refresh-comparison.sh` writes from the pages it fetched
   (`tests/test_comparison_truth.py`); that script re-fetches those pages before a
-  release and re-checks every quotation, every star count against `gh api`,
-  and both install targets above; <!-- claim: test_every_page_the_comparison_cites_was_captured, test_every_star_count_names_the_repository_it_was_read_from, test_every_quotation_is_one_the_refresh_script_found_on_a_page_the_page_cites -->
+  release and re-checks every quotation and every star count against `gh api`;
+  <!-- claim: test_every_page_the_comparison_cites_was_captured, test_every_star_count_names_the_repository_it_was_read_from, test_every_quotation_is_one_the_refresh_script_found_on_a_page_the_page_cites -->
 - the built wheel, installed into a fresh virtual environment and run
   (`tests/test_packaging.py`).
 

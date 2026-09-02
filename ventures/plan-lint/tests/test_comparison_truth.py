@@ -10,6 +10,7 @@ the page it cites and wrote into `docs/comparison-quotes.txt`.
 from __future__ import annotations
 
 import re
+import subprocess
 import tomllib
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -205,16 +206,24 @@ def test_the_page_says_the_unquoted_judgements_are_not_machine_checked() -> None
     assert "no\ncheck can re-derive it" in COMPARISON
 
 
-def test_the_refresh_script_resolves_both_install_targets_the_readme_shows() -> None:
-    """Two install commands, two things that have to exist on release day."""
+def test_the_refresh_script_keeps_the_pending_pypi_release_gate() -> None:
+    """The README source tag and pending-index copy are release-day gates."""
 
-    script = (ROOT / "scripts" / "refresh-comparison.sh").read_text(encoding="utf-8")
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    script = ROOT / "scripts" / "refresh-comparison.sh"
+    targets = subprocess.run(
+        ["bash", str(script), "--print-install-targets"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
 
-    assert "sed -n 's/^pip install //p' README.md" in script
-    assert "sed -n 's/^uv pip install git+//p' README.md" in script
-    assert "https://pypi.org/pypi/${distribution}/json" in script
-    assert "both install targets above" in readme
+    assert targets == [
+        f"{PROJECT['urls']['Source']}/archive/refs/tags/v{PROJECT['version']}.tar.gz",
+        f"https://pypi.org/pypi/{PROJECT['name']}/json",
+    ]
+    assert subprocess.run(["bash", str(script), "--check-pypi-copy", "404"], cwd=ROOT).returncode == 0
+    assert subprocess.run(["bash", str(script), "--check-pypi-copy", "200"], cwd=ROOT).returncode != 0
 
 
 def test_the_refresh_script_identifies_itself_as_this_package() -> None:

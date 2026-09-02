@@ -401,14 +401,15 @@ def test_the_contributing_check_script_claim_is_what_the_script_runs() -> None:
     assert workflow.count("- uses: actions/checkout@v4") == 2
 
 
-def test_the_install_lines_are_the_two_the_metadata_supports() -> None:
-    """The README offers exactly two installs, and neither can drift off the metadata."""
+def test_the_install_line_is_the_tagged_source_the_metadata_supports() -> None:
+    """The pending PyPI release leaves one install, pinned to this source version."""
 
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]
     urls = project["urls"]
     commands = re.findall(r"^(?:pip|uv pip|pipx|python -m pip|poetry|conda) [^\n`]+$", README, re.M)
 
-    assert commands == [f"pip install {project['name']}", f"uv pip install git+{urls['Source']}"]
+    assert commands == [f"pip install git+{urls['Source']}@v{project['version']}"]
+    assert "PyPI publication is pending." in README
     for url in urls.values():
         assert url.startswith(urls["Source"]), url
 

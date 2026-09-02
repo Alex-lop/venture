@@ -5,14 +5,37 @@
 # docs/comparison-quotes.txt with every page it was found on, so CI can re-check
 # both the wording and the attribution offline,
 # every star count is re-read with `gh api` and compared against what the page
-# prints, and both install commands the README shows are resolved -- the source
-# repository and the PyPI project, the second of which turns green the moment
+# prints, and both release targets are resolved -- the tagged source archive
+# and the PyPI project, the second of which turns green the moment
 # the release is uploaded. Run it before a release; it needs the network and an
 # authenticated `gh`, which is why CI does not run it.
 set -uo pipefail
 cd "$(dirname "$0")/.."
 
 agent='agent-plan-lint/0.1.0 (+https://github.com/Alex-lop/agent-plan-lint)'
+source_install="$(sed -n 's/^pip install git+//p' README.md)"
+source_repo="${source_install%@*}"
+source_tag="${source_install##*@}"
+distribution="$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["name"])')"
+pypi_url="https://pypi.org/pypi/${distribution}/json"
+
+print_install_targets() {
+    printf '%s\n' "${source_repo}/archive/refs/tags/${source_tag}.tar.gz" "${pypi_url}"
+}
+
+pypi_copy_is_current() {
+    [ "$1" != "200" ] || ! grep -q 'PyPI publication is pending' README.md
+}
+
+if [ "${1-}" = "--print-install-targets" ]; then
+    print_install_targets
+    exit 0
+fi
+if [ "${1-}" = "--check-pypi-copy" ]; then
+    pypi_copy_is_current "${2-}"
+    exit
+fi
+
 pages="$(mktemp -d)"
 trap 'rm -rf "${pages}"' EXIT
 
@@ -172,16 +195,18 @@ print(f"{2 - len(wrong)}/2 published-package figures still hold")
 sys.exit(1 if wrong else 0)
 FIGURES
 
-# Both install commands the README shows have to resolve before it is public:
-# the source repository, and the PyPI project `pip install` names.
-distribution="$(sed -n 's/^pip install //p' README.md)"
-for install in "$(sed -n 's/^uv pip install git+//p' README.md)" "https://pypi.org/pypi/${distribution}/json"; do
+# The tagged source install and the PyPI project both have to resolve before release.
+while IFS= read -r install; do
     code="$(curl -sS -A "${agent}" -L --max-time 60 -o /dev/null -w '%{http_code}' "${install}")"
     printf '%s  %s\n' "${code}" "${install}"
     if [ "${code}" != "200" ]; then
         echo "INSTALL TARGET DOES NOT RESOLVE: ${install}"
         status=1
     fi
-done
+    if [ "${install}" = "${pypi_url}" ] && ! pypi_copy_is_current "${code}"; then
+        echo "README STILL SAYS PYPI PUBLICATION IS PENDING"
+        status=1
+    fi
+done < <(print_install_targets)
 
 exit "${status}"
