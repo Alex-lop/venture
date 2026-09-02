@@ -17,6 +17,7 @@ next_file: `PRINCIPAL_TODO.md` (13 minutes)
 | N1 | hostile clean-room and doc-truth verification of both source releases | codex/orchestrator | CLAIMED | `ventures/night-verification/packages.md` |
 | N4 | property and mutation hardening of both shipped package working copies | codex/test-hardener | CLAIMED | tests plus `ventures/night-verification/hardening.md` |
 | N5 | supported-Python compatibility audit and fixes | codex/compatibility | CLAIMED | `ventures/night-verification/compatibility.md` |
+| N6 | guardrail-checkup dogfood across every public Alex-lop repository | codex/autopsy-dogfood | CLAIMED | `ventures/guardrail-checkup/docs/dogfood/` |
 
 N2 is complete at 100/100. N3 is already above its target with 3,633 screened repos;
 both will be mechanically rechecked during the close rather than reclaimed.
