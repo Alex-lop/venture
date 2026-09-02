@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from itertools import product
 from typing import ClassVar
 
 import pytest
@@ -189,6 +190,19 @@ class TestForbiddenValues:
         policy = Policy(forbidden_keys=frozenset(), forbidden_values=frozenset({"HIGH"}))
         assert check({"note": "cohort high performed worst"}, policy) == []
 
+        texts = ["".join(chars) for size in range(5) for chars in product("abx", repeat=size)]
+        for size in range(1, 4):
+            for chars in product("ab", repeat=size):
+                value = "".join(chars)
+                policy = Policy(
+                    forbidden_keys=frozenset(),
+                    forbidden_values=frozenset({value}),
+                    detectors=frozenset(),
+                )
+                for text in texts:
+                    found = check(text, policy)
+                    assert bool(found) is (value in text), (value, text)
+
     @pytest.mark.parametrize(
         "text", ["HIGHland", "the HIGH", "a HIGH note", "HIGH", "HHIGH", "\u00e9HIGH"]
     )
@@ -252,10 +266,27 @@ class TestLimits:
         found = check({"items": list(range(100))}, Policy(max_nodes=10))
         assert [item.code for item in found] == [PAYLOAD_TOO_LARGE]
 
+        policy = Policy(forbidden_keys=frozenset(), max_nodes=3)
+        assert check([1, 2], policy) == []
+        assert [item.code for item in check([1, 2, 3], policy)] == [PAYLOAD_TOO_LARGE]
+
     def test_a_string_longer_than_the_limit_is_blocked_not_skipped(self) -> None:
         policy = Policy(forbidden_keys=frozenset(), max_string_length=100)
         found = check({"blob": "x" * 101}, policy)
         assert [item.code for item in found] == [PAYLOAD_TOO_LARGE]
+
+        shaped = memoryview(b"x" * 80).cast("B", shape=[1, 80])
+        policy = Policy(
+            forbidden_keys=frozenset(),
+            detectors=frozenset(),
+            max_string_length=1000,
+            max_total_length=1,
+        )
+        assert [item.code for item in check(shaped, policy)] == [PAYLOAD_TOO_LARGE]
+
+        released = memoryview(b"x")
+        released.release()
+        assert [item.code for item in check(released, policy)] == [PAYLOAD_TOO_LARGE]
 
     def test_limits_must_be_positive(self) -> None:
         with pytest.raises(ValueError, match="max_depth"):
@@ -365,6 +396,26 @@ class TestCheckNeverRaises:
         assert "could not be rendered" in found[0].detail
         with pytest.raises(EgressViolation):
             screen({"n": 10**5000})
+
+        found = check({10**5000: "safe"})
+        assert [item.code for item in found] == [PAYLOAD_TOO_LARGE]
+        assert "could not be rendered" in found[0].detail
+
+        class HostileText(str):
+            def __str__(self) -> str:
+                return self
+
+            def __len__(self) -> int:
+                raise RuntimeError("must not escape")
+
+            def __hash__(self) -> int:
+                raise RuntimeError("must not escape")
+
+        class HostileKey:
+            def __str__(self) -> str:
+                return HostileText("safe")
+
+        assert check({HostileKey(): "safe"}) == []
 
     def test_a_policy_deeper_than_the_walk_can_recurse_is_refused(self) -> None:
         with pytest.raises(ValueError, match="max_depth must be <= 500"):
@@ -766,8 +817,9 @@ class TestADocumentBehindAnInvisibleCharacter:
         """
         import time
 
-        pad = chr(0x200B) * (1024 * 1024)
-        payload = {"a": pad + '{"x": 1}', "b": pad}
+        document = '{"x": 1}'
+        pad = chr(0x200B) * (1024 * 1024 - len(document))
+        payload = {"a": pad + document, "b": chr(0x200B) * (1024 * 1024)}
         started = time.monotonic()
         found = check(payload, Policy(forbidden_keys=frozenset()))
         assert time.monotonic() - started < 1.0
@@ -956,8 +1008,9 @@ class TestBlankCodePointsOutsideTheCategories:
         """The strip is still a Python loop and the widest set is still measured."""
         import time
 
-        pad = "ㅤ" * (1024 * 1024)
-        payload = {"a": pad + '{"x": 1}', "b": pad}
+        document = '{"x": 1}'
+        pad = "ㅤ" * (1024 * 1024 - len(document))
+        payload = {"a": pad + document, "b": "ㅤ" * (1024 * 1024)}
         started = time.monotonic()
         found = check(payload, Policy(forbidden_keys=frozenset()))
         assert time.monotonic() - started < 2.0
@@ -1006,6 +1059,12 @@ class TestADeniedPathBehindAnInflatedParentName:
         screened by the entry the nested spelling is screened by."""
         found = check({"patient.mrn": "NG-88231"}, self.POLICY)
         assert [item.code for item in found] == [DENIED_FIELD_PATH]
+
+        for width in (129, 257):
+            padding = "_" * width
+            name = f"{padding}patient{padding}.{padding}mrn{padding}"
+            found = check({name: "NG-88231"}, self.POLICY)
+            assert [item.code for item in found] == [DENIED_FIELD_PATH], width
 
     def test_the_bound_still_prunes_on_a_genuinely_longer_path(self) -> None:
         """The limit is a real bound, not one the fix removed: a normalized path

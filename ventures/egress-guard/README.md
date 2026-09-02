@@ -4,12 +4,12 @@
 record your policy never approved — by refusing the whole response instead of redacting it.**
 
 ```
-pip install egresswall
+pip install git+https://github.com/Alex-lop/egresswall@v0.1.0
 ```
 
 Zero runtime dependencies, Python 3.11+, one screening core and three places to put it: an
 MCP stdio proxy, a Claude Code hook, and a CI check.
-*Status: 0.1.0. From source: `uv pip install git+https://github.com/Alex-lop/egresswall`.*
+*Status: 0.1.0. PyPI publication is pending; the command above installs the exact source tag.*
 
 Why refuse rather than redact: a redacted response still means your tool assembled the
 value, put it on the wire, and something downstream had to be trusted to remove it. A

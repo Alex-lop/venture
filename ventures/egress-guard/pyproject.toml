@@ -70,3 +70,13 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+
+[tool.mutmut]
+source_paths = ["src"]
+only_mutate = ["src/egresswall/_core.py"]
+pytest_add_cli_args_test_selection = [
+  "tests/test_screen.py",
+  "tests/test_detectors.py",
+  "-k",
+  "not recursion_limit and not timing_bound and not under_a_second and not pathological_input",
+]

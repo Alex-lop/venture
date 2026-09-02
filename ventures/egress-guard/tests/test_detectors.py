@@ -71,6 +71,12 @@ def test_detector_stays_quiet_on_its_negative_case(name: str) -> None:
 def test_a_placeholder_email_is_still_a_violation_by_default() -> None:
     assert [item.code for item in check({"v": "user@example.com"}, OPEN)] == [RAW_IDENTIFIER]
 
+    only = Policy(forbidden_keys=frozenset(), detectors=frozenset({"email"}))
+    for first in "abcdefghijklmnopqrstuvwxyz":
+        for second in "abcdefghijklmnopqrstuvwxyz":
+            address = f"member@clinic.{first}{second}"
+            assert [item.code for item in check(address, only)] == [RAW_IDENTIFIER], address
+
 
 def test_allow_domains_exempts_exactly_the_listed_domain() -> None:
     policy = Policy(forbidden_keys=frozenset(), allow_domains=frozenset({"example.com"}))
@@ -149,7 +155,7 @@ PATHS = frozenset(f"a{index:05d}.b{index:05d}" for index in range(10_000))
 
 def flat_rows() -> tuple[dict, Policy]:
     """Many small strings: the cheapest shape, and the one to beat."""
-    return {f"row_{index}": {"note": "n" * 4088} for index in range(CAP // 4096)}, OPEN
+    return {f"row_{index}": {"note": "n" * 4083} for index in range(CAP // 4096)}, OPEN
 
 
 def deep_with_long_names() -> tuple[dict, Policy]:
@@ -179,7 +185,7 @@ def full_forbidden_value_list() -> tuple[dict, Policy]:
     Every character starts a value in the list, so the matcher's fast path never
     fires. Scanning once per entry instead made this shape O(entries x bytes).
     """
-    payload = {f"row_{index}": {"note": "z" * 4088} for index in range(CAP // 4096)}
+    payload = {f"row_{index}": {"note": "z" * 4083} for index in range(CAP // 4096)}
     return payload, Policy(forbidden_keys=frozenset(), forbidden_values=VALUES)
 
 
@@ -194,14 +200,14 @@ def colliding_forbidden_value_list() -> tuple[dict, Policy]:
     payload before the matcher became an automaton. Nothing in it matches, so
     the cost measured is the search and not an early exit.
     """
-    payload = {f"row_{index}": {"note": "NG" * 2044} for index in range(CAP // 4096)}
+    payload = {f"row_{index}": {"note": "NG" * 2041} for index in range(CAP // 4096)}
     values = frozenset({"QA"} | {f"NG-{index:06d}" for index in range(MAX_FORBIDDEN_VALUES - 1)})
     return payload, Policy(forbidden_keys=frozenset(), forbidden_values=values)
 
 
 def full_denied_path_list() -> tuple[dict, Policy]:
     """A denied-path list of ten thousand entries is one set lookup per node."""
-    payload = {f"row_{index}": {"note": "n" * 4088} for index in range(CAP // 4096)}
+    payload = {f"row_{index}": {"note": "n" * 4083} for index in range(CAP // 4096)}
     return payload, Policy(forbidden_keys=frozenset(), denied_field_paths=PATHS)
 
 
@@ -274,6 +280,15 @@ def test_a_payload_over_the_text_budget_is_refused_rather_than_screened() -> Non
     found = check(over, OPEN)
     assert [item.code for item in found] == ["PAYLOAD_TOO_LARGE"]
     assert time.monotonic() - started < 1.0
+
+    policy = Policy(forbidden_keys=frozenset(), max_total_length=10)
+    for lengths in ((10,), (5, 5), (1, 9)):
+        assert check(["x" * length for length in lengths], policy) == [], lengths
+    detail = "payload carries more text than max_total_length=10 and was not fully screened"
+    for lengths, index in (((11,), 0), ((6, 5), 1), ((4, 4, 3), 2)):
+        found = check(["x" * length for length in lengths], policy)
+        assert [item.code for item in found] == ["PAYLOAD_TOO_LARGE"], lengths
+        assert (found[0].path, found[0].detail) == (f"response[{index}]", detail)
 
 
 def test_a_field_name_counts_against_the_text_budget_like_a_value() -> None:

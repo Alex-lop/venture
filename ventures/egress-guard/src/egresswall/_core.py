@@ -639,6 +639,18 @@ class _Budget:
         self.stopped = False
 
 
+def _text_budget_violation(policy: Policy, path: str, budget: _Budget) -> Violation | None:
+    if budget.text <= policy.max_total_length:
+        return None
+    budget.stopped = True
+    return Violation(
+        PAYLOAD_TOO_LARGE,
+        path,
+        f"payload carries more text than max_total_length={policy.max_total_length} "
+        "and was not fully screened",
+    )
+
+
 def _carries_data(value: Any, policy: Policy) -> bool:
     """True when a value looks like data rather than governance vocabulary.
 
@@ -702,16 +714,8 @@ def _walk(
             PAYLOAD_TOO_LARGE, path, f"payload has more than max_nodes={policy.max_nodes} nodes"
         )
         return
-    if budget.text > policy.max_total_length:
-        # Charged as each string and field name is reached and checked here, so
-        # a payload overruns the budget by at most one node's worth of text.
-        budget.stopped = True
-        yield Violation(
-            PAYLOAD_TOO_LARGE,
-            path,
-            f"payload carries more text than max_total_length={policy.max_total_length} "
-            "and was not fully screened",
-        )
+    if violation := _text_budget_violation(policy, path, budget):
+        yield violation
         return
     if depth > policy.max_depth:
         budget.stopped = True
@@ -726,8 +730,36 @@ def _walk(
         # take a dot as well: `content[0].text→rows`, not `→.rows`.
         joiner = "" if path.endswith(_EMBEDDED) else "."
         for index, (key, item) in enumerate(value.items()):
-            name = str(key)
-            budget.text += len(name)
+            if budget.stopped:
+                return
+            key_path = f"{path}{joiner}<key#{index}>"
+            try:
+                rendered = str(key)
+                size = str.__len__(rendered)
+            except Exception:
+                budget.stopped = True
+                yield Violation(
+                    PAYLOAD_TOO_LARGE,
+                    key_path,
+                    "a field name could not be rendered for screening",
+                )
+                return
+            budget.text += size
+            if violation := _text_budget_violation(policy, key_path, budget):
+                yield violation
+                return
+            try:
+                name = str.encode(rendered, "utf-8", "surrogatepass").decode(
+                    "utf-8", "surrogatepass"
+                )
+            except Exception:
+                budget.stopped = True
+                yield Violation(
+                    PAYLOAD_TOO_LARGE,
+                    key_path,
+                    "a field name could not be rendered for screening",
+                )
+                return
             findings = _key_findings(name, policy)
             # Matching uses the real name; only what is reported is sanitized,
             # so sanitizing can never disarm a rule.
@@ -767,7 +799,30 @@ def _walk(
             )
         return
     if isinstance(value, (str, bytes, bytearray, memoryview)):
-        budget.text += len(value)
+        if isinstance(value, memoryview):
+            try:
+                size = value.nbytes
+            except Exception:
+                budget.stopped = True
+                yield Violation(
+                    PAYLOAD_TOO_LARGE, path, "a value could not be rendered for screening"
+                )
+                return
+        else:
+            size = len(value)
+        budget.text += size
+        if violation := _text_budget_violation(policy, path, budget):
+            yield violation
+            return
+        if isinstance(value, memoryview):
+            try:
+                value = bytes(value)
+            except Exception:
+                budget.stopped = True
+                yield Violation(
+                    PAYLOAD_TOO_LARGE, path, "a value could not be rendered for screening"
+                )
+                return
         yield from _screen_scalar(value, policy, path)
         if isinstance(value, str):
             document = _document_candidate(value)
@@ -778,6 +833,8 @@ def _walk(
         return
     if isinstance(value, Sequence):
         for index, item in enumerate(value):
+            if budget.stopped:
+                return
             yield from _walk(
                 item,
                 policy,
@@ -973,6 +1030,9 @@ def _screen_scalar(
             return
         if budget is not None:
             budget.text += len(text)
+            if violation := _text_budget_violation(policy, path, budget):
+                yield violation
+                return
     if not text:
         return
     if len(text) > policy.max_string_length:

@@ -131,37 +131,32 @@ def test_the_readme_version_matches_the_package(readme: str, repo_root: Path) ->
     assert f"## [{version}]" in (repo_root / "CHANGELOG.md").read_text(encoding="utf-8")
 
 
-#: The two routes a reader may take, and the only two the README may name.
-INSTALL = ("pip install egresswall\n", "uv pip install git+https://github.com/Alex-lop/egresswall")
+#: The one route a reader may take before the PyPI release.
+INSTALL = "pip install git+https://github.com/Alex-lop/egresswall@v0.1.0"
 #: Every installer whose invocation would read as an install route on this page.
 INSTALLERS = re.compile(r"(?:uv pip|uvx|pipx|conda|poetry|pdm|brew|pip)\s+install[^\n`]*")
 
 
-def test_the_readme_names_the_two_install_routes_and_no_others(readme: str) -> None:
-    """One published name, one source URL: a third route would be one nobody tested.
+def test_the_readme_names_the_source_install_route_and_no_others(readme: str) -> None:
+    """One source URL: a second route would be one nobody tested.
 
     Asserted as an equality rather than as a denylist of routes that were once
     true: a `pipx install` block nobody had run could be added under a denylist
     and the suite stayed green.
     """
     found = {match.group(0).strip() for match in INSTALLERS.finditer(readme)}
-    assert found == {route.strip() for route in INSTALL}, found
-    assert INSTALL[0].strip().endswith(egresswall.NAME)
+    assert found == {INSTALL}, found
+    assert INSTALL.endswith("@v0.1.0")
 
 
-def test_both_install_routes_name_what_the_packaging_metadata_names(
+def test_the_source_install_route_names_what_the_packaging_metadata_names(
     readme: str, repo_root: Path
 ) -> None:
-    """Offline, the checkable claim is that the README and pyproject agree.
-
-    `pip install <name>` must be the distribution name hatchling builds, and the
-    from-source URL must be the repository `[project.urls]` points at -- so the
-    README and the metadata PyPI renders cannot name two different projects.
-    """
+    """Offline, the checkable claim is that the README and pyproject agree."""
     project = tomllib.loads((repo_root / "pyproject.toml").read_text(encoding="utf-8"))["project"]
-    assert INSTALL[0].split()[-1].strip() == project["name"] == egresswall.NAME
+    assert project["name"] == egresswall.NAME
     source = project["urls"]["Source"]
-    assert INSTALL[1].endswith(source), (INSTALL[1], source)
+    assert f"pip install git+{source}@v{egresswall.__version__}" == INSTALL
     for url in project["urls"].values():
         assert url.startswith(f"https://github.com/Alex-lop/{egresswall.NAME}"), url
         assert "/ventures/" not in url, url
