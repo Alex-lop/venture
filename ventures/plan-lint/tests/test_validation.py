@@ -166,6 +166,11 @@ def test_plan_requires_global_budget_for_declared_retry_limits() -> None:
     )
 
     assert "attempt_budget_too_small" in codes(policy, _plan())
+    policy = ProjectPolicy.model_validate({**_policy().model_dump(mode="json"), "max_concurrency": 2})
+
+    assert "concurrency_exceeds_policy" not in codes(policy, _plan())
+    assert "concurrency_exceeds_policy" in codes(policy, _plan().model_copy(update={"max_concurrency": 3}))
+    assert "attempt_limit_exceeds_policy" in codes(_policy(), replace(_plan(), "work-a", attempt_limit=3))
 
 
 @pytest.mark.parametrize(
@@ -193,6 +198,20 @@ def test_plan_requires_global_budget_for_declared_retry_limits() -> None:
 )
 def test_plan_rejects_unverifiable_criterion_coverage(changed, code: str) -> None:
     assert code in codes(_policy(), changed(_plan()))
+    dependency_without_input = replace(_plan(), "work-b", dependencies=("work-a",), inputs=())
+    missing_criterion_producer = replace_criterion(_plan(), producer_task_ids=("ghost", "work-a"))
+    detached = replace(
+        _plan(),
+        "assemble",
+        dependencies=("work-b",),
+        inputs=(ArtifactRequirement(producer_task_id="work-b", name="patch-b", kind="patch"),),
+    )
+
+    assert "dependency_without_artifact" in codes(_policy(), dependency_without_input)
+    assert "criterion_missing_producer" in codes(_policy(), missing_criterion_producer)
+    assert "criterion_verifier_not_downstream" in codes(
+        _policy(), replace_criterion(detached, producer_task_ids=("work-a",))
+    )
 
 
 def test_assembly_frontier_must_name_transitive_leaf_outputs() -> None:
@@ -395,6 +414,53 @@ def test_policy_evaluation_binds_exact_valid_plan_and_modes() -> None:
     assert decision.finalization_mode == FinalizationMode.AUTO_FINALIZE_ISOLATED
     assert decision.policy_sha256 == canonical_json_sha256(policy.model_dump(mode="json"))
     assert decision.plan_sha256 == canonical_json_sha256(plan.model_dump(mode="json"))
+    policy_modes = (
+        (AuthorizationMode.REVIEW_REQUIRED, FinalizationMode.REVIEW_REQUIRED),
+        (AuthorizationMode.POLICY_PRE_AUTHORIZED, FinalizationMode.REVIEW_REQUIRED),
+        (AuthorizationMode.POLICY_PRE_AUTHORIZED, FinalizationMode.AUTO_FINALIZE_ISOLATED),
+    )
+    for policy_authorization, policy_finalization in policy_modes:
+        policy = ProjectPolicy.model_validate(
+            {
+                **_policy().model_dump(mode="json"),
+                "schema_version": 2,
+                "authorization_mode": policy_authorization,
+                "finalization_mode": policy_finalization,
+            }
+        )
+        for requested_authorization in AuthorizationMode:
+            for requested_finalization in (None, *FinalizationMode):
+                decision = evaluate_plan_policy(
+                    policy,
+                    _plan(),
+                    goal_request_id="goal-request-0001",
+                    requested_mode=requested_authorization,
+                    requested_finalization_mode=requested_finalization,
+                )
+                pre_authorized = (
+                    requested_authorization == policy_authorization == AuthorizationMode.POLICY_PRE_AUTHORIZED
+                )
+                auto_finalized = (
+                    pre_authorized
+                    and policy_finalization == FinalizationMode.AUTO_FINALIZE_ISOLATED
+                    and requested_finalization != FinalizationMode.REVIEW_REQUIRED
+                )
+                expected_reasons = {"plan_within_policy"}
+                if requested_authorization == AuthorizationMode.REVIEW_REQUIRED:
+                    expected_reasons.add("review_requested")
+                elif not pre_authorized:
+                    expected_reasons.add("policy_requires_review")
+                expected_reasons.add("isolated_result_pre_authorized" if auto_finalized else "final_review_required")
+                if not pre_authorized:
+                    expected_reasons.discard("final_review_required")
+
+                assert decision.effective_mode == (
+                    AuthorizationMode.POLICY_PRE_AUTHORIZED if pre_authorized else AuthorizationMode.REVIEW_REQUIRED
+                )
+                assert decision.finalization_mode == (
+                    FinalizationMode.AUTO_FINALIZE_ISOLATED if auto_finalized else FinalizationMode.REVIEW_REQUIRED
+                )
+                assert set(decision.reason_codes) == expected_reasons
 
 
 def test_policy_evaluation_downgrades_legacy_policy_to_review() -> None:
@@ -436,6 +502,7 @@ def test_human_gate_criterion_passes_by_default_and_fails_under_strict() -> None
     )
 
     assert validate_plan(policy, gated).valid
+    assert require_valid_plan(policy, gated).valid
     assert codes(policy, gated, strict=True) == {"criterion_human_gate"}
     with pytest.raises(PlanValidationError):
         require_valid_plan(policy, gated, strict=True)
@@ -859,6 +926,8 @@ def test_a_directory_lease_and_a_file_lease_inside_it_conflict() -> None:
             expected_outputs=[{"name": "patch-b", "kind": "patch", "paths": ["app/pkgsuffix.py"]}],
         ),
     )
+    root_policy = ProjectPolicy.model_validate({**_policy().model_dump(mode="json"), "allowed_write_globs": ("**",)})
+    assert "parallel_write_conflict" in codes(root_policy, _writing("app", "app/x.py"))
 
 
 def test_the_merge_exemption_covers_only_the_paths_the_assembly_merges() -> None:
